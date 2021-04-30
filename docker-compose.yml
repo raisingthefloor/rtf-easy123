@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+  nodejs-api:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - "2000:2000"
+    container_name: api
+    image: hardikplenar/easy123_api:latest
+    links:
+      - mongo-db
+  mongo-db:
+    image: mongo
+    ports:
+      - "27017:27017"
+    container_name: mongo-db
+    volumes:
+      - ./db/:/data/db
