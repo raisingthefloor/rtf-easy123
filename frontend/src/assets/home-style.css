@@ -1,0 +1,71 @@
+/*
+.flap-second {
+    position:absolute;
+    z-index: 5;
+    left: 852px;
+    top: 61px;
+}
+.flap-child {
+    position:absolute;
+    left: 7px;
+    top: 7px;
+    font-size: 22px
+}
+.spiral-img {
+    position: absolute;
+    top: 80px;
+    left: 472px;
+    z-index: 3;
+    height: 22px;
+}
+#mail {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    margin:25px;
+}
+#palbum {
+    position: absolute;
+    margin:25px;
+}
+#icontact {
+    position: absolute;
+    margin:25px;
+}
+.tray-extra {
+    position:absolute;
+    top:100px;
+    z-index: 1;
+}
+.trash1 {
+    z-index: 2;
+}
+.trash2 {
+    z-index: 4;
+}
+.polaroid {
+    z-index: 1;
+}
+#mailbox_cont {
+    vertical-align: middle;
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    margin-top: -88px;
+    margin-left: -88px;
+    z-index: 1;
+}*/
+#message {
+    word-wrap: break-word;
+    white-space: pre-line;
+}
+.mail-subject {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.mail-to {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
