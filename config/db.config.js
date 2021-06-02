@@ -4,7 +4,12 @@ mongoose.Promise = global.Promise;
 
 const connect = () => {
     //process.env.HOST = "localhost";
-    const url =  `mongodb://${process.env.HOST}:${process.env.MONGODB_PORT}/${process.env.DB_NAME}`;
+    let url
+    if (process.env.DOCKER) {
+        url = `mongodb://mongo-db:${process.env.MONGODB_PORT}/${process.env.DB_NAME}`;
+    }else {
+        url = `mongodb://${process.env.HOST}:${process.env.MONGODB_PORT}/${process.env.DB_NAME}`;
+    }
     logger.info("process.env.MONGO_CONNECTION_STRING :::" + url);
     let options = {
         useNewUrlParser: true,
@@ -30,10 +35,12 @@ const disconnect = () => {
         return;
     }
 
+    if (!mongoose.connection) {
+        return;
+    }
     mongoose.disconnect();
-
     mongoose.once("close", async () => {
-        console.log("Diconnected  to database");
+        console.log("Disconnected  to database");
     });
 
 };

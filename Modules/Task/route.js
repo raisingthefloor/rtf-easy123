@@ -6,5 +6,4 @@ module.exports = function (router) {
     router.put('/api/tracecenter/task', taskController.updateTask)
     router.delete('/api/tracecenter/task/:id', taskController.deleteTask)
     //router.delete('/connect', gmailController.getMails)
-
 }
