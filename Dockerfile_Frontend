@@ -2,10 +2,11 @@ FROM node:latest
 
 WORKDIR /usr/src/app/easy123_frontend
 
+ENV PATH /usr/src/app/easy123_frontend/node_modules/.bin:$PATH
+
 COPY package*.json ./
 
 RUN npm install
-RUN npm install -g @vue/cli@latest
 
 COPY frontend .
 
