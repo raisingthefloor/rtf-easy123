@@ -1,0 +1,106 @@
+/* 
+    Document   : contacts
+    Created on : May 14, 2011, 3:10:21 PM
+    Author     : Rpn
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+/* 
+   TODO customize this sample style
+   Syntax recommendation http://www.w3.org/TR/REC-CSS2/
+*/
+
+	#containment-wrapper { width: 100%; height: 100%; background : #f7f7f7; border : 1px solid #f0e9eb; padding:0px;
+        }
+        #contact{
+border : 2px solid #7f7f7e;
+-moz-border-radius: 15px;
+border-radius: 15px;
+background: #fbfbf2;
+	box-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+        -moz-box-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+	-webkit-box-shadow: 1px 4px 1px rgba(0,0,0,0.5);
+
+
+}
+#person
+{
+border : 2px solid #7f7f7e;
+-moz-border-radius: 15px;
+border-radius: 15px;
+background: #fbfbf2;
+
+
+
+}
+        #person_pic{
+
+      	border: 3px solid #FFF;
+	box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        -moz-box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+	-webkit-box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        -moz-border-radius: 7px;
+        border-radius: 7px;
+
+        }
+
+
+        #contact_pic{
+
+      	border: 3px solid #FFF;
+	box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        -moz-box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+	-webkit-box-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+        -moz-border-radius: 7px;
+        border-radius: 7px;
+
+        }
+#newspaper-b
+{
+	font-family:   "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 22px;
+	width: 470px;
+	text-align: left;
+	border-collapse: collapse;
+}
+
+#newspaper-b tbody
+{
+	background: #fbfbf2;
+}
+#newspaper-b td
+{
+	padding: 8px;
+        padding-left:20px;
+	color: #000000;
+	border-bottom: 1px #636357 dotted;
+
+}
+#newspaper-b tbody tr:hover td
+{
+	background: #eeeeed;
+}
+
+tbody
+{
+    background: #f2edda;
+}
+table{
+
+	font-size: 30px;
+        margin-top:40px;
+        margin-bottom:40px;
+	margin-left: 40px;
+	text-align: left;
+	border: 1px #7f7f7e solid;
+
+
+}
+td
+{
+	padding: 10px;
+	color: #000000;
+	border-bottom: 1px #636357 solid;
+}
+
