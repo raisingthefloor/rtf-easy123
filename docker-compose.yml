@@ -4,8 +4,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile_Frontend
-    ports:
-      - "1000:1000"
     container_name: frontend
     depends_on:
       - backend
@@ -13,8 +11,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile_Backend
-    ports:
-      - "2000:2000"
     container_name: backend
     environment:
       - DOCKER=1
