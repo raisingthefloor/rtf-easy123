@@ -5,6 +5,7 @@ WORKDIR /usr/src/app/easy123_frontend
 COPY package*.json ./
 
 RUN npm install
+RUN npm install -g @vue/cli@latest
 
 COPY frontend .
 
