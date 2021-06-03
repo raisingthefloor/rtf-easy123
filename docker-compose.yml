@@ -22,8 +22,8 @@ services:
       - database
   database:
     image: mongo
-    ports:
-      - "27017:27017"
+    environment:
+      - DOCKER=1
     container_name: mongo-db
     volumes:
       - mongodb:/data/db
