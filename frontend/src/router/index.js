@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Hello from '@/components/HelloWorld'
+//import Hello from '@/components/HelloWorld'
+import Login from '@/components/Login'
+import NewUser from '@/components/NewUser'
 import Foo from "@/components/Foo"
 //import Home from "@/components/Home"
 import HomeCustom from "@/components/HomeCustom"
@@ -14,8 +16,13 @@ export default new Router({
     routes: [
         {
             path: '/',
-            name: 'Hello',
-            component: Hello
+            name: 'Login',
+            component: Login
+        },
+        {
+            path: '/new-user/:id',
+            name: 'NewUser',
+            component: NewUser
         },
         {
             path: '/foo',

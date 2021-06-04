@@ -18,7 +18,8 @@
     "mimemessage": "^1.0.5",
     "mongodb": "^3.6.3",
     "mongoose": "^5.11.10",
-    "pine": "^1.1.1"
+    "pine": "^1.1.1",
+    "stream-to-blob-url": "^3.0.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"

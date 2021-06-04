@@ -15,6 +15,7 @@
     "mimemessage": "^1.0.5",
     "moment": "^2.29.1",
     "socket.io-client": "^4.1.0",
+    "stream-to-blob-url": "^3.0.2",
     "vue": "^2.6.11",
     "vue-router": "^3.5.1",
     "vue-web-cam": "^1.9.0",

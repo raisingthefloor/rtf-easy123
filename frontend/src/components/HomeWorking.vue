@@ -156,6 +156,7 @@ export default {
 const axios = require('axios')
 import Polaroid from "./working/Polaroid"
 import Polaroid2 from "./working/Polaroid2"
+const toBlobURL = require('stream-to-blob-url')
 
 function mySideChange(front) {
   var p=$(this).parent().parent();
@@ -548,7 +549,8 @@ export default {
       moimg: null,
       mcimg: null,
 
-      mails: []
+      mails: [],
+      auth_user: null
     }
   },
   computed: {
@@ -585,15 +587,33 @@ export default {
     initMount() {
       var self = this
 
+      if (localStorage.getItem("user") === null) {
+        this.$router.push({'name': 'Login'})
+      }
+      else
+      {
+        let auth_user = localStorage.getItem("user")
+        auth_user = JSON.parse(auth_user)
+        if(auth_user && auth_user.id)
+        {
+          self.auth_user = auth_user
+        }
+        else
+        {
+          console.log("User not found")
+        }
+      }
+
       //get unread mails
       axios.post(self.$apiHostname+'/api/get-unread-mails/', {
-        headers: {
-          "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "http://localhost:8080"
-        }
+        user_id: self.auth_user.id
       })
       .then(function (response) {
-
+        if(response.data.error)
+        {
+          console.log("Mails did not came")
+          return
+        }
         self.mails = response.data
         self.mails.forEach(function(mail, index) {
           if (!mail.r) {
@@ -604,6 +624,46 @@ export default {
           }
           if (!mail.in) {
             mail.in = "c"
+          }
+
+          //add attachment HTML in mail
+          let attachmentHTML = ""
+          if(mail.decoded_attachments && mail.decoded_attachments.length)
+          {
+            let i = 0
+            for (let decodedAttachment of mail.decoded_attachments)
+            {
+              if (decodedAttachment.attachment_data.data.length > 0)
+              {
+                let dataBase64Rep = decodedAttachment.attachment_data.data.replace(/-/g, '+').replace(/_/g, '/')
+                let urlBlob = self.b64toBlob(dataBase64Rep, decodedAttachment.mimeType, decodedAttachment.attachment_data.size)
+
+                attachmentHTML += `<a href="`+urlBlob+`" download="`+decodedAttachment.filename+`"> <div style="margin-top: 0.5rem; padding: 0.3rem; border: 1px solid #ccc; cursor: pointer;">
+                `+decodedAttachment.filename+`
+            </div></a>`
+                URL.revokeObjectURL(urlBlob)
+              }
+
+
+              i++
+            }
+
+            if(mail.payload.mimeType == "multipart/mixed")
+            {
+              //check if </body> exist
+              if(mail.decoded_body[0].includes("</body>"))
+              {
+                //<body> exists
+                attachmentHTML += "</body>"
+                mail.decoded_body[0].replace("</body>", attachmentHTML)
+              }
+              else
+              {
+                //<body> does not exists
+                mail.decoded_body[0] += attachmentHTML
+              }
+            }
+
           }
         })
         console.log(self.mails)
@@ -799,6 +859,31 @@ export default {
 
       })
     },
+    b64toBlob (b64Data, contentType, sliceSize) {
+      contentType = contentType || ''
+      sliceSize = sliceSize || 512
+
+      var byteCharacters = atob(b64Data)
+      var byteArrays = []
+
+      for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+        var slice = byteCharacters.slice(offset, offset + sliceSize)
+
+        var byteNumbers = new Array(slice.length)
+        for (var i = 0; i < slice.length; i++) {
+          byteNumbers[i] = slice.charCodeAt(i)
+        }
+
+        var byteArray = new Uint8Array(byteNumbers)
+
+        byteArrays.push(byteArray)
+
+      }
+      var blob = new Blob(byteArrays, {type: contentType})
+      let urlBlob = URL.createObjectURL(blob)
+      return urlBlob
+    },
+
     //find header with name form the mail.payload.headers
     findMailHeader(mail, header_name){
       return mail.payload.headers.find(x => x.name === header_name).value;
@@ -1323,6 +1408,7 @@ export default {
               var p=$(this).parent().parent();
               //send message
               axios.post(self.$apiHostname+'/api/reply-mail', {
+                user_id: self.auth_user.id,
                 message: $(p).find('#inputpaper').val(),
                 subject: $(p).find('#reply-subject').val(),
                 from: $(p).find('#reply-mail-header-from').val(),
@@ -1330,7 +1416,12 @@ export default {
                 references: $(p).find('#reply-mail-header-references').val()
               })
               .then((response) => {
-                console.log(response);
+                if(response.data.error)
+                {
+                  console.log("Mails did not sent")
+                  return
+                }
+                console.log(response)
               }, (error) => {
                 console.log(error);
               })

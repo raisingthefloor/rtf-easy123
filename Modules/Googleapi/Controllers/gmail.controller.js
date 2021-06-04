@@ -2,108 +2,217 @@ const logger = require('../../../logger/api.logger');
 const fs = require('fs');
 const readline = require('readline');
 const {google} = require('googleapis');
-const mimemessage = require('mimemessage');
-
+const GoogleManager =  require("../../../Managers/GoogleManager");
+const {User} = require('../Models/user.model')
+//const toBlobURL = require('stream-to-blob-url')
 
 class GmailController {
 
     TOKEN_PATH = __dirname+'/config/token/new.txt'
     SCOPES = ['https://www.googleapis.com/auth/gmail.modify','https://www.googleapis.com/auth/gmail.send', 'https://www.googleapis.com/auth/gmail.modify']
 
-    async getMails(request, response) {
-        //console.log('mails:::', "here", new Date());
-        /*let token = {"sa": "sample"}
-        fs.writeFile(__dirname+'/config/token/new.txt', JSON.stringify(token), { flag: 'w' }, (err) => {
-            if (err) {
-                return console.error(err);
+    async connect(request, response) {
+        let credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS)
+        const {client_secret, client_id, redirect_uris} = credentials.web
+        const oAuth2Client = new google.auth.OAuth2(
+            client_id, client_secret, redirect_uris[0])
+
+        const authUrl = oAuth2Client.generateAuthUrl({
+            access_type: 'offline',
+            scope: this.SCOPES,
+        })
+        return response.redirect(authUrl)
+    }
+
+    async googleCallback(request, response) {
+        //console.log("code", request.query.code)
+        const token = await GoogleManager.getToken(request.query.code)
+
+        const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS)
+        const {client_secret, client_id, redirect_uris} = credentials.web
+        const oAuth2Client = new google.auth.OAuth2(
+            client_id, client_secret, redirect_uris[0])
+        oAuth2Client.setCredentials(token)
+
+        //get user profile
+        const userProfile = await GoogleManager.getUserProfile(oAuth2Client)
+        //console.log("userProfile", userProfile)
+
+        let data
+        try {
+            //check user exists with email
+            const users = await User.find({email: userProfile.emailAddress});
+            if(users.length)
+            {
+                return response.redirect(process.env.FRONT_URL)
             }
-            else {
-                console.log('Token stored to', this.TOKEN_PATH);
-                return console.log('mails:::', "here", new Date())
-            }
 
-        });
-        return;*/
+            //store the token in the database
+            data = await User.create({
+                email: userProfile.emailAddress,
+                google_authentication_code: JSON.stringify(token)
+            });
+            return response.redirect(process.env.FRONT_URL + "#/new-user/"+data.id)
+            //console.log("user data", data)
+        } catch (err) {
+            //console.log("error while inserting ", err)
+            logger.error('Error::' + err)
+        }
+    }
 
-        //response.send([]);
-        // If modifying these scopes, delete token.json.
-        //const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
-        // The file token.json stores the user's access and refresh tokens, and is
-        // created automatically when the authorization flow completes for the first
-        // time.
-        //const TOKEN_PATH = __dirname+'/../../../config/token';
+    async getUser(request, response) {
+        try {
+            const users = await User.find({_id: request.body.id});
+            //console.log('users:::', users);
+            response.send(users);
+        } catch (err) {
+            logger.error('Error::' + err);
+        }
+    }
 
-        // Load client secrets from a local file.
-        fs.readFile(`${__dirname}/credentials.json`, (err, content) => {
-            if (err) return console.log('Error loading client secret file:', err);
-            // Authorize a client with credentials, then call the Gmail API.
-            //this.authorize(JSON.parse(content), this.listLabels);
-            this.authorize(JSON.parse(content), request, response, this.listLabels);
-        });
+    async saveNewUser(request, response) {
+        let data = {}
+        try {
+            data = await User.updateOne({
+                _id: request.body.id
+            }, {$set: {
+                    name: request.body.name,
+                    password: request.body.password
+                }})
+        } catch (err) {
+            logger.error('Error::' + err)
+        }
+        response.send(data)
+    }
 
+    async login( request, response) {
+        try {
+            const users = await User.find({
+                email: request.body.email,
+                password: request.body.password
+            });
+            //console.log('users:::', users);
+            response.send(users);
+        } catch (err) {
+            logger.error('Error::' + err);
+        }
     }
 
     async getAllMails(request, response) {
+        let credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS)
+        const {client_secret, client_id, redirect_uris} = credentials.web
+        const oAuth2Client = new google.auth.OAuth2(
+            client_id, client_secret, redirect_uris[0]);
 
-        /*fs.readFile(`${__dirname}/data/unreadmail.txt`, (err, content) => {
-            if (err) return console.log('Error loading data from file:', err);
-            // Authorize a client with credentials, then call the Gmail API.
-            //this.authorize(JSON.parse(content), this.listLabels);
+        if(!request.body.user_id)
+        {
+            response.send({"error": true, "data":[], "message": "User is not logged in"})
+            return
+        }
 
-            let content_json = JSON.parse(content)
-            content_json.forEach(function (mail, index, content_json) {
-                if(mail.payload.body.data)
-                {
-                    let buff = new Buffer.from(mail.payload.body.data, 'base64');
-                    let text = buff.toString('utf8');
-                    mail.decoded_body = []
-                    mail.decoded_body[0] = text
-                }
-                if(mail.payload.parts)
-                {
-                    let buff = new Buffer.from(mail.payload.parts[0].body.data, 'base64');
-                    let text = buff.toString('utf8');
-                    mail.decoded_parts = []
-                    mail.decoded_parts[0] = text
-                }
-
+        //get user from db
+        try {
+            let user = await User.find({
+                _id: request.body.user_id
             })
-            //console.log(JSON.parse(content))
 
-            //response.send(JSON.parse(content));
-            response.send(content_json);
-        });*/
+            //console.log('users:::', users);
+            if(!user.length)
+            {
+                response.send({"error": true, "data":[], "message": "User is not logged in"})
+                return
+            }
+            user = user[0]
 
-        //console.log('mails:::', "here", new Date());
+            oAuth2Client.setCredentials(JSON.parse(user.google_authentication_code))
+            oAuth2Client.expressResponse = response
+            oAuth2Client.expressRequest = request
+            oAuth2Client.currentClassPointer = this
 
-        //response.send([]);
-        // If modifying these scopes, delete token.json.
-        //const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
-        // The file token.json stores the user's access and refresh tokens, and is
-        // created automatically when the authorization flow completes for the first
-        // time.
-        //const TOKEN_PATH = __dirname+'/../../../config/token';
 
-        // Load client secrets from a local file.
-        fs.readFile(`${__dirname}/credentials.json`, (err, content) => {
-            if (err) return console.log('Error loading client secret file:', err);
-            // Authorize a client with credentials, then call the Gmail API.
-            //this.authorize(JSON.parse(content), this.listLabels);
-            this.authorize(JSON.parse(content), request, response, this.listUnreadMessages);
-        });
+            const gmail = google.gmail({version: 'v1', oAuth2Client})
+            let allUnreadMails = await GoogleManager.getUnreadMessages(oAuth2Client)
+            let allUnreadMailDetails = []
+            for (let mail of allUnreadMails)
+            {
+                let mail_detail = await GoogleManager.getSingleProcessedMessageDetails(oAuth2Client, mail)
 
+                let messageId = mail_detail.payload.headers.find(obj => obj.name == "Message-ID")
+                if(mail_detail.decoded_attachments && mail_detail.decoded_attachments.length)
+                {
+                    let i = 0
+                    for (let attachment of mail_detail.decoded_attachments)
+                    {
+                        let attachment_data = await GoogleManager.attachmentData(oAuth2Client, messageId, attachment)
+                        mail_detail.decoded_attachments[i].attachment_data = attachment_data
+                        i++
+                    }
+                }
+                allUnreadMailDetails.push(mail_detail)
+            }
+            oAuth2Client.expressResponse.send(allUnreadMailDetails)
+
+
+
+        } catch (err) {
+            logger.error('Error::' + err);
+        }
+
+
+
+        //this.authorize(JSON.parse(process.env.GOOGLE_CREDENTIALS), request, response, this.listUnreadMessages)
     }
 
     async replyMail(request, response) {
+        let credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS)
+        const {client_secret, client_id, redirect_uris} = credentials.web
+        const oAuth2Client = new google.auth.OAuth2(
+            client_id, client_secret, redirect_uris[0]);
 
-        //response.send([request.body])
+        if(!request.body.user_id)
+        {
+            response.send({"error": true, "data":[], "message": "User is not logged in"})
+            return
+        }
+
+        //get user from db
+        try {
+            let user = await User.find({
+                _id: request.body.user_id
+            })
+
+            //console.log('users:::', users);
+            if(!user.length)
+            {
+                response.send({"error": true, "data":[], "message": "User is not logged in"})
+                return
+            }
+            user = user[0]
+
+            oAuth2Client.setCredentials(JSON.parse(user.google_authentication_code))
+            oAuth2Client.expressResponse = response
+            oAuth2Client.expressRequest = request
+            oAuth2Client.currentClassPointer = this
+
+            let raw = this.createMessage('myrealemail@gmail.com', request.body.from, request.body.subject, request.body.message, oAuth2Client.expressRequest.body)
+            const mail_sent = await GoogleManager.sendMail(oAuth2Client, raw)
+        } catch (err) {
+            logger.error('Error::' + err);
+        }
+
+
+
+
+
+
+        /*//response.send([request.body])
         // Load client secrets from a local file.
         fs.readFile(`${__dirname}/credentials.json`, (err, content) => {
             if (err) return console.log('Error loading client secret file:', err);
             // Authorize a client with credentials, then call the Gmail API.
             //this.authorize(JSON.parse(content), this.listLabels);
             this.authorize(JSON.parse(content), request, response, this.sendMessage);
-        });
+        });*/
     }
 
 
@@ -116,11 +225,40 @@ class GmailController {
     authorize(credentials, expressRequest, expressResponse, callback) {
         const {client_secret, client_id, redirect_uris} = credentials.web
         const oAuth2Client = new google.auth.OAuth2(
-            client_id, client_secret, redirect_uris[0]);
+            client_id, client_secret, redirect_uris[0])
 
-        // Check if we have previously stored a token.
+        if(!expressRequest.body.id)
+        {
+            expressResponse.send({"error": true, "data":[], "message": "User is not logged in"})
+        }
+
+        /*//get user from db
+        try {
+            let user = await User.find({
+                id: request.body.id
+            });
+            //console.log('users:::', users);
+            if(!user.length)
+            {
+                expressResponse.send({"error": true, "data":[], "message": "User is not logged in"})
+            }
+            user = user[0]
+
+            oAuth2Client.setCredentials(JSON.parse(user.google_authentication_code))
+            oAuth2Client.expressResponse = expressResponse
+            oAuth2Client.expressRequest = expressRequest
+            oAuth2Client.currentClassPointer = this
+            return callback(oAuth2Client)
+        } catch (err) {
+            logger.error('Error::' + err);
+        }*/
+
+        /*// Check if we have previously stored a token.
         fs.readFile(this.TOKEN_PATH, (err, token) => {
-            if (err) return this.getNewToken(oAuth2Client, callback);
+            if (err) return this.getNewToken(oAuth2Client, expressRequest, expressResponse, callback);
+
+
+
 
             oAuth2Client.setCredentials(JSON.parse(token));
             oAuth2Client.expressResponse = expressResponse;
@@ -128,7 +266,7 @@ class GmailController {
             oAuth2Client.currentClassPointer = this;
 
             return callback(oAuth2Client)
-        });
+        });*/
     }
 
     /**
@@ -137,13 +275,16 @@ class GmailController {
      * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
      * @param {getEventsCallback} callback The callback for the authorized client.
      */
-    async getNewToken(oAuth2Client, callback) {
-        console.log("getNewToken Running ...")
+    async getNewToken(oAuth2Client, expressRequest, expressResponse, callback) {
+        //console.log("getNewToken Running ...")
         var self = this
         const authUrl = oAuth2Client.generateAuthUrl({
             access_type: 'offline',
             scope: this.SCOPES,
         });
+        return expressResponse.redirect(authUrl);
+
+
         console.log('Authorize this app by visiting this url:', authUrl);
         const rl = readline.createInterface({
             input: process.stdin,
@@ -192,156 +333,29 @@ class GmailController {
      *
      * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
      */
-    listUnreadMessages(auth) {
-        const gmail = google.gmail({version: 'v1', auth});
-        gmail.users.messages.list({
-            userId: 'me',
-            labelIds: ['UNREAD','INBOX']
-        }, (err, res) => {
-            if (err) return console.log('The API returned an error: ' + err);
+    async listUnreadMessages(auth) {
+        console.log("listUnreadMessages")
+        const gmail = google.gmail({version: 'v1', auth})
+        let allUnreadMails = await GoogleManager.getUnreadMessages(auth)
+        let allUnreadMailDetails = []
+        for (let mail of allUnreadMails)
+        {
+            let mail_detail = await GoogleManager.getSingleProcessedMessageDetails(auth, mail)
 
-            //get message details
-            let formatedResponse = []
-
-            let allMails = res.data.messages
-            let counter = 1
-
-            if(allMails.length)
+            let messageId = mail_detail.payload.headers.find(obj => obj.name == "Message-ID")
+            if(mail_detail.decoded_attachments && mail_detail.decoded_attachments.length)
             {
-                let allMailsPromise = new Promise((resolve, reject) => {
-                    allMails.forEach((element, index) => {
-
-                        gmail.users.messages.get({
-                            userId: 'me',
-                            id: element.id
-                        }, (err, res) => {
-                            if (err) return console.log('The API returned an error: ' + err);
-                            let mail_data = res.data
-                            let mail_data_alternative = {}
-                            let headers = mail_data.payload.headers
-                            let decoded_attachments = []
-                            if(mail_data.payload.mimeType == "multipart/mixed")
-                            {
-                                let messageId = headers.find(obj => obj.name == "Message-ID")
-                                //mail_data_alternative = mail_data.payload.parts
-                                mail_data_alternative = mail_data.payload.parts.find(x => x.mimeType == "multipart/alternative")
-
-                                let html_part = mail_data_alternative.parts.find(y => y.mimeType == "text/html")
-
-                                let buff = new Buffer.from(html_part.body.data, 'base64');
-                                let text = buff.toString('utf8');
-                                mail_data.decoded_parts = []
-                                mail_data.decoded_parts[0] = text
-                                //const root = parse(html)
-                                //console.log("root", root)
-
-                                //console.log("mail_data_alternative, mixed", mail_data_alternative)
-                                let attachments = mail_data.payload.parts.filter(obj => obj.mimeType != "multipart/alternative")
-                                mail_data.decoded_attachments = attachments
-                                /*if(attachments.length)
-                                {
-                                    let attachment_promise = new Promise((resolve, reject) => {
-                                        /!*foo.forEach((value, index, array) => {
-                                            console.log(value);
-                                            if (index === array.length -1) resolve();
-                                        });*!/
-
-                                        attachments.forEach((attachment_element, attachment_index) => {
-                                            if(attachment_element.body && attachment_element.body.attachmentId)
-                                            {
-                                                //get attachment of message
-                                                gmail.users.messages.attachments.get({
-                                                    userId: 'me',
-                                                    messageId: messageId,
-                                                    id: attachment_element.body.attachmentId
-                                                }, (err, res) => {
-                                                    if (err) return console.log('The API returned an error: ' + err);
-                                                    let att = attachment_element
-                                                    att.data = res.data.data
-
-                                                    decoded_attachments.push(att)
-                                                    if (attachment_index === attachments.length -1) resolve()
-                                                    //console.log("attachment_element", attachment_element,mail_data.decoded_attachments.length)
-                                                })
-                                            }
-
-                                        })
-                                    });
-
-                                    attachment_promise.then(() => {
-                                        //console.log('All done!', decoded_attachments);
-                                        mail_data.decoded_attachments = []
-                                        mail_data.decoded_attachments = decoded_attachments
-                                        console.log("mail_data.decoded_attachments", mail_data)
-                                    });
-
-
-
-
-
-                                }*/
-                                //console.log("attachments", attachments)
-                            }
-                            else if(mail_data.payload.mimeType == "multipart/alternative")
-                            {
-                                if(mail_data.payload.body.data)
-                                {
-                                    let buff = new Buffer.from(mail_data.payload.body.data, 'base64')
-                                    let text = buff.toString('utf8');
-                                    mail_data.decoded_body = []
-                                    mail_data.decoded_body[0] = text
-                                }
-                                if(mail_data.payload.parts)
-                                {
-                                    let obj = mail_data.payload.parts.find(x => x.mimeType === 'text/html')
-                                    let buff = new Buffer.from(obj.body.data, 'base64');
-                                    let text = buff.toString('utf8');
-                                    mail_data.decoded_parts = []
-                                    mail_data.decoded_parts[0] = text
-                                }
-                            }
-
-
-
-                            /*if(mail_data.payload.body.data)
-                            {
-                                let buff = new Buffer.from(mail_data.payload.body.data, 'base64')
-                                let text = buff.toString('utf8');
-                                mail_data.decoded_body = []
-                                mail_data.decoded_body[0] = text
-                            }
-                            if(mail_data.payload.parts)
-                            {
-                                let obj = mail_data.payload.parts.find(x => x.mimeType === 'text/html')
-                                let buff = new Buffer.from(obj.body.data, 'base64');
-                                let text = buff.toString('utf8');
-                                mail_data.decoded_parts = []
-                                mail_data.decoded_parts[0] = text
-                            }*/
-
-                            formatedResponse.push(mail_data)
-
-                            if (index === allMails.length -1) resolve();
-                            // if(allMails.length == (index + 1))
-                            // {
-                            //     auth.expressResponse.send(formatedResponse)
-                            // }
-                            //console.log("data", formatedResponse)
-                        })
-                        //console.log("index", index)
-
-                    });
-                });
-
-                allMailsPromise.then(() => {
-                    auth.expressResponse.send(formatedResponse)
-                });
+                let i = 0
+                for (let attachment of mail_detail.decoded_attachments)
+                {
+                    let attachment_data = await GoogleManager.attachmentData(auth, messageId, attachment)
+                    mail_detail.decoded_attachments[i].attachment_data = attachment_data
+                    i++
+                }
             }
-
-
-
-
-        });
+            allUnreadMailDetails.push(mail_detail)
+        }
+        auth.expressResponse.send(allUnreadMailDetails)
     }
 
     /**
@@ -406,6 +420,7 @@ class GmailController {
         var encodedMail = new Buffer.from(str).toString("base64").replace(/\+/g, '-').replace(/\//g, '_');
         return encodedMail;
     }
+
 
 }
 
