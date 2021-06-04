@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     getNewUserURL() {
-      return this.$apiHostname + "/connect"
+      return process.env.VUE_APP_API_HOST_NAME + "/connect"
     }
   },
   mounted() {
@@ -54,7 +54,7 @@ export default {
         return
       }
 
-      axios.post(self.$apiHostname+'/api/login/',{
+      axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/login/',{
         email: self.email,
         password: self.password
       })

@@ -53,7 +53,7 @@ export default {
       var self = this
       this.id = this.$route.params.id
 
-      axios.post(self.$apiHostname+'/api/get-user/',{
+      axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/get-user/',{
         id: self.id
       })
       .then((response) => {
@@ -76,7 +76,7 @@ export default {
         return
       }
 
-      axios.post(self.$apiHostname+'/api/save-new-user/',{
+      axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/save-new-user/',{
         id: self.id,
         email: self.email,
         password: self.password,

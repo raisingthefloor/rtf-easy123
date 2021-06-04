@@ -297,7 +297,7 @@ export default {
       //console.log(self.$store.state)
 
       //get unread mails
-      axios.get(self.$apiHostname+'/api/get-unread-mails/', {
+      axios.get(process.env.VUE_APP_API_HOST_NAME+'/api/get-unread-mails/', {
         headers: {
           "Content-Type": "application/json",
           "Access-Control-Allow-Origin": "http://localhost:8080"
