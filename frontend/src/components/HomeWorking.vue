@@ -581,6 +581,7 @@ export default {
   },
   mounted() {
     this.initMount()
+    console.log("API_URL", process.env)
     //console.log("date", moment())
   },
   methods: {
@@ -605,7 +606,7 @@ export default {
       }
 
       //get unread mails
-      axios.post(self.$apiHostname+'/api/get-unread-mails/', {
+      axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/get-unread-mails/', {
         user_id: self.auth_user.id
       })
       .then(function (response) {
@@ -1407,7 +1408,7 @@ export default {
             $(this).find('.send').bind('click',function() {
               var p=$(this).parent().parent();
               //send message
-              axios.post(self.$apiHostname+'/api/reply-mail', {
+              axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/reply-mail', {
                 user_id: self.auth_user.id,
                 message: $(p).find('#inputpaper').val(),
                 subject: $(p).find('#reply-subject').val(),

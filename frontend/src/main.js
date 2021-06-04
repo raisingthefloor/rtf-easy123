@@ -17,7 +17,7 @@ import store from './store/store'
 
 Vue.config.productionTip = false
 
-Vue.prototype.$apiHostname = (Vue.config.productionTip) ? 'https://liveHostname:port' : 'http://localhost:2000'
+//Vue.prototype.$apiHostname = (Vue.config.productionTip) ? 'https://liveHostname:port' : 'https://localhost:2000'
 
 
 /*global.jQuery = require('jquery')
