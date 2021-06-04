@@ -14,8 +14,8 @@ class GmailController {
     async connect(request, response) {
         let credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS)
         const {client_secret, client_id, redirect_uris} = credentials.web
-        const oAuth2Client = new google.auth.OAuth2(
-            client_id, client_secret, redirect_uris[0])
+        //const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0])
+        const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, process.env.GOOGLE_REDIRECT_URI)
 
         const authUrl = oAuth2Client.generateAuthUrl({
             access_type: 'offline',
@@ -55,6 +55,50 @@ class GmailController {
             return response.redirect(process.env.FRONT_URL + "#/new-user/"+data.id)
             //console.log("user data", data)
         } catch (err) {
+            //console.log("error while inserting ", err)
+            logger.error('Error::' + err)
+        }
+    }
+
+    async apiGoogleCallback(request, response) {
+        //console.log("code", request.body.code)
+        const token = await GoogleManager.getToken(request.body.code)
+
+        const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS)
+        const {client_secret, client_id, redirect_uris} = credentials.web
+        const oAuth2Client = new google.auth.OAuth2(
+            client_id, client_secret, process.env.GOOGLE_REDIRECT_URI)
+        oAuth2Client.setCredentials(token)
+
+        //get user profile
+        const userProfile = await GoogleManager.getUserProfile(oAuth2Client)
+        //console.log("userProfile", userProfile)
+
+        let data
+        try {
+            //check user exists with email
+            const users = await User.find({email: userProfile.emailAddress});
+            if(users.length)
+            {
+                return response.redirect(process.env.FRONT_URL)
+            }
+
+            //store the token in the database
+            data = await User.create({
+                email: userProfile.emailAddress,
+                google_authentication_code: JSON.stringify(token)
+            });
+            response.send({
+                status: true,
+                data: {id: data.id}
+            })
+            //return response.redirect(process.env.FRONT_URL + "#/new-user/"+data.id)
+            //console.log("user data", data)
+        } catch (err) {
+            response.send({
+                status: false,
+                data: {}
+            })
             //console.log("error while inserting ", err)
             logger.error('Error::' + err)
         }

@@ -8,5 +8,6 @@ module.exports = function (router) {
     router.post('/api/get-user', gmailController.getUser.bind(gmailController))
     router.post('/api/save-new-user', gmailController.saveNewUser.bind(gmailController))
     router.post('/api/login', gmailController.login.bind(gmailController))
+    router.post('/api/googlecallback', gmailController.apiGoogleCallback.bind(gmailController))
 
 }

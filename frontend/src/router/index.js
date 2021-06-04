@@ -2,8 +2,9 @@ import Vue from 'vue'
 import Router from 'vue-router'
 //import Hello from '@/components/HelloWorld'
 import Login from '@/components/Login'
+import GoogleCallback from '@/components/GoogleCallback'
 import NewUser from '@/components/NewUser'
-import Foo from "@/components/Foo"
+//import Foo from "@/components/Foo"
 //import Home from "@/components/Home"
 import HomeCustom from "@/components/HomeCustom"
 import HomeWorking from "@/components/HomeWorking"
@@ -13,6 +14,7 @@ import CallComponent from "@/components/CallComponent"
 Vue.use(Router)
 
 export default new Router({
+    mode: 'history',
     routes: [
         {
             path: '/',
@@ -20,20 +22,15 @@ export default new Router({
             component: Login
         },
         {
+            path: '/googlecallback',
+            name: 'GoogleCallback',
+            component: GoogleCallback
+        },
+        {
             path: '/new-user/:id',
             name: 'NewUser',
             component: NewUser
         },
-        {
-            path: '/foo',
-            name: 'Foo',
-            component: Foo
-        },
-        /*{
-            path: '/home',
-            name: 'Home',
-            component: Home
-        },*/
         {
             path: '/home-custom',
             name: 'HomeCustom',

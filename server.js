@@ -32,8 +32,8 @@ app.get('*', function (req, res) {
 
 
 
-//startNonSSLServer()
-startSSLServer()
+startNonSSLServer()
+//startSSLServer()
 function startNonSSLServer() {
     let server = require('http').createServer(app);
     mongoConnection.connect()
