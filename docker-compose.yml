@@ -7,6 +7,8 @@ services:
     ports:
       - "1000:1000"
     container_name: frontend
+    environment:
+        - VUE_APP_API_HOST_NAME=http://localhost:2000
     depends_on:
       - backend
   backend:
@@ -17,6 +19,7 @@ services:
       - "2000:2000"
     container_name: backend
     environment:
+      - FRONT_URL=http://localhost:1000/
       - DOCKER=1
     depends_on:
       - database
@@ -28,4 +31,4 @@ services:
     volumes:
       - mongodb:/data/db
 volumes:
-    mongodb:
+  mongodb:
