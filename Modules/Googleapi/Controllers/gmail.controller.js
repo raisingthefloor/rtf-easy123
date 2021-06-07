@@ -23,6 +23,23 @@ class GmailController {
         })
         return response.redirect(authUrl)
     }
+    async apiConnect(request, response) {
+        let credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS)
+        const {client_secret, client_id, redirect_uris} = credentials.web
+        //const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0])
+        const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, process.env.GOOGLE_REDIRECT_URI)
+
+        const authUrl = oAuth2Client.generateAuthUrl({
+            access_type: 'offline',
+            scope: this.SCOPES,
+        })
+
+        response.send({
+            status: true,
+            data: {url: authUrl}
+        })
+        //return response.redirect(authUrl)
+    }
 
     async googleCallback(request, response) {
         //console.log("code", request.query.code)
@@ -80,7 +97,12 @@ class GmailController {
             const users = await User.find({email: userProfile.emailAddress});
             if(users.length)
             {
-                return response.redirect(process.env.FRONT_URL)
+                response.send({
+                    status: false,
+                    data: {id: process.env.FRONT_URL}
+                })
+                return
+                //return response.redirect(process.env.FRONT_URL)
             }
 
             //store the token in the database
@@ -92,6 +114,7 @@ class GmailController {
                 status: true,
                 data: {id: data.id}
             })
+            return
             //return response.redirect(process.env.FRONT_URL + "#/new-user/"+data.id)
             //console.log("user data", data)
         } catch (err) {
@@ -99,6 +122,7 @@ class GmailController {
                 status: false,
                 data: {}
             })
+            return
             //console.log("error while inserting ", err)
             logger.error('Error::' + err)
         }
