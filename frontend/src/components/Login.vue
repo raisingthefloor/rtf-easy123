@@ -15,7 +15,7 @@
         </div>
 
       </form>
-      <a :href="getNewUserURL">New User</a>
+      <a :href="newUserURL">New User</a>
     </div>
 
   </div>
@@ -28,13 +28,12 @@ export default {
     return {
       password: null,
       email: null,
-      showError: false
+      showError: false,
+      newUserURLLoaded: false,
+      newUserURL: null
     }
   },
   computed: {
-    getNewUserURL() {
-      return process.env.VUE_APP_API_HOST_NAME + "/connect"
-    }
   },
   mounted() {
     //console.log("env file", this.$apiHostname)
@@ -42,9 +41,26 @@ export default {
   },
   methods: {
     checkLogin() {
+      var self = this
       if (localStorage.getItem("user") !== null) {
         this.$router.push({'name': 'HomeWorking'})
       }
+
+      //load registration URL
+      axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/connect/',{
+      })
+      .then((response) => {
+        if(response.data.status)
+        {
+          self.newUserURLLoaded = true
+          self.newUserURL = response.data.data.url
+          console.log("newUserURL", self.newUserURL)
+        }
+        console.log(response.data)
+      }, (error) => {
+        console.log(error);
+      })
+
     },
     submitForm() {
       var self = this
@@ -75,22 +91,6 @@ export default {
         console.log(error);
       })
 
-
-
-      /*if(this.password == "Plenar@Easy123")
-      {
-        this.showError = false
-
-        if (typeof(Storage) !== "undefined") {
-          // Code for localStorage/sessionStorage.
-          console.log("support session storage")
-        } else {
-          console.log("not support session storage")
-          // Display an error message showing that the browser doesn't support web storage
-        }
-
-        //this.$router.push({ name: 'SelectAccount' })
-      }*/
     }
   }
 }
