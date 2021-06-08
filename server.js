@@ -28,8 +28,17 @@ app.get('*', function (req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
 
-//startNonSSLServer()
-startSSLServer()
+if(process.env.NODE_LOCAL_HOST == 'true')
+{
+    console.log("true")
+    startNonSSLServer()
+}
+else
+{
+    console.log("false")
+    startSSLServer()
+}
+
 function startNonSSLServer() {
     logENV()
     let server = require('http').createServer(app);
@@ -84,7 +93,7 @@ function logENV() {
     console.log('======================== PORT FETCHING START ================================')
     console.log(port)
     console.log('======================== PORT FETCHING END ================================== ')
-    console.log('********************************************************************')
+    console.log ('********************************************************************')
     console.log('============================== ENV GLOBAL START ====================')
     console.log(process.env)
     console.log('============================== ENV GLOBAL END ======================')
