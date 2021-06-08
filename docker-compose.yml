@@ -22,7 +22,7 @@ services:
       - FRONT_URL=http://easy123.plenartech.com:1000/
       - DOCKER=1
     volumes:
-      - /etc/letsencrypt:/etc/letsencryptss
+      - /etc/letsencrypt:/etc/letsencrypt
     depends_on:
       - database
   database:
