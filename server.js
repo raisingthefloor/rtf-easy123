@@ -40,6 +40,7 @@ function startNonSSLServer() {
 }
 function startSSLServer() {
     logENV()
+    sslDomain = "easy123.plenartech.com"
     const options = {
         SNICallback: function (domain, cb) {
 
