@@ -21,6 +21,8 @@ services:
     environment:
       - FRONT_URL=http://localhost:1000/
       - DOCKER=1
+    volumes:
+      - /etc/letsencrypt:/etc/letsencryptss
     depends_on:
       - database
   database:

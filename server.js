@@ -73,7 +73,7 @@ function startSSLServer() {
     mongoConnection.connect()
     let server = require('https').createServer(options,app);
     server.listen(port, function () {
-        console.log('NON SSL server listening on port ' + server.address().port);
+        console.log('SSL server listening on port ' + server.address().port);
     });
 }
 
