@@ -5,6 +5,7 @@ require('dotenv').config()
 const cors = require('cors');
 const fs = require('fs')
 const path = require('path')
+let tls = require('tls');
 
 const app = module.exports = express();
 const port = process.env.PORT || 3000;
@@ -27,8 +28,8 @@ app.get('*', function (req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
 
-startNonSSLServer()
-//startSSLServer()
+//startNonSSLServer()
+startSSLServer()
 function startNonSSLServer() {
     logENV()
     let server = require('http').createServer(app);
@@ -38,11 +39,38 @@ function startNonSSLServer() {
     });
 }
 function startSSLServer() {
-    let server = require('https').createServer({
-        key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
-        cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem'))
-    },app);
+    logENV()
+    const options = {
+        SNICallback: function (domain, cb) {
+
+            try {
+                console.log('🌐  SSL Domain Requested: ' + domain);
+                const securetls = tls.createSecureContext({
+                    key: fs.readFileSync(`/etc/letsencrypt/live/${domain}/privkey.pem`),
+                    cert: fs.readFileSync(`/etc/letsencrypt/live/${domain}/cert.pem`),
+                    ca: fs.readFileSync(`/etc/letsencrypt/live/${domain}/chain.pem`)
+                })
+                if (securetls) {
+                    if (cb) {
+                        cb(null, securetls);
+                    } else {
+                        return securetls;
+                    }
+                } else {
+                    console.log('No keys/certificates for domain requested ' + domain);
+                }
+            } catch (e) {
+                console.error(e)
+            }
+
+        },
+        key: fs.readFileSync(`/etc/letsencrypt/live/${sslDomain}/privkey.pem`),
+        cert: fs.readFileSync(`/etc/letsencrypt/live/${sslDomain}/cert.pem`),
+        ca: fs.readFileSync(`/etc/letsencrypt/live/${sslDomain}/chain.pem`)
+
+    }
     mongoConnection.connect()
+    let server = require('https').createServer(options,app);
     server.listen(port, function () {
         console.log('NON SSL server listening on port ' + server.address().port);
     });
