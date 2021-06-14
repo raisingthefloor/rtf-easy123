@@ -3,6 +3,19 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
 import VueMeta from 'vue-meta'
+import * as Sentry from "@sentry/vue"
+import { Integrations } from "@sentry/tracing"
+
+Sentry.init({
+  Vue,
+  dsn: "https://3b3b75713a3a4b5897450eaf04ace755@o464399.ingest.sentry.io/5806034",
+  integrations: [new Integrations.BrowserTracing()],
+
+  // Set tracesSampleRate to 1.0 to capture 100%
+  // of transactions for performance monitoring.
+  // We recommend adjusting this value in production
+  tracesSampleRate: 1.0,
+})
 
 
 Vue.use(Vuex)
