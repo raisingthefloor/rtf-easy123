@@ -509,6 +509,10 @@ function randomXToY(minVal,maxVal,floatVal) {
 
 export default {
   name: 'HomeWorking',
+  metaInfo: {
+    // if no subcomponents specify a metaInfo.title, this title will be used
+    title: 'Home',
+  },
   components: {
     "Polaroid": Polaroid,
     "Polaroid2": Polaroid2
