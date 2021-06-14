@@ -1,5 +1,5 @@
 {
-  "name": "easyvue",
+  "name": "Easy123",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,14 +9,17 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "bootstrap": "^5.0.1",
     "core-js": "^3.6.5",
     "cors": "^2.8.5",
     "jquery": "^3.6.0",
     "mimemessage": "^1.0.5",
     "moment": "^2.29.1",
+    "popper.js": "^1.16.1",
     "socket.io-client": "^4.1.0",
     "stream-to-blob-url": "^3.0.2",
     "vue": "^2.6.11",
+    "vue-meta": "^2.4.0",
     "vue-router": "^3.5.1",
     "vue-web-cam": "^1.9.0",
     "vue-webrtc": "^1.2.2",

@@ -2,10 +2,12 @@ import Vue from 'vue'
 
 import Vuex from 'vuex'
 import VueRouter from 'vue-router'
+import VueMeta from 'vue-meta'
 
 
 Vue.use(Vuex)
 Vue.use(VueRouter)
+Vue.use(VueMeta)
 
 import App from './App.vue'
 

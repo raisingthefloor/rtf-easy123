@@ -9,7 +9,7 @@ const {User} = require('../Models/user.model')
 class GmailController {
 
     TOKEN_PATH = __dirname+'/config/token/new.txt'
-    SCOPES = ['https://www.googleapis.com/auth/gmail.modify','https://www.googleapis.com/auth/gmail.send', 'https://www.googleapis.com/auth/gmail.modify']
+    SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
     async connect(request, response) {
         let credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS)
