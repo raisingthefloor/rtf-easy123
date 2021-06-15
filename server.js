@@ -47,12 +47,12 @@ app.get('*', function (req, res) {
 
 if(process.env.NODE_LOCAL_HOST == 'true')
 {
-    console.log("true")
+    //console.log("true")
     startNonSSLServer()
 }
 else
 {
-    console.log("false")
+    //console.log("false")
     startSSLServer()
 }
 
@@ -106,7 +106,7 @@ function startSSLServer() {
 
 function logENV() {
 
-    console.log()
+    /*console.log()
     console.log('======================== PORT FETCHING START ================================')
     console.log(port)
     console.log('======================== PORT FETCHING END ================================== ')
@@ -114,5 +114,5 @@ function logENV() {
     console.log('============================== ENV GLOBAL START ====================')
     console.log(process.env)
     console.log('============================== ENV GLOBAL END ======================')
-    console.log('********************************************************************')
+    console.log('********************************************************************')*/
 }
