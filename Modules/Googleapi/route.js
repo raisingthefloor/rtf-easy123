@@ -10,5 +10,6 @@ module.exports = function (router) {
     router.post('/api/login', gmailController.login.bind(gmailController))
     router.post('/api/googlecallback', gmailController.apiGoogleCallback.bind(gmailController))
     router.post('/api/connect', gmailController.apiConnect.bind(gmailController))
+    router.get('/api/delete-old-data', gmailController.deleteOldData.bind(gmailController))
 
 }

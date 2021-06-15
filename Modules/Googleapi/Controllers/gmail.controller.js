@@ -489,6 +489,24 @@ class GmailController {
         return encodedMail;
     }
 
+    /**
+     * delete old data of user table
+     */
+    deleteOldData(request, response) {
+        let data = {"status": false}
+        try {
+            User.deleteMany({}, function (err) {
+                if (err) return handleError(err);
+                // deleted at most one tank document
+                data = {"status": true}
+            })
+        } catch (err) {
+            logger.error('Error::' + err)
+        }
+
+        response.send(data)
+    }
+
 
 }
 
