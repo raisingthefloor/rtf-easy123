@@ -1,4 +1,7 @@
 const mutations = {
+    SET_LAYOUT (state, payload) {
+        state.layout = payload
+    },
 
     SET_VIEWPORT_HEIGHT(state, value) {
         state.viewportheight = value

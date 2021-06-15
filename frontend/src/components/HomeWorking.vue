@@ -143,6 +143,9 @@
     <img src="mail/desk.png" class="tray" @mousedown="trayMousedown" width="133" height="133" style="position:absolute; top:100px;"/>
   </div>
 </template>
+
+
+
 <script>
 import Polaroid2 from "./working/Polaroid2";
 export default {

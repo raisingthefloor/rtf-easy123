@@ -12,6 +12,7 @@ const userDefaults = {
 // /////////////////////////////////////////////
 
 const state = {
+    layout : 'simple-layout',
     AppActiveUser           : userDefaults,
     sampleVariable          : "test",
 
