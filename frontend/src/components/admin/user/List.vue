@@ -1,33 +1,94 @@
 <template>
   <div class="container-fluid">
-    <table class="table">
-      <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">First</th>
-        <th scope="col">Last</th>
-        <th scope="col">Handle</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>@mdo</td>
-      </tr>
-      <tr>
-        <th scope="row">2</th>
-        <td>Jacob</td>
-        <td>Thornton</td>
-        <td>@fat</td>
-      </tr>
-      <tr>
-        <th scope="row">3</th>
-        <td colspan="2">Larry the Bird</td>
-        <td>@twitter</td>
-      </tr>
-      </tbody>
-    </table>
+    <div class="table-responsive">
+      <table class="table mt-5">
+        <thead>
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Login Email</th>
+          <th scope="col">Google Account</th>
+          <th scope="col">Role</th>
+          <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="user in users" :key="user.id">
+          <td>{{ user.name }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.google_account_email }}</td>
+          <td style="text-transform: capitalize;">{{ user.role }}</td>
+          <td>
+<!--            <button type="button" class="btn btn-danger btn-sm" @click="deleteUser(user.id)" v-show="user.role != 'admin'">Delete</button>-->
+            <button type="button" class="btn btn-danger btn-sm" @click="deleteUserAlert(user.id)" v-show="user.role != 'admin'">Delete</button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
   </div>
 </template>
+
+<style scoped src="@/assets/bootstrap-5/css/bootstrap.min.css">
+</style>
+
+<script>
+import swal from 'sweetalert';
+const axios = require('axios')
+export default {
+  name: 'NewUser',
+  metaInfo: {
+    // if no subcomponents specify a metaInfo.title, this title will be used
+    title: 'Easy123 Admin - Users List',
+  },
+  data() {
+    return {
+      users: []
+    }
+  },
+  mounted() {
+    this.getUsers()
+  },
+  methods: {
+    getUsers() {
+      var self = this
+
+      axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/admin/get-users/',{})
+      .then((response) => {
+        self.users = response.data.data
+        console.log(self.users)
+      }, (error) => {
+        console.log(error)
+      })
+    },
+    async deleteUserAlert(id) {
+      console.log(id)
+      let willDelete = await swal({
+        title: "Are you sure, you want to delete?",
+        text: "Once deleted, you will not be able to recover!",
+        icon: "warning",
+        buttons: ["Cancel", "Delete"],
+        dangerMode: true,
+      })
+
+      if (willDelete) {
+        this.users = this.users.filter(user => user.id != id)
+        this.deleteUser(id)
+      } else {
+        //pressed cancel button
+      }
+    },
+    deleteUser(id) {
+
+      axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/admin/delete-user/',{
+        id: id
+      })
+      .then(() => {
+        //self.users = response.data.data
+      }, (error) => {
+        console.log(error)
+      })
+    }
+  }
+}
+</script>

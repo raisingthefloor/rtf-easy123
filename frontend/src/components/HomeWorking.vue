@@ -144,7 +144,16 @@
   </div>
 </template>
 
-
+<style scoped src="../assets/css/newcss.css">
+</style>
+<style scoped src="../assets/css/demo14-styles.css">
+</style>
+<style scoped src="../assets/css/contacts.css">
+</style>
+<style scoped src="../assets/css/style.css">
+</style>
+<style scoped src="../assets/css/contact_buttons.css">
+</style>
 
 <script>
 import Polaroid2 from "./working/Polaroid2";

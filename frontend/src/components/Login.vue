@@ -83,8 +83,7 @@
   }
 }
 </style>
-<style scoped src="../assets/bootstrap.min.css">
-
+<style scoped src="@/assets/bootstrap-5/css/bootstrap.css">
 </style>
 <script>
 const axios = require('axios')
