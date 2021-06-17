@@ -11,6 +11,9 @@ import HomeWorking from "@/components/HomeWorking"
 import HomeWorking2 from "@/components/HomeWorking2"
 import CallComponent from "@/components/CallComponent"
 
+//admin components
+import AdminUser from "@/components/admin/user/List"
+
 Vue.use(Router)
 
 export default new Router({
@@ -50,6 +53,13 @@ export default new Router({
             path: '/webrtc',
             name: 'CallComponent',
             component: CallComponent
+        },
+
+        //Admin Routes
+        {
+            path: '/admin',
+            name: 'Admin',
+            component: AdminUser
         }
     ]
 })

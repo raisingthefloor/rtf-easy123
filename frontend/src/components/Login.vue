@@ -83,8 +83,7 @@
   }
 }
 </style>
-<style scoped src="../assets/bootstrap.min.css">
-
+<style scoped src="@/assets/bootstrap-5/css/bootstrap.css">
 </style>
 <script>
 const axios = require('axios')
@@ -118,8 +117,21 @@ export default {
   methods: {
     checkLogin() {
       var self = this
-      if (localStorage.getItem("user") !== null) {
-        this.$router.push({'name': 'HomeWorking'})
+      let user = localStorage.getItem("user")
+      if (user !== null)
+      {
+        user = JSON.parse(user)
+        if(user.role == "admin")
+        {
+          self.$router.push({ 'name': 'Admin' })
+          self.$store.commit('SET_LAYOUT', 'admin-layout')
+        }
+        else
+        {
+          self.$router.push({ 'name': 'HomeWorking' })
+        }
+
+        //this.$router.push({'name': 'HomeWorking'})
       }
 
       //load registration URL
@@ -159,7 +171,16 @@ export default {
           self.showError = false
           let user = users[0]
           localStorage.setItem("user", JSON.stringify(user))
-          self.$router.push({ 'name': 'HomeWorking' })
+          if(user.role == "admin")
+          {
+            self.$router.push({ 'name': 'Admin' })
+            self.$store.commit('SET_LAYOUT', 'admin-layout')
+          }
+          else
+          {
+            self.$router.push({ 'name': 'HomeWorking' })
+          }
+
         }
         console.log(response.data)
       }, (error) => {

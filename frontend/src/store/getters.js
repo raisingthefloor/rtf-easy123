@@ -3,6 +3,10 @@ import state from "./state";
 
 const getters = {
 
+    layout: state => {
+        return state.layout
+    },
+
     getUserData: state => {
         return state.AppActiveUser
     },

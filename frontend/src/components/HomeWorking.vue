@@ -143,6 +143,18 @@
     <img src="mail/desk.png" class="tray" @mousedown="trayMousedown" width="133" height="133" style="position:absolute; top:100px;"/>
   </div>
 </template>
+
+<style scoped src="../assets/css/newcss.css">
+</style>
+<style scoped src="../assets/css/demo14-styles.css">
+</style>
+<style scoped src="../assets/css/contacts.css">
+</style>
+<style scoped src="../assets/css/style.css">
+</style>
+<style scoped src="../assets/css/contact_buttons.css">
+</style>
+
 <script>
 import Polaroid2 from "./working/Polaroid2";
 export default {
