@@ -18,27 +18,11 @@
 
         <button class="w-100 btn btn-lg btn-primary" type="submit">Submit</button>
 
-        <p class="mt-4">Not a user? <a :href="newUserURL">Register</a></p>
+        <p class="mt-4">Not a user? <router-link to="/register">Register</router-link> </p>
 
       </form>
     </main>
-<!--    <div style="text-align: center">
-      <h3 style="text-align: center;">Login</h3>
-      <form @submit.prevent="submitForm">
-        <p style="color: red" v-show="showError">Please enter correct username or password</p>
-        <div>
-          <input type="email" v-model="email" placeholder="Email">
-        </div>
-        <div>
-          <input type="password" v-model="password" placeholder="Password">
-        </div>
-        <div>
-          <input type="submit">
-        </div>
 
-      </form>
-      <a :href="newUserURL">New User</a>
-    </div>-->
 
   </div>
 </template>
@@ -87,8 +71,6 @@
 </style>
 <script>
 const axios = require('axios')
-//import 'bootstrap/dist/css/bootstrap.min.css'
-//import 'bootstrap/dist/js/bootstrap.min.js'
 
 export default {
   name: 'Login',
@@ -97,8 +79,6 @@ export default {
       password: null,
       email: null,
       showError: false,
-      newUserURLLoaded: false,
-      newUserURL: null
     }
   },
   computed: {
@@ -113,14 +93,22 @@ export default {
     document.querySelector('body').style.paddingTop = '40px'
     document.querySelector('body').style.paddingBottom = '40px'
     document.querySelector('body').style.backgroundColor = '#f5f5f5'
+    document.querySelector('body').style.overflowY = 'initial'
+  },
+  beforeDestroy() {
+    document.querySelector('body').style.height = '100%'
+    document.querySelector('body').style.alignItems = 'initial'
+    document.querySelector('body').style.paddingTop = '0px'
+    document.querySelector('body').style.paddingBottom = '0px'
+    document.querySelector('body').style.backgroundColor = '#fff'
+    document.querySelector('body').style.overflowY = 'hidden'
   },
   methods: {
     checkLogin() {
       var self = this
-      let user = localStorage.getItem("user")
-      if (user !== null)
+      let user = this.$store.state.AppActiveUser
+      if (user.token)
       {
-        user = JSON.parse(user)
         if(user.role == "admin")
         {
           self.$router.push({ 'name': 'Admin' })
@@ -129,24 +117,9 @@ export default {
         else
         {
           self.$router.push({ 'name': 'HomeWorking' })
+          self.$store.commit('SET_LAYOUT', 'simple-layout')
         }
-
-        //this.$router.push({'name': 'HomeWorking'})
       }
-
-      //load registration URL
-      axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/connect/',{
-      })
-      .then((response) => {
-        if(response.data.status)
-        {
-          self.newUserURLLoaded = true
-          self.newUserURL = response.data.data.url
-        }
-        //console.log(response.data)
-      }, (error) => {
-        console.log(error);
-      })
 
     },
     submitForm() {
@@ -162,8 +135,29 @@ export default {
         password: self.password
       })
       .then((response) => {
-        let users = response.data
-        if(!users.length )
+        if(response.data.status)
+        {
+          self.$store.commit('UPDATE_USER', response.data.data)
+
+          if(response.data.data.role == "admin")
+          {
+            self.$store.commit('SET_LAYOUT', 'admin-layout')
+            self.$router.push({ 'name': 'Admin' })
+          }
+          else {
+            self.$store.commit('SET_LAYOUT', 'simple-layout')
+            self.$router.push({ 'name': 'HomeWorking' })
+          }
+
+        }
+        else {
+          console.log("do nothing")
+        }
+
+
+        //let users = response.data
+
+        /*if(!users.length )
         {
           self.showError = true
         }
@@ -181,7 +175,7 @@ export default {
             self.$router.push({ 'name': 'HomeWorking' })
           }
 
-        }
+        }*/
         console.log(response.data)
       }, (error) => {
         console.log(error);

@@ -136,7 +136,8 @@ exports.getUnreadMessages = async function (auth) {
 
         gmail.users.messages.list({
             userId: 'me',
-            labelIds: ['UNREAD','INBOX']
+            labelIds: ['UNREAD','INBOX'],
+            maxResults: 20
         }, (err, res) => {
             if (err) return console.log('The API returned an error: ' + err)
 
