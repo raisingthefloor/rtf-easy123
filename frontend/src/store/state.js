@@ -1,10 +1,9 @@
 const userDefaults = {
-    uid         : 0,          // From Auth
-    displayName : "", // From Auth
-    //about       : "Dessert chocolate cake lemon drops jujubes. Biscuit cupcake ice cream bear claw brownie brownie marshmallow.",
-    //status      : "online",
-    userRole    : "",
-    token       : null
+    name : "",
+    email: "",
+    role: "",
+    googleEmail: "",
+    token: null
 }
 
 // /////////////////////////////////////////////
@@ -14,6 +13,11 @@ const userDefaults = {
 const state = {
     layout : 'simple-layout',
     AppActiveUser           : userDefaults,
+    setInitialDone: false,
+
+
+
+
     sampleVariable          : "test",
 
     dragging: 0,

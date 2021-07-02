@@ -106,7 +106,6 @@
 }
 </style>
 <style scoped src="../assets/bootstrap.min.css">
-
 </style>
 <script>
 const axios = require('axios')

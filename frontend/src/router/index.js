@@ -2,8 +2,10 @@ import Vue from 'vue'
 import Router from 'vue-router'
 //import Hello from '@/components/HelloWorld'
 import Login from '@/components/Login'
+import Register from '@/components/Register'
 import GoogleCallback from '@/components/GoogleCallback'
 import NewUser from '@/components/NewUser'
+import VerifyEmail from '@/components/VerifyEmail'
 //import Foo from "@/components/Foo"
 //import Home from "@/components/Home"
 import HomeCustom from "@/components/HomeCustom"
@@ -14,9 +16,12 @@ import CallComponent from "@/components/CallComponent"
 //admin components
 import AdminUser from "@/components/admin/user/List"
 
+import admin from "../middleware/admin"
+import subscribed from "../middleware/subscribed"
+
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
     mode: 'history',
     routes: [
         {
@@ -24,6 +29,17 @@ export default new Router({
             name: 'Login',
             component: Login
         },
+        {
+            path: '/register',
+            name: 'Register',
+            component: Register
+        },
+        {
+            path: '/confirmation/:email/:token',
+            name: 'VerifyEmail',
+            component: VerifyEmail
+        },
+
         {
             path: '/googlecallback',
             name: 'GoogleCallback',
@@ -42,7 +58,10 @@ export default new Router({
         {
             path: '/home-working',
             name: 'HomeWorking',
-            component: HomeWorking
+            component: HomeWorking,
+            meta: {
+                middleware: subscribed
+            }
         },
         {
             path: '/home-working-2',
@@ -59,7 +78,46 @@ export default new Router({
         {
             path: '/admin',
             name: 'Admin',
-            component: AdminUser
+            component: AdminUser,
+            meta: {
+                middleware: admin
+            }
         }
     ]
 })
+
+function nextFactory(context, middleware, index) {
+    const subsequentMiddleware = middleware[index];
+    // If no subsequent Middleware exists,
+    // the default `next()` callback is returned.
+    if (!subsequentMiddleware) return context.next;
+
+    return (...parameters) => {
+        // Run the default Vue Router `next()` callback first.
+        context.next(...parameters);
+        // Then run the subsequent Middleware with a new
+        // `nextMiddleware()` callback.
+        const nextMiddleware = nextFactory(context, middleware, index + 1);
+        subsequentMiddleware({ ...context, next: nextMiddleware });
+    }
+}
+
+router.beforeEach((to, from, next) => {
+    if (to.meta.middleware) {
+        const middleware = Array.isArray(to.meta.middleware) ? to.meta.middleware : [to.meta.middleware]
+
+        const context = {
+            from,
+            next,
+            router,
+            to,
+        }
+
+        const nextMiddleware = nextFactory(context, middleware, 1)
+        return middleware[0]({ ...context, next: nextMiddleware })
+    }
+
+    return next()
+})
+
+export default router;

@@ -10,7 +10,6 @@ export default {
   name: 'GoogleCallback',
   mounted() {
     this.checkRequestIsCorrect()
-    console.log(this.$route)
   },
   methods: {
     checkRequestIsCorrect() {
@@ -24,14 +23,14 @@ export default {
         code: self.$route.query.code
       })
       .then((response) => {
-        console.log(response)
         if(response.data.status)
         {
-          this.$router.push('/new-user/'+response.data.data.id)
+          self.$store.commit('SET_GOOGLE_EMAIL', response.data.data.email)
+          self.$router.push({ 'name': 'Login' })
         }
         else
         {
-          this.$router.push({ 'name': 'Login' })
+          self.$router.push({ 'name': 'Login' })
         }
 
       }, (error) => {

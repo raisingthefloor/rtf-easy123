@@ -18,6 +18,7 @@ class UserController {
             data: [],
             message: ''
         }
+        //console.log("data", request.decoded)
         try {
             data.status = true
             data.data = await User.find({deleted: false})

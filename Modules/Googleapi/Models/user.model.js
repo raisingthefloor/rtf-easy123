@@ -1,13 +1,22 @@
-//import softDelete from 'mongoose-softdelete'
 const mongoose = require('mongoose');
-//const softDelete = require('mongoose-softdelete');
+
 const modelName = "user"
 const schema = new mongoose.Schema({
-    name: {type: String},
+    name: {type: String, trim: true},
     role: {type: String, default: "subscribed"},
-    email: {type: String},
-    password: {type: String},
+    email: {
+        type: String,
+        trim: true,
+        unique: true
+    },
+    password: {type: String, trim: true},
+    googleEmail: {
+        type: String,
+        trim: true,
+        default: ''
+    },
     google_authentication_code: {type: String},
+    emailVerified: {type: Boolean, default: false},
     deleted: {type: Boolean},
     deletedAt: {type: Date}
 }, {

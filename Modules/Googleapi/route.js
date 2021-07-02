@@ -1,15 +1,30 @@
 const gmailController = require('./Controllers/gmail.controller')
+const authController = require('./Controllers/auth.controller')
+const middelware = require('./Middleware/createUser')
+
+const validateToken = require('./utils').validateToken
 
 module.exports = function (router) {
-    router.get('/connect', gmailController.connect.bind(gmailController))
-    router.get('/googlecallback', gmailController.googleCallback.bind(gmailController))
-    router.post('/api/get-unread-mails', gmailController.getAllMails.bind(gmailController))
+    //protected routes
+    router.post('/api/connect', validateToken, gmailController.apiConnect.bind(gmailController))
+    router.post('/api/googlecallback', validateToken, gmailController.apiGoogleCallback.bind(gmailController))
+    router.post('/api/get-unread-mails', validateToken, gmailController.getAllMails.bind(gmailController))
     router.post('/api/reply-mail', gmailController.replyMail.bind(gmailController))
     router.post('/api/get-user', gmailController.getUser.bind(gmailController))
     router.post('/api/save-new-user', gmailController.saveNewUser.bind(gmailController))
-    router.post('/api/login', gmailController.login.bind(gmailController))
-    router.post('/api/googlecallback', gmailController.apiGoogleCallback.bind(gmailController))
-    router.post('/api/connect', gmailController.apiConnect.bind(gmailController))
+
+
+
+
+    //unprotected routes
+    router.post('/api/login', authController.login.bind(authController))
+    router.post('/api/register', middelware.createUser, authController.register.bind(authController))
+    router.post('/api/confirmation', authController.confirmation.bind(authController))
+
+
+    router.get('/connect', gmailController.connect.bind(gmailController))
+    router.get('/googlecallback', gmailController.googleCallback.bind(gmailController))
+
     router.get('/api/delete-old-data', gmailController.deleteOldData.bind(gmailController))
 
 }

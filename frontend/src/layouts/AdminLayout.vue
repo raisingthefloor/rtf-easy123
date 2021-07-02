@@ -15,7 +15,7 @@
               <a class="nav-link" href="#">Config</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Logout</a>
+              <a class="nav-link" href="javascript:void(0)" @click="logoutUser">Logout</a>
             </li>
           </ul>
         </div>
@@ -32,5 +32,10 @@
 <script>
 import 'bootstrap/dist/js/bootstrap.bundle'
 export default {
+  methods: {
+    logoutUser() {
+      this.$store.commit('LOGOUT_USER', this.$router)
+    }
+  }
 }
 </script>

@@ -1,14 +1,15 @@
-const logger = require('../../../logger/api.logger');
-const fs = require('fs');
-const readline = require('readline');
-const {google} = require('googleapis');
+const logger = require('../../../logger/api.logger')
+const {google} = require('googleapis')
 const GoogleManager =  require("../../../Managers/GoogleManager");
+const UserManager =  require("../../../Managers/UserManager");
 const {User} = require('../Models/user.model')
-//const toBlobURL = require('stream-to-blob-url')
+const {Token} = require('../Models/token.model')
+const bcrypt = require('bcrypt')
+const crypto = require('crypto')
+const jwt = require('jsonwebtoken')
 
 class GmailController {
 
-    TOKEN_PATH = __dirname+'/config/token/new.txt'
     SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
 
     async connect(request, response) {
@@ -93,38 +94,44 @@ class GmailController {
 
         let data
         try {
-            //check user exists with email
-            const users = await User.find({email: userProfile.emailAddress});
-            if(users.length)
+            //get current user data
+            let current_user = await User.findOne({_id: request.decoded.id})
+            if(!current_user)
             {
                 response.send({
                     status: false,
                     data: {id: process.env.FRONT_URL}
                 })
                 return
-                //return response.redirect(process.env.FRONT_URL)
             }
+            //console.log("current_user", request.decoded, current_user)
 
             //store the token in the database
-            data = await User.create({
+            current_user.google_authentication_code = JSON.stringify(token)
+            current_user.googleEmail = userProfile.emailAddress
+            current_user.save()
+            /*data = await User.create({
                 email: userProfile.emailAddress,
                 google_authentication_code: JSON.stringify(token)
-            });
+            });*/
+
             response.send({
                 status: true,
-                data: {id: data.id}
+                data: { email: current_user.googleEmail },
+                message: 'success'
             })
             return
             //return response.redirect(process.env.FRONT_URL + "#/new-user/"+data.id)
             //console.log("user data", data)
         } catch (err) {
+            console.log(err)
             response.send({
                 status: false,
                 data: {}
             })
             return
             //console.log("error while inserting ", err)
-            logger.error('Error::' + err)
+            //logger.error('Error::' + err)
         }
     }
 
@@ -153,18 +160,11 @@ class GmailController {
         response.send(data)
     }
 
-    async login( request, response) {
-        try {
-            const users = await User.find({
-                email: request.body.email,
-                password: request.body.password
-            });
-            //console.log('users:::', users);
-            response.send(users);
-        } catch (err) {
-            logger.error('Error::' + err);
-        }
-    }
+
+
+
+
+
 
     async getAllMails(request, response) {
         let credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS)
@@ -172,16 +172,11 @@ class GmailController {
         const oAuth2Client = new google.auth.OAuth2(
             client_id, client_secret, redirect_uris[0]);
 
-        if(!request.body.user_id)
-        {
-            response.send({"error": true, "data":[], "message": "User is not logged in"})
-            return
-        }
 
         //get user from db
         try {
             let user = await User.find({
-                _id: request.body.user_id
+                _id: request.decoded.id
             })
 
             //console.log('users:::', users);
@@ -268,19 +263,6 @@ class GmailController {
             logger.error('Error::' + err);
         }
 
-
-
-
-
-
-        /*//response.send([request.body])
-        // Load client secrets from a local file.
-        fs.readFile(`${__dirname}/credentials.json`, (err, content) => {
-            if (err) return console.log('Error loading client secret file:', err);
-            // Authorize a client with credentials, then call the Gmail API.
-            //this.authorize(JSON.parse(content), this.listLabels);
-            this.authorize(JSON.parse(content), request, response, this.sendMessage);
-        });*/
     }
 
 
@@ -299,132 +281,8 @@ class GmailController {
         {
             expressResponse.send({"error": true, "data":[], "message": "User is not logged in"})
         }
-
-        /*//get user from db
-        try {
-            let user = await User.find({
-                id: request.body.id
-            });
-            //console.log('users:::', users);
-            if(!user.length)
-            {
-                expressResponse.send({"error": true, "data":[], "message": "User is not logged in"})
-            }
-            user = user[0]
-
-            oAuth2Client.setCredentials(JSON.parse(user.google_authentication_code))
-            oAuth2Client.expressResponse = expressResponse
-            oAuth2Client.expressRequest = expressRequest
-            oAuth2Client.currentClassPointer = this
-            return callback(oAuth2Client)
-        } catch (err) {
-            logger.error('Error::' + err);
-        }*/
-
-        /*// Check if we have previously stored a token.
-        fs.readFile(this.TOKEN_PATH, (err, token) => {
-            if (err) return this.getNewToken(oAuth2Client, expressRequest, expressResponse, callback);
-
-
-
-
-            oAuth2Client.setCredentials(JSON.parse(token));
-            oAuth2Client.expressResponse = expressResponse;
-            oAuth2Client.expressRequest = expressRequest;
-            oAuth2Client.currentClassPointer = this;
-
-            return callback(oAuth2Client)
-        });*/
     }
 
-    /**
-     * Get and store new token after prompting for user authorization, and then
-     * execute the given callback with the authorized OAuth2 client.
-     * @param {google.auth.OAuth2} oAuth2Client The OAuth2 client to get token for.
-     * @param {getEventsCallback} callback The callback for the authorized client.
-     */
-    async getNewToken(oAuth2Client, expressRequest, expressResponse, callback) {
-        //console.log("getNewToken Running ...")
-        var self = this
-        const authUrl = oAuth2Client.generateAuthUrl({
-            access_type: 'offline',
-            scope: this.SCOPES,
-        });
-        return expressResponse.redirect(authUrl);
-
-
-        console.log('Authorize this app by visiting this url:', authUrl);
-        const rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout,
-        });
-        rl.question('Enter the code from that page here: ', (code) => {
-            rl.close();
-            oAuth2Client.getToken(code, (err, token) => {
-                if (err) return console.error('Error retrieving access token', err);
-                oAuth2Client.setCredentials(token);
-                // Store the token to disk for later program executions
-                fs.writeFile(self.TOKEN_PATH, JSON.stringify(token), (err) => {
-                    if (err) return console.error(err);
-                    console.log('Token stored to', self.TOKEN_PATH);
-                });
-                callback(oAuth2Client);
-            });
-        });
-    }
-
-    /**
-     * Lists the labels in the user's account.
-     *
-     * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
-     */
-    async listLabels(auth) {
-        const gmail = google.gmail({version: 'v1', auth});
-        gmail.users.labels.list({
-            userId: 'me',
-        }, (err, res) => {
-            if (err) return console.log('The API returned an error: ' + err);
-            const labels = res.data.labels;
-            if (labels.length) {
-                console.log('Labels:');
-                labels.forEach((label) => {
-                    console.log(`- ${label.name}`);
-                });
-            } else {
-                console.log('No labels found.');
-            }
-        });
-    }
-
-    /**
-     * Lists the unread messages in the user's account.
-     *
-     * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
-     */
-    async listUnreadMessages(auth) {
-        console.log("listUnreadMessages")
-        const gmail = google.gmail({version: 'v1', auth})
-        let allUnreadMails = await GoogleManager.getUnreadMessages(auth)
-        let allUnreadMailDetails = []
-        for (let mail of allUnreadMails)
-        {
-            let mail_detail = await GoogleManager.getSingleProcessedMessageDetails(auth, mail)
-
-            let messageId = mail_detail.payload.headers.find(obj => obj.name == "Message-ID")
-            if(mail_detail.decoded_attachments && mail_detail.decoded_attachments.length)
-            {
-                let i = 0
-                for (let attachment of mail_detail.decoded_attachments)
-                {
-                    let attachment_data = await GoogleManager.attachmentData(auth, messageId, attachment)
-                    mail_detail.decoded_attachments[i].attachment_data = attachment_data
-                    i++
-                }
-            }
-            allUnreadMailDetails.push(mail_detail)
-        }
-        auth.expressResponse.send(allUnreadMailDetails)
-    }
 
     /**
      * Send a reply to message

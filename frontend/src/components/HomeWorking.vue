@@ -143,7 +143,27 @@
     <img src="mail/desk.png" class="tray" @mousedown="trayMousedown" width="133" height="133" style="position:absolute; top:100px;"/>
   </div>
 </template>
-
+<style>
+.swal-button--connect {
+  padding: 7px 19px;
+  border-radius: 2px;
+  background-color: #1B5F85;
+  font-size: 12px;
+  border: 1px solid #1B5F85;
+  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3);
+}
+.swal-button {
+  padding: 7px 19px;
+  border-radius: 2px;
+  background-color: #1B5F85;
+  font-size: 12px;
+  border: 1px solid #1B5F85;
+  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3);
+}
+.swal-button--connect:active {
+  background-color: #13425d !important;
+}
+</style>
 <style scoped src="../assets/css/newcss.css">
 </style>
 <style scoped src="../assets/css/demo14-styles.css">
@@ -153,6 +173,65 @@
 <style scoped src="../assets/css/style.css">
 </style>
 <style scoped src="../assets/css/contact_buttons.css">
+</style>
+
+<style scoped>
+
+/*.swal-text {
+  background-color: #FEFAE3;
+  padding: 17px;
+  border: 1px solid #F0E1A1;
+  display: block;
+  margin: 22px;
+  text-align: center;
+  color: #61534e;
+}
+.swal-button {
+  padding: 7px 19px;
+  border-radius: 2px;
+  background-color: #4962B3;
+  font-size: 12px;
+  border: 1px solid #3e549a;
+  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3);
+}*/
+
+.swal-content > div > .btn {
+  display: inline-block;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  text-align: center;
+  text-decoration: none;
+  vertical-align: middle;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  background-color: transparent;
+  border: 1px solid transparent;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  border-radius: 0.25rem;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+}
+.swal-content > div > .btn:hover {
+  color: #212529;
+}
+.swal-content > div > .btn-primary {
+  color: #fff;
+  background-color: #1B5F85;
+  border-color: #1B5F85;
+}
+.swal-content > div > .btn-primary:hover {
+  color: #fff;
+  background-color: #13425d;
+  border-color: #0a58ca;
+}
 </style>
 
 <script>
@@ -583,8 +662,6 @@ export default {
   },
   watch: {
     mails: function(newVal, oldVal) {
-      console.log("newVal", newVal)
-      console.log("oldVal", oldVal)
       let z = 1
       $('.polaroid').each(function() { //set the initial z-index's
         z++; //at the end we have the highest z-index value stored in the z variable
@@ -597,15 +674,71 @@ export default {
   },
   mounted() {
     this.initMount()
-    console.log("API_URL", process.env)
     //console.log("date", moment())
   },
   methods: {
     initMount() {
       var self = this
 
+      if(this.$store.state.AppActiveUser.googleEmail == null || this.$store.state.AppActiveUser.googleEmail == "")
+      {
+        /*let wrapper = document.createElement('div');
+        wrapper.innerHTML = `Connect to your Google account to enable Email access and management <br><br> <a href="#" class="btn btn-primary" style="display: inline-block; font-weight: 400; line-height: 1.5; color: #212529; text-align: center; text-decoration: none; vertical-align: middle; cursor: pointer; -webkit-user-select: none; -moz-user-select: none; user-select: none; background-color: transparent; border: 1px solid transparent; padding: 0.375rem 0.75rem; font-size: 1rem; border-radius: 0.25rem; transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;color: #fff; background-color: #1B5F85; border-color: #1B5F85;">Connect</a>`;
+
+        swal({
+          content: wrapper,
+          buttons: false,
+          closeOnClickOutside: false,
+          closeOnEsc: false
+        })*/
+
+        swal({
+          text: "Connect to your Google account to enable Email access and management",
+          buttons: {
+            connect: {
+              text: "Connect",
+              value: "connect",
+              closeModal: false,
+            }
+          },
+          closeOnClickOutside: false,
+          closeOnEsc: false
+        })
+        .then((value) => {
+          if(value == "connect")
+          {
+            //get connect URL and connect with Google Calendar
+            axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/connect/', {})
+                .then(function (response) {
+                  if (response.data.status)
+                  {
+                    //console.log(response.data)
+                    window.location.href = response.data.data.url
+                    // self.$router.push(response.data.data.url)
+                    swal.close()
+                  }
+                })
+                .catch(function (error) {
+                  if(error.response.status == 401)
+                  {
+                    swal.close()
+                  }
+                  console.log(error)
+                })
+          }
+        })
+
+      }
+
       if (localStorage.getItem("user") === null) {
-        this.$router.push({'name': 'Login'})
+        //this.$router.push({'name': 'Login'})
+        let auth_user = {
+          id: 5,
+          name: "Jatin",
+          email: "jatin@gmail.com",
+          role: "subscribed"
+        }
+        self.auth_user = auth_user
       }
       else
       {
@@ -622,73 +755,77 @@ export default {
       }
 
       //get unread mails
-      axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/get-unread-mails/', {
-        user_id: self.auth_user.id
-      })
-      .then(function (response) {
-        if(response.data.error)
-        {
-          console.log("Mails did not came")
-          return
-        }
-        self.mails = response.data
-        self.mails.forEach(function(mail, index) {
-          if (!mail.r) {
-            mail.r = "unread"
-          }
-          if (!mail.t) {
-            mail.t = "none"
-          }
-          if (!mail.in) {
-            mail.in = "c"
-          }
-
-          //add attachment HTML in mail
-          let attachmentHTML = ""
-          if(mail.decoded_attachments && mail.decoded_attachments.length)
-          {
-            let i = 0
-            for (let decodedAttachment of mail.decoded_attachments)
-            {
-              if (decodedAttachment.attachment_data.data.length > 0)
+      if(this.$store.state.AppActiveUser.googleEmail != "")
+      {
+        axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/get-unread-mails/', {
+          user_id: self.auth_user.id
+        })
+            .then(function (response) {
+              if(response.data.error)
               {
-                let dataBase64Rep = decodedAttachment.attachment_data.data.replace(/-/g, '+').replace(/_/g, '/')
-                let urlBlob = self.b64toBlob(dataBase64Rep, decodedAttachment.mimeType, decodedAttachment.attachment_data.size)
+                //console.log("Mails did not came")
+                return
+              }
+              self.mails = response.data
+              self.mails.forEach(function(mail, index) {
+                if (!mail.r) {
+                  mail.r = "unread"
+                }
+                if (!mail.t) {
+                  mail.t = "none"
+                }
+                if (!mail.in) {
+                  mail.in = "c"
+                }
 
-                attachmentHTML += `<a href="`+urlBlob+`" download="`+decodedAttachment.filename+`"> <div style="margin-top: 0.5rem; padding: 0.3rem; border: 1px solid #ccc; cursor: pointer;">
+                //add attachment HTML in mail
+                let attachmentHTML = ""
+                if(mail.decoded_attachments && mail.decoded_attachments.length)
+                {
+                  let i = 0
+                  for (let decodedAttachment of mail.decoded_attachments)
+                  {
+                    if (decodedAttachment.attachment_data.data.length > 0)
+                    {
+                      let dataBase64Rep = decodedAttachment.attachment_data.data.replace(/-/g, '+').replace(/_/g, '/')
+                      let urlBlob = self.b64toBlob(dataBase64Rep, decodedAttachment.mimeType, decodedAttachment.attachment_data.size)
+
+                      attachmentHTML += `<a href="`+urlBlob+`" download="`+decodedAttachment.filename+`"> <div style="margin-top: 0.5rem; padding: 0.3rem; border: 1px solid #ccc; cursor: pointer;">
                 `+decodedAttachment.filename+`
             </div></a>`
-                URL.revokeObjectURL(urlBlob)
-              }
+                      URL.revokeObjectURL(urlBlob)
+                    }
 
 
-              i++
-            }
+                    i++
+                  }
 
-            if(mail.payload.mimeType == "multipart/mixed")
-            {
-              //check if </body> exist
-              if(mail.decoded_body[0].includes("</body>"))
-              {
-                //<body> exists
-                attachmentHTML += "</body>"
-                mail.decoded_body[0].replace("</body>", attachmentHTML)
-              }
-              else
-              {
-                //<body> does not exists
-                mail.decoded_body[0] += attachmentHTML
-              }
-            }
+                  if(mail.payload.mimeType == "multipart/mixed")
+                  {
+                    //check if </body> exist
+                    if(mail.decoded_body[0].includes("</body>"))
+                    {
+                      //<body> exists
+                      attachmentHTML += "</body>"
+                      mail.decoded_body[0].replace("</body>", attachmentHTML)
+                    }
+                    else
+                    {
+                      //<body> does not exists
+                      mail.decoded_body[0] += attachmentHTML
+                    }
+                  }
 
-          }
-        })
-        console.log(self.mails)
-        //self.generateMailsHTML()
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+                }
+              })
+              //console.log(self.mails)
+              //self.generateMailsHTML()
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+      }
+
 
       this.people[0]=new Array("Adam Smith","Anna Johnson","Becky Jones");  //AB
       this.people[1]=new Array("Cathy Richards"); //CD

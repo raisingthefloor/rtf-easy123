@@ -15,7 +15,7 @@
         <tr v-for="user in users" :key="user.id">
           <td>{{ user.name }}</td>
           <td>{{ user.email }}</td>
-          <td>{{ user.google_account_email }}</td>
+          <td>{{ user.googleEmail }}</td>
           <td style="text-transform: capitalize;">{{ user.role }}</td>
           <td>
 <!--            <button type="button" class="btn btn-danger btn-sm" @click="deleteUser(user.id)" v-show="user.role != 'admin'">Delete</button>-->
@@ -53,16 +53,19 @@ export default {
     getUsers() {
       var self = this
 
+      //let appActiveUser = this.$store.state.AppActiveUser
+      //console.log('AppActiveUser', appActiveUser)
+
       axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/admin/get-users/',{})
       .then((response) => {
         self.users = response.data.data
-        console.log(self.users)
+        //console.log(self.users)
       }, (error) => {
         console.log(error)
       })
     },
     async deleteUserAlert(id) {
-      console.log(id)
+      //console.log(id)
       let willDelete = await swal({
         title: "Are you sure, you want to delete?",
         text: "Once deleted, you will not be able to recover!",
@@ -79,7 +82,6 @@ export default {
       }
     },
     deleteUser(id) {
-
       axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/admin/delete-user/',{
         id: id
       })
