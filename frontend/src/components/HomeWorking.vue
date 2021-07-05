@@ -177,24 +177,6 @@
 
 <style scoped>
 
-/*.swal-text {
-  background-color: #FEFAE3;
-  padding: 17px;
-  border: 1px solid #F0E1A1;
-  display: block;
-  margin: 22px;
-  text-align: center;
-  color: #61534e;
-}
-.swal-button {
-  padding: 7px 19px;
-  border-radius: 2px;
-  background-color: #4962B3;
-  font-size: 12px;
-  border: 1px solid #3e549a;
-  text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3);
-}*/
-
 .swal-content > div > .btn {
   display: inline-block;
   font-weight: 400;
@@ -644,8 +626,7 @@ export default {
       moimg: null,
       mcimg: null,
 
-      mails: [],
-      auth_user: null
+      mails: []
     }
   },
   computed: {
@@ -730,35 +711,10 @@ export default {
 
       }
 
-      if (localStorage.getItem("user") === null) {
-        //this.$router.push({'name': 'Login'})
-        let auth_user = {
-          id: 5,
-          name: "Jatin",
-          email: "jatin@gmail.com",
-          role: "subscribed"
-        }
-        self.auth_user = auth_user
-      }
-      else
-      {
-        let auth_user = localStorage.getItem("user")
-        auth_user = JSON.parse(auth_user)
-        if(auth_user && auth_user.id)
-        {
-          self.auth_user = auth_user
-        }
-        else
-        {
-          console.log("User not found")
-        }
-      }
-
       //get unread mails
       if(this.$store.state.AppActiveUser.googleEmail != "")
       {
         axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/get-unread-mails/', {
-          user_id: self.auth_user.id
         })
             .then(function (response) {
               if(response.data.error)
@@ -1562,7 +1518,6 @@ export default {
               var p=$(this).parent().parent();
               //send message
               axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/reply-mail', {
-                user_id: self.auth_user.id,
                 message: $(p).find('#inputpaper').val(),
                 subject: $(p).find('#reply-subject').val(),
                 from: $(p).find('#reply-mail-header-from').val(),
@@ -1570,12 +1525,10 @@ export default {
                 references: $(p).find('#reply-mail-header-references').val()
               })
               .then((response) => {
-                if(response.data.error)
+                if(!response.data.status)
                 {
-                  console.log("Mails did not sent")
-                  return
+                  console.log("Mail not sent")
                 }
-                console.log(response)
               }, (error) => {
                 console.log(error);
               })

@@ -9,7 +9,7 @@ module.exports = function (router) {
     router.post('/api/connect', validateToken, gmailController.apiConnect.bind(gmailController))
     router.post('/api/googlecallback', validateToken, gmailController.apiGoogleCallback.bind(gmailController))
     router.post('/api/get-unread-mails', validateToken, gmailController.getAllMails.bind(gmailController))
-    router.post('/api/reply-mail', gmailController.replyMail.bind(gmailController))
+    router.post('/api/reply-mail', validateToken, gmailController.replyMail.bind(gmailController))
     router.post('/api/get-user', gmailController.getUser.bind(gmailController))
     router.post('/api/save-new-user', gmailController.saveNewUser.bind(gmailController))
 

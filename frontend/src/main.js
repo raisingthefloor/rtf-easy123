@@ -73,7 +73,7 @@ new Vue({
     }, function (error) {
       // Any status codes that falls outside the range of 2xx cause this function to trigger
       // if its 401 which is Authorization token error redirect to login page
-      if (error.response.status == 401)
+      if (error.response && error.response.status == 401)
       {
         self.$store.commit('LOGOUT_USER', router)
         self.$store.commit('SET_INITIAL_LAYOUT')
