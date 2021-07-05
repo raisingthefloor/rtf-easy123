@@ -232,22 +232,16 @@ class GmailController {
         const oAuth2Client = new google.auth.OAuth2(
             client_id, client_secret, redirect_uris[0]);
 
-        if(!request.body.user_id)
-        {
-            response.send({"error": true, "data":[], "message": "User is not logged in"})
-            return
-        }
-
         //get user from db
         try {
             let user = await User.find({
-                _id: request.body.user_id
+                _id: request.decoded.id
             })
 
             //console.log('users:::', users);
             if(!user.length)
             {
-                response.send({"error": true, "data":[], "message": "User is not logged in"})
+                response.status(401).send({"status": false, "data":[], "message": "User is not logged in"})
                 return
             }
             user = user[0]
@@ -259,6 +253,15 @@ class GmailController {
 
             let raw = this.createMessage('myrealemail@gmail.com', request.body.from, request.body.subject, request.body.message, oAuth2Client.expressRequest.body)
             const mail_sent = await GoogleManager.sendMail(oAuth2Client, raw)
+            if(mail_sent && mail_sent.status == 200)
+            {
+                response.send({"status": true, "data":[], "message": "success"})
+                return
+            }
+            else {
+                response.send({"status": false, "data":[], "message": "Reply not sent"})
+                return
+            }
         } catch (err) {
             logger.error('Error::' + err);
         }
@@ -324,7 +327,7 @@ class GmailController {
         let modified_to = to
         modified_to = modified_to.substring(modified_to.indexOf("<") + 1)
         modified_to = modified_to.substring(0, modified_to.indexOf('>'))
-        console.log("modified_to", modified_to)
+        //console.log("modified_to", modified_to)
         var str = ["Content-Type: text/plain; charset=\"UTF-8\"\n",
             "MIME-Version: 1.0\n",
             "Content-Transfer-Encoding: 7bit\n",
