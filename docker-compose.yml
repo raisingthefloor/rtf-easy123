@@ -22,6 +22,11 @@ services:
       - FRONT_URL=http://easy123.plenartech.com:1000/
       - DOCKER=1
       - NODE_LOCAL_HOST=false
+      - MJ_APIKEY_PUBLIC=da8c89436c3b7b0d8cc27023ff6ca9a8
+      - MJ_APIKEY_PRIVATE=9cab25ffd9105b967bc77aec80228e02
+      - MJ_SENDER_EMAIL=no-reply@plenartech.com
+      - MJ_SENDER_NAME="Easy123 - Dev"
+      - JWT_SECRET=QuOFSdpixAi46DViKzGiiboX3VriWzQV
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
     depends_on:
