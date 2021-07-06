@@ -1,14 +1,15 @@
 <template>
   <div>
-    <main class="form-signin text-center">
+    <main class="form-signin text-center" style="max-width: 400px;">
+      <h2>Easy123</h2>
       <h3 v-show="!is_request_processed">Verifying Email...</h3>
       <div class="alert alert-success" role="alert" v-show="is_request_processed && request_success">
         <h4 class="alert-heading">Well done!</h4>
-        <p>You are email is verified <a class="alert-link" @click="redirectToLogin" href="javascript:void(0)">Click here</a> to login</p>
+        <p>You are email is verified. <br><a class="alert-link" @click="redirectToLogin" href="javascript:void(0)">Click here</a> to login</p>
       </div>
       <div class="alert alert-danger" role="alert" v-show="is_request_processed && request_fail">
         <h4 class="alert-heading">Oops!</h4>
-        <p>{{ verificationError }}</p>
+        <p>Please login again to resent verification link. <br><a class="alert-link" @click="redirectToLogin" href="javascript:void(0)">Login</a></p>
       </div>
     </main>
 
