@@ -140,14 +140,15 @@ exports.getUnreadMessages = async function (auth) {
             maxResults: 20
         }, (err, res) => {
             if (err) return console.log('The API returned an error: ' + err)
-
+            //console.log("res.data.messages", res.data.messages)
             if(res.data && res.data.messages)
             {
                 resolve(res.data.messages)
             }
             else
             {
-                reject("Unable to data from gmail.users.messages")
+                resolve([])
+                //reject("Unable to data from gmail.users.messages")
             }
         })
 

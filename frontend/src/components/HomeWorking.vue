@@ -6,12 +6,17 @@
           <img  id="mailbox" src="mail/mailbox_c.png" />
         </div>
 
-        <div  style=" position:absolute; left:55%; z-index:2; top:0%">
+        <div  style=" position:absolute; left:55%; z-index:2; top:0%" v-show="mails.length || loading_mails">
           <img  align='right' src='mail/call1.png' width="110" height="110" alt='' style="z-index:2;" />
         </div>
-        <div style=" position:absolute; position:absolute; left:69%; top:10%; z-index:3; width: 130px">
+        <div style=" position:absolute; position:absolute; left:67%; top:10%; z-index:3; width: 130px" v-if="mails.length && !loading_mails">
           <h3>
-            <b id="new_emails" style='color:#ffffff; font-size: 24px'>{{ getNewMailString }} </b>
+            <b id="new_emails" style='color:#ffffff; font-size: 20px'>{{ mails.length }} New </b>
+          </h3>
+        </div>
+        <div style=" position:absolute; position:absolute; left:63%; top:10%; z-index:3; width: 130px" v-if="loading_mails">
+          <h3>
+            <b id="new_emails" style='color:#ffffff; font-size: 19px'>Checking </b>
           </h3>
         </div>
       </a>
@@ -632,7 +637,8 @@ export default {
       moimg: null,
       mcimg: null,
 
-      mails: []
+      mails: [],
+      loading_mails: true
     }
   },
   computed: {
@@ -729,6 +735,7 @@ export default {
                 return
               }
               self.mails = response.data
+              self.loading_mails = false
               self.mails.forEach(function(mail, index) {
                 if (!mail.r) {
                   mail.r = "unread"
@@ -1058,6 +1065,10 @@ export default {
     },
     mailClick() {
       var self = this
+      if(!this.mails.length)
+      {
+        return
+      }
       let zi = 1
       $('.polaroid').each(function() { //set the initial z-index's
         zi++; //at the end we have the highest z-index value stored in the z variable

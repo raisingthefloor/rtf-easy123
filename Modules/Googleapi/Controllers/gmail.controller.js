@@ -196,6 +196,7 @@ class GmailController {
             const gmail = google.gmail({version: 'v1', oAuth2Client})
             let allUnreadMails = await GoogleManager.getUnreadMessages(oAuth2Client)
             let allUnreadMailDetails = []
+            //console.log("allUnreadMails", allUnreadMails)
             for (let mail of allUnreadMails)
             {
                 let mail_detail = await GoogleManager.getSingleProcessedMessageDetails(oAuth2Client, mail)
@@ -218,7 +219,7 @@ class GmailController {
 
 
         } catch (err) {
-            logger.error('Error::' + err);
+            logger.error('Error::' + err, err.stackTrace);
         }
 
 
