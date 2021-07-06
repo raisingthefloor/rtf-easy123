@@ -118,7 +118,7 @@ class AuthController {
                         ],
                         Subject: 'Email Verification - Easy123',
                         TextPart: 'Greetings from Mailjet!',
-                        HTMLPart: 'Hello '+ data.name + ',<br>' + 'Please verify your account by clicking the link: <a href="'+process.env.FRONT_URL+'confirmation\/'+data.email+'\/'+token.token+'">Verify Email</a><br><br>Thank You!<br>'
+                        HTMLPart: 'Hello '+ data.name + ',<br><br>' + 'Please verify your account by clicking the link: <a href="'+process.env.FRONT_URL+'confirmation\/'+data.email+'\/'+token.token+'">Verify Email</a><br><br>Thank You!<br>Easy123 Team'
                     },
                 ],
             })
