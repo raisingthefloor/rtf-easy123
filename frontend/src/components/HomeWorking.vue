@@ -160,6 +160,12 @@
   border: 1px solid #1B5F85;
   text-shadow: 0px -1px 0px rgba(0, 0, 0, 0.3);
 }
+.swal-button--cancel {
+  background-color: #e8e8e8 !important;
+}
+.swal-button--danger {
+  background-color: #df4740 !important;
+}
 .swal-button--connect:active {
   background-color: #13425d !important;
 }
