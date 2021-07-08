@@ -1,9 +1,23 @@
 <template>
   <div class="text-center" style="height: 100%; display: flex; align-items: center; padding-top: 40px; padding-bottom: 40px; background-color: rgb(245, 245, 245);">
-    <main class="form-signin">
+    <main class="form-signin" style="max-width: 400px;">
       <form @submit.prevent="submitForm">
-
         <h1 class="h3 mb-3 fw-normal">Login</h1>
+        <div class="form-floating" v-show="showResendVerificationLink">
+          <div class="alert alert-danger" role="alert" v-show="!sentVerificationEmail">
+            <p>
+              Please verify your email to continue. <br>
+              It may take upto 1 minute to receive the email. <br> <br>
+              <a href="javascript:void(0)" @click="resendVerificationLink" class="btn btn-sm btn-primary" v-if="!sendingVerificationEmail">Resend Verification Email</a>
+              <a href="javascript:void(0)" disabled="true" class="btn btn-sm btn-primary" v-if="sendingVerificationEmail">Sending Verification Email...</a>
+            </p>
+          </div>
+
+          <div class="alert alert-success" role="alert" v-show="sentVerificationEmail">
+            <p>Verification email sent to {{ verificationLinkMail }}. <br></p>
+          </div>
+
+        </div>
         <div class="form-floating">
           <p style="color: red" v-show="showError">Please enter correct username or password</p>
         </div>
@@ -19,6 +33,7 @@
         <button class="w-100 btn btn-lg btn-primary" type="submit">Submit</button>
 
         <p class="mt-4">Not a user? <router-link to="/register">Register</router-link> </p>
+
 
       </form>
     </main>
@@ -79,12 +94,15 @@ export default {
       password: null,
       email: null,
       showError: false,
+      showResendVerificationLink: false,
+      verificationLinkMail: null,
+      sentVerificationEmail: false,
+      sendingVerificationEmail: false
     }
   },
   computed: {
   },
   mounted() {
-    //console.log("env file", this.$apiHostname)
     this.checkLogin()
 
     //apply body styles
@@ -151,35 +169,54 @@ export default {
 
         }
         else {
-          console.log("do nothing")
-        }
-
-
-        //let users = response.data
-
-        /*if(!users.length )
-        {
-          self.showError = true
-        }
-        else {
-          self.showError = false
-          let user = users[0]
-          localStorage.setItem("user", JSON.stringify(user))
-          if(user.role == "admin")
+          if(response.data.message == "NOT_VERIFIED")
           {
-            self.$router.push({ 'name': 'Admin' })
-            self.$store.commit('SET_LAYOUT', 'admin-layout')
+            self.showResendVerificationLink = true
+            self.verificationLinkMail = response.data.data.email
           }
           else
           {
-            self.$router.push({ 'name': 'HomeWorking' })
+            console.log("do nothing")
           }
 
-        }*/
-        console.log(response.data)
+        }
+
       }, (error) => {
         console.log(error);
       })
+
+    },
+    resendVerificationLink() {
+      var self = this
+      if(!self.verificationLinkMail)
+      {
+        return
+      }
+
+
+
+      self.sendingVerificationEmail = true
+
+      axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/resend-verification-mail/',{
+        email: self.verificationLinkMail
+      })
+          .then((response) => {
+            self.sendingVerificationEmail = false
+            if (response.data.status)
+            {
+              self.sentVerificationEmail = true
+            }
+          }, (error) => {
+            self.sendingVerificationEmail = false
+            self.$toasted.show("Failed to send verification email", {
+              theme: "toasted-primary",
+              position: "top-right",
+              duration : 5000,
+              type: "error"
+            })
+            console.log(error)
+          })
+
 
     }
   }

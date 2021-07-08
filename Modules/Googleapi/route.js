@@ -20,6 +20,7 @@ module.exports = function (router) {
     router.post('/api/login', authController.login.bind(authController))
     router.post('/api/register', middelware.createUser, authController.register.bind(authController))
     router.post('/api/confirmation', authController.confirmation.bind(authController))
+    router.post('/api/resend-verification-mail', authController.resendVerificationEmail.bind(authController))
 
 
     router.get('/connect', gmailController.connect.bind(gmailController))

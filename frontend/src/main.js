@@ -6,6 +6,7 @@ import VueMeta from 'vue-meta'
 import * as Sentry from "@sentry/vue"
 import { Integrations } from "@sentry/tracing"
 import axios from 'axios'
+import Toasted from 'vue-toasted'
 
 Sentry.init({
   Vue,
@@ -16,12 +17,17 @@ Sentry.init({
   // of transactions for performance monitoring.
   // We recommend adjusting this value in production
   tracesSampleRate: 1.0,
+  environment: process.env.VUE_APP_ENV,
 })
 
 
 Vue.use(Vuex)
 Vue.use(VueRouter)
 Vue.use(VueMeta)
+
+Vue.use(Toasted, {
+  duration: 5000
+})
 
 import App from './App.vue'
 

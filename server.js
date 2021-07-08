@@ -10,17 +10,16 @@ const Sentry = require("@sentry/node");
 const Tracing = require("@sentry/tracing");
 
 
-if(process.env.NODE_LOCAL_HOST != 'true')
-{
-    Sentry.init({
-        dsn: "https://3618b3bf0670431bb5f2d9391b0e6387@o464399.ingest.sentry.io/5806040",
+Sentry.init({
+    dsn: "https://3618b3bf0670431bb5f2d9391b0e6387@o464399.ingest.sentry.io/5806040",
 
-        // Set tracesSampleRate to 1.0 to capture 100%
-        // of transactions for performance monitoring.
-        // We recommend adjusting this value in production
-        tracesSampleRate: 1.0,
-    });
-}
+    // Set tracesSampleRate to 1.0 to capture 100%
+    // of transactions for performance monitoring.
+    // We recommend adjusting this value in production
+    tracesSampleRate: 1.0,
+    environment: process.env.NODE_APP_ENV,
+})
+
 
 
 

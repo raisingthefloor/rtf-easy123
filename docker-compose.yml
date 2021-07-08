@@ -9,6 +9,7 @@ services:
     container_name: frontend
     environment:
         - VUE_APP_API_HOST_NAME=https://easy123.plenartech.com:2000
+        - VUE_APP_ENV=development
     depends_on:
       - backend
   backend:
@@ -27,6 +28,7 @@ services:
       - MJ_SENDER_EMAIL=no-reply@plenartech.com
       - MJ_SENDER_NAME="Easy123 - Dev"
       - JWT_SECRET=QuOFSdpixAi46DViKzGiiboX3VriWzQV
+      - NODE_APP_ENV=development
     volumes:
       - /etc/letsencrypt:/etc/letsencrypt
     depends_on:
