@@ -9,7 +9,7 @@
       </div>
       <div class="alert alert-danger" role="alert" v-show="is_request_processed && request_fail">
         <h4 class="alert-heading">Oops!</h4>
-        <p>Please login again to resent verification link. <br><a class="alert-link" @click="redirectToLogin" href="javascript:void(0)">Login</a></p>
+        <p>Please login again to resent verification link. <br><br><a @click="redirectToLogin" href="javascript:void(0)" class="btn btn-primary">Login</a></p>
       </div>
     </main>
 

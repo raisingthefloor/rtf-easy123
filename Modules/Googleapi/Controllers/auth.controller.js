@@ -13,6 +13,7 @@ class AuthController {
      * @returns {Promise<void>}
      */
     async login( request, response) {
+
         try {
             const user = await User.findOne({
                 email: request.body.email
@@ -31,6 +32,18 @@ class AuthController {
                 .then(match => {
                     if(match)
                     {
+                        //check if email is verified
+                        if(!user.emailVerified)
+                        {
+                            response.send({
+                                status: false,
+                                data: {
+                                    email: user.email
+                                },
+                                message: "NOT_VERIFIED"
+                            })
+                            return
+                        }
                         // Create a jwt token
                         const payload = {
                             id: user._id
@@ -226,6 +239,73 @@ class AuthController {
         {
             logger.error('Error::' + err)
         }
+    }
+
+    /**
+     * resend verification email
+     */
+    async resendVerificationEmail(request, response) {
+        //get user with email
+        const user = await User.findOne({
+            email: request.body.email
+        })
+
+        if(!user)
+        {
+            response.code(404).send({
+                status: false,
+                data: null,
+                message: 'user_not_found'
+            })
+        }
+        let data = user
+
+        // generate token and save
+        let token = await Token.create({
+            _userId: data._id,
+            token: crypto.randomBytes(16).toString('hex')
+        })
+
+        //send mail mailjet
+        const mailjet = require('node-mailjet').connect(
+            process.env.MJ_APIKEY_PUBLIC,
+            process.env.MJ_APIKEY_PRIVATE
+        )
+
+        const mailRequest = mailjet.post('send', { version: 'v3.1' }).request({
+            Messages: [
+                {
+                    From: {
+                        Email: process.env.MJ_SENDER_EMAIL,
+                        Name: process.env.MJ_SENDER_NAME,
+                    },
+                    To: [
+                        {
+                            Email: data.email,
+                            Name: data.name,
+                        },
+                    ],
+                    Subject: 'Email Verification - Easy123',
+                    TextPart: 'Greetings from Mailjet!',
+                    HTMLPart: 'Hello '+ data.name + ',<br><br>' + 'Please verify your account by clicking the link: <a href="'+process.env.FRONT_URL+'confirmation\/'+data.email+'\/'+token.token+'">Verify Email</a><br><br>Thank You!<br>Easy123 Team'
+                },
+            ],
+        })
+
+        mailRequest
+            .then(result => {
+                //console.log(result.body)
+            })
+            .catch(err => {
+                console.log(err.statusCode)
+            })
+
+        response.send({
+            status: true,
+            data: {
+            },
+            message: 'success'
+        })
     }
 }
 
