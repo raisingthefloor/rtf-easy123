@@ -1,15 +1,16 @@
 <template>
   <div>
     <main class="form-signin text-center" style="max-width: 400px;">
-      <h2>Easy123</h2>
-      <h3 v-show="!is_request_processed">Verifying Email...</h3>
+      <h2>{{ $t('easy123') }}</h2>
+      <h3 v-show="!is_request_processed">{{ $t('verifying_email') }}</h3>
       <div class="alert alert-success" role="alert" v-show="is_request_processed && request_success">
-        <h4 class="alert-heading">Well done!</h4>
-        <p>You are email is verified. <br><a class="alert-link" @click="redirectToLogin" href="javascript:void(0)">Click here</a> to login</p>
+        <h4 class="alert-heading">{{ $t('well_done') }}</h4>
+        <p>{{ $t('your_email_is_verified') }} <br><a class="alert-link" @click="redirectToLogin" href="javascript:void(0)">{{ $t('click_here') }}</a>
+          {{ $t('to_login') }}</p>
       </div>
       <div class="alert alert-danger" role="alert" v-show="is_request_processed && request_fail">
         <h4 class="alert-heading">Oops!</h4>
-        <p>Please login again to resent verification link. <br><br><a @click="redirectToLogin" href="javascript:void(0)" class="btn btn-primary">Login</a></p>
+        <p>{{ $t('login_to_resent_verification_link') }} <br><br><a @click="redirectToLogin" href="javascript:void(0)" class="btn btn-primary">{{ $t('login') }}</a></p>
       </div>
     </main>
 

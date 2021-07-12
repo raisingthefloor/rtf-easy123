@@ -2,37 +2,41 @@
   <div class="text-center" style="height: 100%; display: flex; align-items: center; padding-top: 40px; padding-bottom: 40px; background-color: rgb(245, 245, 245);">
     <main class="form-signin" style="max-width: 400px;">
       <form @submit.prevent="submitForm">
-        <h1 class="h3 mb-3 fw-normal">Login</h1>
+        <h1 class="h3 mb-3 fw-normal">{{ $t('login') }}</h1>
         <div class="form-floating" v-show="showResendVerificationLink">
           <div class="alert alert-danger" role="alert" v-show="!sentVerificationEmail">
             <p>
-              Please verify your email to continue. <br>
-              It may take upto 1 minute to receive the email. <br> <br>
-              <a href="javascript:void(0)" @click="resendVerificationLink" class="btn btn-sm btn-primary" v-if="!sendingVerificationEmail">Resend Verification Email</a>
-              <a href="javascript:void(0)" disabled="true" class="btn btn-sm btn-primary" v-if="sendingVerificationEmail">Sending Verification Email...</a>
+              {{ $t('please_verify_your_email_to_continue') }} <br>
+              {{ $t('it_may_take_upto_1_min_to_receive_the_email') }} <br> <br>
+              <a href="javascript:void(0)" @click="resendVerificationLink" class="btn btn-sm btn-primary" v-if="!sendingVerificationEmail">{{
+                  $t('resend_verification_email')
+                }}</a>
+              <a href="javascript:void(0)" disabled="true" class="btn btn-sm btn-primary" v-if="sendingVerificationEmail">{{
+                  $t('sending_verification_email')
+                }}</a>
             </p>
           </div>
 
           <div class="alert alert-success" role="alert" v-show="sentVerificationEmail">
-            <p>Verification email sent to {{ verificationLinkMail }}. <br></p>
+            <p>{{ $t('verification_email_sent_to') }} {{ verificationLinkMail }}. <br></p>
           </div>
 
         </div>
         <div class="form-floating">
-          <p style="color: red" v-show="showError">Please enter correct username or password</p>
+          <p style="color: red" v-show="showError">{{ $t('please_enter_correct_username_or_password') }}</p>
         </div>
         <div class="form-floating">
           <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" v-model="email" autofocus>
-          <label for="floatingInput">Email address</label>
+          <label for="floatingInput">{{ $t('email_address') }}</label>
         </div>
         <div class="form-floating">
-          <input type="password" class="form-control" id="floatingPassword" placeholder="Password" v-model="password">
-          <label for="floatingPassword">Password</label>
+          <input type="password" class="form-control" id="floatingPassword" :placeholder="$t('password')" v-model="password">
+          <label for="floatingPassword">{{ $t('password') }}</label>
         </div>
 
         <button class="w-100 btn btn-lg btn-primary" type="submit">Submit</button>
 
-        <p class="mt-4">Not a user? <router-link to="/register">Register</router-link> </p>
+        <p class="mt-4">{{ $t('not_a_user') }} <router-link to="/register">{{ $t('register') }}</router-link> </p>
 
 
       </form>
