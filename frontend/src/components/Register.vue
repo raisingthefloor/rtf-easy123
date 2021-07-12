@@ -7,13 +7,13 @@
         <div class="form-floating">
           <p v-show="showError" style="color: red; font-size: 15px;">
             <span v-show="!nodeErrorArr.length">
-              Please fill all details correctly <br>
-              <b>Name</b> should be a string <br>
-              <b>Email</b> should be a proper email address <br>
-              <b>Password</b> should be a string of 8 char long
+              {{ $t('please_fill_all_details_correctly') }} <br>
+              {{ $t('name_should_be_string') }} <br>
+              {{ $t('email_should_be_proper_proper_address') }} <br>
+              {{ $t('password_should_be_string_of_8_char_long') }}
             </span>
             <span v-show="nodeErrorArr.length">
-              Please fill all details correctly <br>
+              {{ $t('please_fill_all_details_correctly') }} <br>
               <span v-for="(nodeError, index) in nodeErrorArr" :key="'error'+index">
                 {{ nodeError.msg }} <br>
               </span>
@@ -24,20 +24,22 @@
           <input type="text" class="form-control" id="floatingName" placeholder="Name" v-model="name" autofocus>
           <label for="floatingName">Name</label>
         </div>
-        <p class="text-muted text-start"><small style="font-size: 1rem;">Enter your full name</small></p>
+        <p class="text-muted text-start"><small style="font-size: 1rem;">{{ $t('enter_your_full_name') }}</small></p>
         <div class="form-floating mb-3">
           <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" v-model="email">
-          <label for="floatingInput">Email address</label>
+          <label for="floatingInput">{{ $t('email_address') }}</label>
         </div>
 
 
         <div class="form-floating">
           <input type="password" class="form-control" id="floatingPassword" placeholder="Password" v-model="password" min="8" max="15" required>
-          <label for="floatingPassword">Password</label>
+          <label for="floatingPassword">{{ $t('password') }}</label>
         </div>
-        <p class="text-muted text-start"><small style="font-size: 1rem;">Create new password for Easy123 System. Password must be 8 character long.</small></p>
+        <p class="text-muted text-start"><small style="font-size: 1rem;">{{
+            $t('password_help')
+          }}</small></p>
 
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Submit</button>
+        <button class="w-100 btn btn-lg btn-primary" type="submit">{{ $t('submit') }}</button>
 
       </form>
 
@@ -131,6 +133,9 @@ export default {
     document.querySelector('body').style.overflowY = 'hidden'
   },
   methods: {
+    getTranslation(name) {
+      return this.$t(name)
+    },
     getUser() {
       var self = this
       this.id = this.$route.params.id
@@ -174,10 +179,10 @@ export default {
           //self.$router.push({'name': 'HomeWorking'})
 
           swal({
-            title: "Congratulations",
-            text: "You are now signed up with Easy123. Currently Easy123 is Free to use!",
+            title: self.getTranslation('congratulations'),
+            text: self.getTranslation('register_success_message'),
             icon: "success",
-            button: "Continue",
+            button: self.getTranslation('continue'),
             closeOnClickOutside: false,
             closeOnEsc: false
           }).then((swalResponse) => {

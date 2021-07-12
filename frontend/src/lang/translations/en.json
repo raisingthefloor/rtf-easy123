@@ -1,0 +1,37 @@
+{
+  "//": "Common",
+  "easy123": "Easy123",
+  "email_address": "Email address",
+  "password": "Password",
+  "submit": "Submit",
+  "congratulations": "Congratulations",
+  "continue": "Continue",
+  "well_done": "Well done!",
+  "click_here": "Click here",
+
+  "//": "Login",
+  "login": "Login",
+  "please_verify_your_email_to_continue": "Please verify your email to continue.",
+  "it_may_take_upto_1_min_to_receive_the_email": "It may take upto 1 minute to receive the email.",
+  "resend_verification_email": "Resend Verification Email",
+  "sending_verification_email": "Sending Verification Email...",
+  "verification_email_sent_to": "Verification email sent to",
+  "please_enter_correct_username_or_password": "Please enter correct username or password",
+  "not_a_user": "Not a user?",
+
+  "//": "Register",
+  "register": "Register",
+  "please_fill_all_details_correctly": "Please fill all details correctly",
+  "name_should_be_string": "<b>Name</b> should be a string <br>",
+  "email_should_be_proper_proper_address": "<b>Email</b> should be a proper email address",
+  "password_should_be_string_of_8_char_long": "<b>Password</b> should be a string of 8 char long",
+  "enter_your_full_name": "Enter your full name",
+  "password_help": "Create new password for Easy123 System. Password must be 8 character long.",
+  "register_success_message": "You are now signed up with Easy123. Currently Easy123 is Free to use!",
+
+  "//": "Verfiy Email",
+  "verifying_email": "Verifying Email...",
+  "your_email_is_verified": "You are email is verified.",
+  "to_login": "to login",
+  "login_to_resent_verification_link": "Please login again to resent verification link."
+}
