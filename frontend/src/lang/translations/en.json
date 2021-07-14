@@ -33,5 +33,8 @@
   "verifying_email": "Verifying Email...",
   "your_email_is_verified": "You are email is verified.",
   "to_login": "to login",
-  "login_to_resent_verification_link": "Please login again to resent verification link."
+  "login_to_resent_verification_link": "Please login again to resent verification link.",
+
+  "//": "Home",
+  "connect_google_account_desc": "Connect to your Google account to enable Email access and management"
 }
