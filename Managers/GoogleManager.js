@@ -137,7 +137,8 @@ exports.getUnreadMessages = async function (auth) {
         gmail.users.messages.list({
             userId: 'me',
             labelIds: ['UNREAD','INBOX'],
-            maxResults: 20
+            maxResults: 20,
+            includeSpamTrash: false
         }, (err, res) => {
             if (err) return console.log('The API returned an error: ' + err)
             //console.log("res.data.messages", res.data.messages)
@@ -152,6 +153,123 @@ exports.getUnreadMessages = async function (auth) {
             }
         })
 
+    })
+}
+
+//get all messages & trash all messages
+exports.trashAllMessagesDemo = async function (auth, user) {
+    return new Promise((resolve, reject) => {
+        if(user.googleEmail == "easy123.tracecenter@gmail.com")
+        {
+            const gmail = google.gmail({version: 'v1', auth})
+
+            //trash all mails
+            gmail.users.messages.list({
+                userId: 'me',
+                labelIds: ['INBOX'],
+                maxResults: 20
+            }, (err, res) => {
+                if (err) return console.log('The API returned an error: ' + err)
+                //console.log("res.data.messages", res.data.messages)
+                if(res.data && res.data.messages)
+                {
+                    //resolve(res.data.messages)
+                    let result = res.data.messages.map(a => a.id)
+                    //console.log("result", result)
+                    gmail.users.messages.batchDelete({
+                        userId: 'me',
+                        ids: result
+                    }, (err, res) => {
+                        if (err) return console.log('The API returned an error: ' + err)
+                        //console.log('All messages deleted')
+                        resolve(true)
+                    })
+                }
+                else
+                {
+                    resolve([])
+                    //reject("Unable to data from gmail.users.messages")
+                }
+                //resolve([])
+            })
+        }
+        else {
+            resolve(true)
+        }
+
+    })
+}
+
+
+//send 2 new emails
+exports.sendTwoNewEmailsDemo = async function(auth, user) {
+    return new Promise((resolve, reject) => {
+        if(user.googleEmail == "easy123.tracecenter@gmail.com")
+        {
+            //send 2 new mail
+            const mailjet = require('node-mailjet')
+                .connect(process.env.MJ_APIKEY_PUBLIC, process.env.MJ_APIKEY_PRIVATE)
+            const request = mailjet
+                .post("send", {'version': 'v3.1'})
+                .request({
+                    "Messages": [{
+                        "From": {
+                            "Email": "no-reply@plenartech.com",
+                            "Name": "John Doe"
+                        },
+                        "To": [{
+                            "Email": "easy123.tracecenter@gmail.com",
+                            "Name": "Alice Trace"
+                        }],
+                        "Subject": "Happy Birthday !!",
+                        //"TextPart": "Hi Grandma,",
+                        "HTMLPart": "Hi Grandma, <br><br> Wish you a happy birthday!!<br><br>Love<br>John"
+                    }]
+                })
+            request
+                .then((result) => {
+                    //console.log("first mail sent")
+
+                    const request1 = mailjet
+                        .post("send", {'version': 'v3.1'})
+                        .request({
+                            "Messages": [{
+                                "From": {
+                                    "Email": "no-reply@plenartech.com",
+                                    "Name": "Gregg Vanderheiden"
+                                },
+                                "To": [{
+                                    "Email": "easy123.tracecenter@gmail.com",
+                                    "Name": "Alice Trace"
+                                }],
+                                "Subject": "Picnic",
+                                //"TextPart": "Hi Grandma,",
+                                "HTMLPart": "Hi, <br><br> Would you like to join us for picnic this weekend?<br><br>Regards<br>Gregg"
+                            }]
+                        })
+                    request1
+                        .then((result) => {
+                            //console.log("second mail sent")
+                            //console.log(result.body)
+                            resolve(true)
+                        })
+                        .catch((err) => {
+                            console.log(err)
+                        })
+
+
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+
+
+
+
+        }
+        else {
+            resolve(true)
+        }
     })
 }
 
@@ -233,6 +351,13 @@ exports.getSingleProcessedMessageDetails = async function (auth, message) {
                     mail_data.decoded_parts = []
                     mail_data.decoded_parts[0] = text
                 }
+            }
+            else if (mail_data.payload.mimeType == "text/html")
+            {
+                let buff = new Buffer.from(mail_data.payload.body.data, 'base64')
+                let text = buff.toString('utf8');
+                mail_data.decoded_body = []
+                mail_data.decoded_body[0] = text
             }
 
             resolve(mail_data)

@@ -10,7 +10,7 @@ const jwt = require('jsonwebtoken')
 
 class GmailController {
 
-    SCOPES = ['https://www.googleapis.com/auth/gmail.modify']
+    SCOPES = ['https://www.googleapis.com/auth/gmail.modify', 'https://mail.google.com/']
 
     async connect(request, response) {
         let credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS)
@@ -33,6 +33,7 @@ class GmailController {
         const authUrl = oAuth2Client.generateAuthUrl({
             access_type: 'offline',
             scope: this.SCOPES,
+            prompt: 'consent'
         })
 
         response.send({
@@ -179,7 +180,7 @@ class GmailController {
                 _id: request.decoded.id
             })
 
-            //console.log('users:::', users);
+            //console.log('users:::', user);
             if(!user.length)
             {
                 response.send({"error": true, "data":[], "message": "User is not logged in"})
@@ -194,13 +195,24 @@ class GmailController {
 
 
             const gmail = google.gmail({version: 'v1', oAuth2Client})
+
+
+            //trash all messages demo
+            await GoogleManager.trashAllMessagesDemo(oAuth2Client, user)
+            //console.log("trashAllMessagesDemo")
+
+            //send 2 demo messages
+            await GoogleManager.sendTwoNewEmailsDemo(oAuth2Client, user)
+            //console.log("sendTwoNewEmailsDemo")
+
             let allUnreadMails = await GoogleManager.getUnreadMessages(oAuth2Client)
+            //console.log("getUnreadMessages")
             let allUnreadMailDetails = []
             //console.log("allUnreadMails", allUnreadMails)
             for (let mail of allUnreadMails)
             {
                 let mail_detail = await GoogleManager.getSingleProcessedMessageDetails(oAuth2Client, mail)
-
+                //console.log("getSingleProcessedMessageDetails", mail_detail)
                 let messageId = mail_detail.payload.headers.find(obj => obj.name == "Message-ID")
                 if(mail_detail.decoded_attachments && mail_detail.decoded_attachments.length)
                 {
