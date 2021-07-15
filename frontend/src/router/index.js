@@ -24,18 +24,11 @@
  **/
 import Vue from 'vue'
 import Router from 'vue-router'
-//import Hello from '@/components/HelloWorld'
 import Login from '@/components/Login'
 import Register from '@/components/Register'
 import GoogleCallback from '@/components/GoogleCallback'
-import NewUser from '@/components/NewUser'
 import VerifyEmail from '@/components/VerifyEmail'
-//import Foo from "@/components/Foo"
-//import Home from "@/components/Home"
-import HomeCustom from "@/components/HomeCustom"
 import HomeWorking from "@/components/HomeWorking"
-import HomeWorking2 from "@/components/HomeWorking2"
-import CallComponent from "@/components/CallComponent"
 
 //admin components
 import AdminUser from "@/components/admin/user/List"
@@ -70,32 +63,12 @@ const router = new Router({
             component: GoogleCallback
         },
         {
-            path: '/new-user/:id',
-            name: 'NewUser',
-            component: NewUser
-        },
-        {
-            path: '/home-custom',
-            name: 'HomeCustom',
-            component: HomeCustom
-        },
-        {
             path: '/home-working',
             name: 'HomeWorking',
             component: HomeWorking,
             meta: {
                 middleware: subscribed
             }
-        },
-        {
-            path: '/home-working-2',
-            name: 'HomeWorking2',
-            component: HomeWorking2
-        },
-        {
-            path: '/webrtc',
-            name: 'CallComponent',
-            component: CallComponent
         },
 
         //Admin Routes

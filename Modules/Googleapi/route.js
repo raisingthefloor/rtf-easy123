@@ -46,10 +46,7 @@ module.exports = function (router) {
     router.post('/api/confirmation', authController.confirmation.bind(authController))
     router.post('/api/resend-verification-mail', authController.resendVerificationEmail.bind(authController))
 
-
-    router.get('/connect', gmailController.connect.bind(gmailController))
-    router.get('/googlecallback', gmailController.googleCallback.bind(gmailController))
-
+    //for deleting all users from database- delete in production
     router.get('/api/delete-old-data', gmailController.deleteOldData.bind(gmailController))
 
 }

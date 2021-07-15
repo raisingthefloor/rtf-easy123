@@ -52,10 +52,6 @@ const port = process.env.PORT || 3000;
 
 app.use(cors())
 
-/*app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    next();
-});*/
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json({
@@ -70,17 +66,14 @@ app.get('*', function (req, res) {
 
 if(process.env.NODE_LOCAL_HOST == 'true')
 {
-    //console.log("true")
     startNonSSLServer()
 }
 else
 {
-    //console.log("false")
     startSSLServer()
 }
 
 function startNonSSLServer() {
-    logENV()
     let server = require('http').createServer(app);
     mongoConnection.connect()
     server.listen(port, function () {
@@ -124,18 +117,4 @@ function startSSLServer() {
     server.listen(port, function () {
         console.log('SSL server listening on port ' + server.address().port);
     });
-}
-
-
-function logENV() {
-
-    /*console.log()
-    console.log('======================== PORT FETCHING START ================================')
-    console.log(port)
-    console.log('======================== PORT FETCHING END ================================== ')
-    console.log ('********************************************************************')
-    console.log('============================== ENV GLOBAL START ====================')
-    console.log(process.env)
-    console.log('============================== ENV GLOBAL END ======================')
-    console.log('********************************************************************')*/
 }

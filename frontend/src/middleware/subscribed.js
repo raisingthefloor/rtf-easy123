@@ -25,6 +25,7 @@
 import store from "../store/store";
 import router from "../router/index";
 
+//process only subscribed user request
 export default function subscribed({ next, to }) {
 //export default function subscribed({ next }) {
     store.commit('INITIALISE_STORE')

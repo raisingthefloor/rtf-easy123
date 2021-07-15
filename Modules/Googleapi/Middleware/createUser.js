@@ -25,6 +25,9 @@
 const { body, validationResult } = require('express-validator')
 const {User} = require('../Models/user.model')
 
+/**
+ * create user validation middleware
+ */
 const createUser = [
     body('name')
         .not()

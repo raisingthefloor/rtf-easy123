@@ -25,6 +25,7 @@
 import store from '../store/store'
 import router from '../router/index'
 
+//process only admin request
 //export default function admin({ next, to }) {
 export default function admin({ next }) {
     store.commit('INITIALISE_STORE')
@@ -41,8 +42,6 @@ export default function admin({ next }) {
         store.commit('SET_LAYOUT', 'simple-layout')
         router.push('/')
     }
-
-    //console.log("from middleware", store.state.AppActiveUser)
 
     return next();
 }

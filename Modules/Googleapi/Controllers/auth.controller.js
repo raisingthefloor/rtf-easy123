@@ -29,6 +29,9 @@ const bcrypt = require('bcrypt')
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
 
+/**
+ * manage authentication
+ */
 class AuthController {
     /**
      * login user

@@ -22,12 +22,8 @@
  * Adobe Foundation
  * Consumer Electronics Association Foundation
  **/
-const logger = require('../../../logger/api.logger');
-const fs = require('fs');
-const readline = require('readline');
-const {google} = require('googleapis')
+const logger = require('../../../logger/api.logger')
 const {User} = require('../../Googleapi/Models/user.model')
-//const toBlobURL = require('stream-to-blob-url')
 
 class UserController {
     /**
@@ -42,11 +38,10 @@ class UserController {
             data: [],
             message: ''
         }
-        //console.log("data", request.decoded)
+
         try {
             data.status = true
             data.data = await User.find({deleted: false})
-            //console.log('users:::', data.data);
             response.send(data)
         } catch (err) {
             logger.error('Error::' + err)

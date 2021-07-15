@@ -24,30 +24,19 @@
  **/
 const logger = require('../../../logger/api.logger')
 const {google} = require('googleapis')
-const GoogleManager =  require("../../../Managers/GoogleManager");
-const UserManager =  require("../../../Managers/UserManager");
+const GoogleManager =  require("../../../Managers/GoogleManager")
 const {User} = require('../Models/user.model')
-const {Token} = require('../Models/token.model')
-const bcrypt = require('bcrypt')
-const crypto = require('crypto')
-const jwt = require('jsonwebtoken')
 
 class GmailController {
 
     SCOPES = ['https://www.googleapis.com/auth/gmail.modify', 'https://mail.google.com/']
 
-    async connect(request, response) {
-        let credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS)
-        const {client_secret, client_id, redirect_uris} = credentials.web
-        //const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, redirect_uris[0])
-        const oAuth2Client = new google.auth.OAuth2(client_id, client_secret, process.env.GOOGLE_REDIRECT_URI)
-
-        const authUrl = oAuth2Client.generateAuthUrl({
-            access_type: 'offline',
-            scope: this.SCOPES,
-        })
-        return response.redirect(authUrl)
-    }
+    /**
+     * api for getting connect URL
+     * @param request
+     * @param response
+     * @returns {Promise<void>}
+     */
     async apiConnect(request, response) {
         let credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS)
         const {client_secret, client_id, redirect_uris} = credentials.web
@@ -67,42 +56,12 @@ class GmailController {
         //return response.redirect(authUrl)
     }
 
-    async googleCallback(request, response) {
-        //console.log("code", request.query.code)
-        const token = await GoogleManager.getToken(request.query.code)
-
-        const credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS)
-        const {client_secret, client_id, redirect_uris} = credentials.web
-        const oAuth2Client = new google.auth.OAuth2(
-            client_id, client_secret, redirect_uris[0])
-        oAuth2Client.setCredentials(token)
-
-        //get user profile
-        const userProfile = await GoogleManager.getUserProfile(oAuth2Client)
-        //console.log("userProfile", userProfile)
-
-        let data
-        try {
-            //check user exists with email
-            const users = await User.find({email: userProfile.emailAddress});
-            if(users.length)
-            {
-                return response.redirect(process.env.FRONT_URL)
-            }
-
-            //store the token in the database
-            data = await User.create({
-                email: userProfile.emailAddress,
-                google_authentication_code: JSON.stringify(token)
-            });
-            return response.redirect(process.env.FRONT_URL + "#/new-user/"+data.id)
-            //console.log("user data", data)
-        } catch (err) {
-            //console.log("error while inserting ", err)
-            logger.error('Error::' + err)
-        }
-    }
-
+    /**
+     * Handle Google callback for
+     * @param request
+     * @param response
+     * @returns {Promise<void>}
+     */
     async apiGoogleCallback(request, response) {
         //console.log("code", request.body.code)
         const token = await GoogleManager.getToken(request.body.code)
@@ -117,7 +76,6 @@ class GmailController {
         const userProfile = await GoogleManager.getUserProfile(oAuth2Client)
         //console.log("userProfile", userProfile)
 
-        let data
         try {
             //get current user data
             let current_user = await User.findOne({_id: request.decoded.id})
@@ -135,10 +93,6 @@ class GmailController {
             current_user.google_authentication_code = JSON.stringify(token)
             current_user.googleEmail = userProfile.emailAddress
             current_user.save()
-            /*data = await User.create({
-                email: userProfile.emailAddress,
-                google_authentication_code: JSON.stringify(token)
-            });*/
 
             response.send({
                 status: true,
@@ -146,8 +100,6 @@ class GmailController {
                 message: 'success'
             })
             return
-            //return response.redirect(process.env.FRONT_URL + "#/new-user/"+data.id)
-            //console.log("user data", data)
         } catch (err) {
             console.log(err)
             response.send({
@@ -155,11 +107,15 @@ class GmailController {
                 data: {}
             })
             return
-            //console.log("error while inserting ", err)
-            //logger.error('Error::' + err)
         }
     }
 
+    /**
+     * find user by id
+     * @param request
+     * @param response
+     * @returns {Promise<void>}
+     */
     async getUser(request, response) {
         try {
             const users = await User.find({_id: request.body.id});
@@ -186,11 +142,12 @@ class GmailController {
     }
 
 
-
-
-
-
-
+    /**
+     * get all unread mails
+     * @param request
+     * @param response
+     * @returns {Promise<void>}
+     */
     async getAllMails(request, response) {
         let credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS)
         const {client_secret, client_id, redirect_uris} = credentials.web
@@ -263,6 +220,12 @@ class GmailController {
         //this.authorize(JSON.parse(process.env.GOOGLE_CREDENTIALS), request, response, this.listUnreadMessages)
     }
 
+    /**
+     * reply to existing mail
+     * @param request
+     * @param response
+     * @returns {Promise<void>}
+     */
     async replyMail(request, response) {
         let credentials = JSON.parse(process.env.GOOGLE_CREDENTIALS)
         const {client_secret, client_id, redirect_uris} = credentials.web
@@ -303,24 +266,6 @@ class GmailController {
             logger.error('Error::' + err);
         }
 
-    }
-
-
-    /**
-     * Create an OAuth2 client with the given credentials, and then execute the
-     * given callback function.
-     * @param {Object} credentials The authorization client credentials.
-     * @param {function} callback The callback to call with the authorized client.
-     */
-    authorize(credentials, expressRequest, expressResponse, callback) {
-        const {client_secret, client_id, redirect_uris} = credentials.web
-        const oAuth2Client = new google.auth.OAuth2(
-            client_id, client_secret, redirect_uris[0])
-
-        if(!expressRequest.body.id)
-        {
-            expressResponse.send({"error": true, "data":[], "message": "User is not logged in"})
-        }
     }
 
 
