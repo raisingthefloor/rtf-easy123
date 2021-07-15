@@ -24,6 +24,10 @@
  **/
 const jwt = require('jsonwebtoken')
 
+/**
+ * validate token if its correct, decode token to get user data & put it into request so that it can be accessed from method
+ * @type {{validateToken: exports.validateToken}}
+ */
 module.exports = {
     validateToken: (req, res, next) => {
         const authorizationHeaader = req.headers.authorization;
