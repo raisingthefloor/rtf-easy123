@@ -48,7 +48,7 @@ class AuthController {
 
             if(!user)
             {
-                response.code(404).send({
+                response.status(404).send({
                     status: false,
                     data: null,
                     message: 'User not found'
@@ -95,7 +95,7 @@ class AuthController {
                     }
                     else
                     {
-                        response.code(401).send({
+                        response.status(401).send({
                             status: false,
                             data: null,
                             message: 'Please enter correct email or password'
@@ -279,7 +279,7 @@ class AuthController {
 
         if(!user)
         {
-            response.code(404).send({
+            response.status(404).send({
                 status: false,
                 data: null,
                 message: 'user_not_found'
