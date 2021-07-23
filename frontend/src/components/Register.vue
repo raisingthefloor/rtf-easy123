@@ -230,7 +230,7 @@ export default {
           })
         }
       }, (error) => {
-        if(error && error.response.status == 422)
+        if(error && error.response && error.response.status == 422)
         {
           self.nodeErrorArr = error.response.data.data
           this.showError = true

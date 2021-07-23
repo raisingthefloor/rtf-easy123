@@ -354,7 +354,7 @@ class GmailController {
     /**
      * list all users
      */
-    function listAllUser(request, response) {
+    listAllUser(request, response) {
         let data = {"status": false}
         try {
             User.find({}, function(err, users) {
@@ -373,7 +373,7 @@ class GmailController {
     /**
      * add admin user
      */
-    function addAdminUser(request, response)
+    addAdminUser(request, response)
     {
         let data = {"status": false}
         try {
