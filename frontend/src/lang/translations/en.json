@@ -30,6 +30,7 @@
   "enter_your_full_name": "Enter your full name",
   "password_help": "Create new password for Easy123 System. Password must be 8 character long.",
   "register_success_message": "You are now signed up with Easy123. Currently Easy123 is Free to use!",
+  "already_a_user": "Already have an account? ",
 
   "//": "Verfiy Email",
   "verifying_email": "Verifying Email...",

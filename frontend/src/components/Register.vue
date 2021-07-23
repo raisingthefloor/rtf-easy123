@@ -68,6 +68,8 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           <span v-if="registerSubmitClicked">{{ $t('processing') }}</span>
         </button>
 
+        <p class="mt-4">{{ $t('already_a_user') }} <router-link to="/">{{ $t('login') }}</router-link> </p>
+
       </form>
 
     </main>
