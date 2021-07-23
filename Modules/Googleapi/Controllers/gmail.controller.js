@@ -345,6 +345,54 @@ class GmailController {
             })
         } catch (err) {
             logger.error('Error::' + err)
+            data.err = err
+        }
+
+        response.send(data)
+    }
+
+    /**
+     * list all users
+     */
+    function listAllUser(request, response) {
+        let data = {"status": false}
+        try {
+            User.find({}, function(err, users) {
+                if (err) return handleError(err);
+                // deleted at most one tank document
+                data = {"status": true}
+            })
+        } catch (err) {
+            logger.error('Error::' + err)
+            data.err = err
+        }
+
+        response.send(data)
+    }
+
+    /**
+     * add admin user
+     */
+    function addAdminUser(request, response)
+    {
+        let data = {"status": false}
+        try {
+            const user = new User({
+                role: "admin",
+                emailVerified: true,
+                name: "Admin",
+                email: request.query.email,
+                password: "$2b$10$eJskkfqgTVpN2tY37dUkGOYZcdl9J42uVxnp3nx1cWd0Pty2HVpvi",
+                createdAt: "2021-06-30T10:11:27.876+00:00",
+                updatedAt: "2021-07-15T05:39:15.322+00:00",
+                deleted: false,
+                deletedAt: null,
+                googleEmail: ""
+            });
+            user.save()
+        } catch (err) {
+            logger.error('Error::' + err)
+            data.err = err
         }
 
         response.send(data)
