@@ -335,14 +335,11 @@ class GmailController {
     /**
      * delete old data of user table
      */
-    deleteOldData(request, response) {
+    async deleteOldData(request, response) {
         let data = {"status": false}
         try {
-            User.deleteMany({}, function (err) {
-                if (err) return handleError(err);
-                // deleted at most one tank document
-                data = {"status": true}
-            })
+            await User.deleteMany({})
+            data.status = true
         } catch (err) {
             logger.error('Error::' + err)
             data.err = err
@@ -354,26 +351,26 @@ class GmailController {
     /**
      * list all users
      */
-    listAllUser(request, response) {
+    async listAllUser(request, response) {
         let data = {"status": false}
         try {
-            User.find({}, function(err, users) {
-                if (err) return handleError(err);
-                // deleted at most one tank document
-                data = {"status": true}
-            })
+
+            data.data = await User.find({})
+            data.status = true
+            response.send(data)
         } catch (err) {
             logger.error('Error::' + err)
             data.err = err
+            response.send(data)
         }
 
-        response.send(data)
+
     }
 
     /**
      * add admin user
      */
-    addAdminUser(request, response)
+    async addAdminUser(request, response)
     {
         let data = {"status": false}
         try {
@@ -389,7 +386,8 @@ class GmailController {
                 deletedAt: null,
                 googleEmail: ""
             });
-            user.save()
+            await user.save()
+            data.status = true
         } catch (err) {
             logger.error('Error::' + err)
             data.err = err
