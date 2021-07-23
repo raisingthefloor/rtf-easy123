@@ -325,6 +325,8 @@ exports.getSingleProcessedMessageDetails = async function (auth, message) {
             {
                 let messageId = headers.find(obj => obj.name == "Message-ID")
                 let mail_data_alternative = mail_data.payload.parts.find(x => x.mimeType == "multipart/alternative")
+                console.log("mail_data.payload", mail_data.payload)
+                console.log("mail_data.payload.parts", mail_data.payload.parts)
                 console.log("message part", mail_data_alternative)
                 console.log("message part data", mail_data.payload)
                 let html_part = mail_data_alternative.parts.find(y => y.mimeType == "text/html")
