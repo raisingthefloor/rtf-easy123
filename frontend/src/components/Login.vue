@@ -58,10 +58,12 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           <label for="floatingPassword">{{ $t('password') }}</label>
         </div>
 
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Submit</button>
+        <button class="w-100 btn btn-lg btn-primary" type="submit" :disabled="loginSubmitClicked" :readonly="loginSubmitClicked">
+          <span v-if="!loginSubmitClicked">{{ $t('submit') }}</span>
+          <span v-if="loginSubmitClicked">{{ $t('processing') }}</span>
+        </button>
 
         <p class="mt-4">{{ $t('not_a_user') }} <router-link to="/register">{{ $t('register') }}</router-link> </p>
-
 
       </form>
     </main>
@@ -125,7 +127,8 @@ export default {
       showResendVerificationLink: false,
       verificationLinkMail: null,
       sentVerificationEmail: false,
-      sendingVerificationEmail: false
+      sendingVerificationEmail: false,
+      loginSubmitClicked: false
     }
   },
   computed: {
@@ -170,10 +173,16 @@ export default {
     },
     submitForm() {
       var self = this
+      this.loginSubmitClicked = true
       if(!this.email || !this.password)
       {
+        this.loginSubmitClicked = false
         this.showError = true
         return
+      }
+      else
+      {
+        this.showError = false
       }
 
       axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/login/',{
@@ -181,6 +190,7 @@ export default {
         password: self.password
       })
       .then((response) => {
+        self.loginSubmitClicked = false
         if(response.data.status)
         {
           self.$store.commit('UPDATE_USER', response.data.data)
@@ -204,12 +214,15 @@ export default {
           }
           else
           {
+            self.showError = true
             console.log("do nothing")
           }
 
         }
 
       }, (error) => {
+        self.loginSubmitClicked = false
+        self.showError = true
         console.log(error);
       })
 
