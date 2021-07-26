@@ -321,22 +321,38 @@ exports.getSingleProcessedMessageDetails = async function (auth, message) {
             let mail_data = res.data
             let headers = mail_data.payload.headers
 
+            //console.log("mail_data", mail_data)
+
             if(mail_data.payload.mimeType == "multipart/mixed")
             {
+                console.log("mail data3", mail_data)
                 let messageId = headers.find(obj => obj.name == "Message-ID")
                 let mail_data_alternative = mail_data.payload.parts.find(x => x.mimeType == "multipart/alternative")
-                console.log("mail_data.payload", mail_data.payload)
-                console.log("mail_data.payload.parts", mail_data.payload.parts)
-                console.log("message part", mail_data_alternative)
-                console.log("message part data", mail_data.payload)
-                let html_part = mail_data_alternative.parts.find(y => y.mimeType == "text/html")
-                let buff = new Buffer.from(html_part.body.data, 'base64')
-                let text = buff.toString('utf8')
-                let attachments = mail_data.payload.parts.filter(obj => obj.mimeType != "multipart/alternative")
-                mail_data.decoded_attachments = attachments
+                if(mail_data_alternative)
+                {
+                    console.log("mail_data.payload", mail_data.payload)
+                    console.log("mail_data.payload.parts", mail_data.payload.parts)
+                    console.log("message part", mail_data_alternative)
+                    console.log("message part data", mail_data.payload)
+                    let html_part = mail_data_alternative.parts.find(y => y.mimeType == "text/html")
+                    let buff = new Buffer.from(html_part.body.data, 'base64')
+                    let text = buff.toString('utf8')
+                    let attachments = mail_data.payload.parts.filter(obj => obj.mimeType != "multipart/alternative")
+                    mail_data.decoded_attachments = attachments
 
-                mail_data.decoded_body = []
-                mail_data.decoded_body[0] = text
+                    mail_data.decoded_body = []
+                    mail_data.decoded_body[0] = text
+                }
+
+                let mail_data_related = mail_data.payload.parts.find(x => x.mimeType == "multipart/related")
+                if (mail_data_related)
+                {
+                    let buff = new Buffer.from(textHtml.body.data, 'base64')
+                    let text = buff.toString('utf8');
+                    mail_data.decoded_body = []
+                    mail_data.decoded_body[0] = text
+                }
+
                 /*if(text.includes("</body>"))
                 {
                     //<body> exists
@@ -364,6 +380,7 @@ exports.getSingleProcessedMessageDetails = async function (auth, message) {
             }
             else if (mail_data.payload.mimeType == "multipart/alternative")
             {
+                //console.log("mail data2", mail_data)
                 if(mail_data.payload.body.data)
                 {
                     let buff = new Buffer.from(mail_data.payload.body.data, 'base64')
@@ -386,6 +403,60 @@ exports.getSingleProcessedMessageDetails = async function (auth, message) {
                 let text = buff.toString('utf8');
                 mail_data.decoded_body = []
                 mail_data.decoded_body[0] = text
+                console.log("mail data", mail_data)
+            }
+            else if (mail_data.payload.mimeType == "multipart/related")
+            {
+                //check if alternative
+                let multipartAlternative = mail_data.payload.parts.find(obj => obj.mimeType == "multipart/alternative")
+                if(multipartAlternative)
+                {
+                    if(multipartAlternative.body.data)
+                    {
+                        let buff = new Buffer.from(multipartAlternative.body.data, 'base64')
+                        let text = buff.toString('utf8');
+                        mail_data.decoded_body = []
+                        mail_data.decoded_body[0] = text
+                    }
+                    if(multipartAlternative.parts)
+                    {
+                        let obj = multipartAlternative.parts.find(x => x.mimeType === 'text/html')
+                        let buff = new Buffer.from(obj.body.data, 'base64');
+                        let text = buff.toString('utf8');
+                        mail_data.decoded_parts = []
+                        mail_data.decoded_parts[0] = text
+                    }
+                }
+
+                //check if text/html
+                let textHtml = mail_data.payload.parts.find(obj => obj.mimeType == "text/html")
+                if(textHtml)
+                {
+                    let buff = new Buffer.from(textHtml.body.data, 'base64')
+                    let text = buff.toString('utf8');
+                    mail_data.decoded_body = []
+                    mail_data.decoded_body[0] = text
+                }
+
+
+                /*let attachments = mail_data.payload.parts.filter(obj => (obj.mimeType == "image/jpeg" || obj.mimeType == "image/png"))
+                //mail_data.decoded_attachments = attachments
+
+                mail_data.decoded_related_images = attachments
+
+
+                console.log("decoded_attachments", attachments.length)*/
+
+                /*for (let i = 0; i < mail_data.payload.parts.length; i++)
+                {
+
+                }*/
+                /*if(mail_data.payload.parts)
+                {
+                    console.log("mail parts", mail_data.payload.parts[0])
+                    console.log("mail parts", mail_data.payload.parts[1])
+
+                }*/
             }
 
             resolve(mail_data)

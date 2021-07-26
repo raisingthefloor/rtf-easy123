@@ -205,6 +205,28 @@ class GmailController {
                         i++
                     }
                 }
+
+                /*console.log("decoded_related_images", mail_detail.decoded_related_images)
+                console.log("datatype ", mail_detail.decoded_related_images, typeof mail_detail.decoded_related_images, Array.isArray(mail_detail.decoded_related_images))*/
+                //console.log("decoded_attachments1", mail_detail.decoded_related_images.length)
+                /*if (mail_detail.decoded_related_images)
+                {
+                    for (let attachment of mail_detail.decoded_attachments)
+                    {
+                        console.log("attachment", attachment)
+                        let attachment_data = await GoogleManager.attachmentData(oAuth2Client, messageId, attachment)
+                        mail_detail.decoded_related_images[i].attachment_data = attachment_data
+                    }
+                }*/
+
+                /*for (let j = 0; j < mail_detail.decoded_related_images.length; j++)
+                {
+                    let attachment_data = await GoogleManager.attachmentData(oAuth2Client, messageId, mail_detail.decoded_related_images[j])
+                    mail_detail.decoded_related_images[j].attachment_data = attachment_data
+                    mail_detail.decoded_related_images[j].content_id = mail_detail.decoded_related_images[j].headers.find(obj => obj.name == "X-Attachment-Id").value
+                    //console.log("now", mail_detail.decoded_related_images[j])
+                }*/
+
                 allUnreadMailDetails.push(mail_detail)
             }
             oAuth2Client.expressResponse.send(allUnreadMailDetails)

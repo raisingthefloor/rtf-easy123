@@ -800,6 +800,8 @@ export default {
                   }
 
                 }
+
+
               })
               //console.log(self.mails)
               //self.generateMailsHTML()
