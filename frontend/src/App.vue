@@ -32,6 +32,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 <script>
 import SimpleLayout from './layouts/SimpleLayout'
 import AdminLayout from './layouts/AdminLayout'
+import AssistantLayout from "./layouts/AssistantLayout";
 
 require('@/assets/home-style.css')
 
@@ -39,12 +40,33 @@ export default {
   name: 'App',
   computed: {
     layout () {
-      return this.$store.getters.layout
+      console.log("route", this.$route)
+      let path = this.$route.fullPath
+      const pathArr = path.split("/")
+      if(pathArr[1] == "static")
+      {
+        if(pathArr[2] == "assistant" && pathArr[3] == "signup")
+        {
+          return "simple-layout"
+        }
+        else
+        {
+          return "assistant-layout"
+        }
+
+        //console.log(pathArr)
+      }
+      else {
+        return this.$store.getters.layout
+      }
+
+
     }
   },
   components: {
     'simple-layout': SimpleLayout,
-    'admin-layout': AdminLayout
+    'admin-layout': AdminLayout,
+    'assistant-layout': AssistantLayout
     // define as many layouts you want for the application
   }
 }

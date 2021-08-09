@@ -39,6 +39,12 @@ import admin from "../middleware/admin"
 import assistant from "../middleware/assistant"
 import subscribed from "../middleware/subscribed"
 
+//static ui component
+import StaticAssistantSignup from "@/components/staticui/backend/StaticAssistantSignup"
+import StaticAssistantCreateUser from "@/components/staticui/backend/StaticAssistantCreateUser"
+import StaticAssistantEditUser from "@/components/staticui/backend/StaticAssistantEditUser"
+import StaticAssistantUsers from "@/components/staticui/backend/StaticAssistantUsers"
+
 Vue.use(Router)
 
 const router = new Router({
@@ -100,6 +106,28 @@ const router = new Router({
             meta: {
                 middleware: assistant
             }
+        },
+
+        //static ui for backend
+        {
+            path: '/static/assistant/signup',
+            name: 'StaticAssistantSignup',
+            component: StaticAssistantSignup
+        },
+        {
+            path: '/static/assistant/create-user',
+            name: 'StaticAssistantCreateUser',
+            component: StaticAssistantCreateUser
+        },
+        {
+            path: '/static/assistant/edit-user',
+            name: 'StaticAssistantEditUser',
+            component: StaticAssistantEditUser
+        },
+        {
+            path: '/static/assistant/users',
+            name: 'StaticAssistantUsers',
+            component: StaticAssistantUsers
         }
     ]
 })
