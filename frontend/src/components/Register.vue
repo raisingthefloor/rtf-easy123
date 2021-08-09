@@ -227,6 +227,11 @@ export default {
                 self.$store.commit('SET_LAYOUT', 'admin-layout')
                 self.$router.push({ 'name': 'Admin' })
               }
+              else if(response.data.data.role == "assistant")
+              {
+                self.$store.commit('SET_LAYOUT', 'admin-layout')
+                self.$router.push({ 'name': 'Assistant' })
+              }
               else {
                 self.$store.commit('SET_LAYOUT', 'simple-layout')
                 self.$router.push({ 'name': 'HomeWorking' })

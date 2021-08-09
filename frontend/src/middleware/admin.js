@@ -38,10 +38,15 @@ export default function admin({ next }) {
         store.commit('SET_LAYOUT', 'simple-layout')
         router.push('/home-working')
     }
+    else if (store.state.AppActiveUser.role == "assistant")
+    {
+        store.commit('SET_LAYOUT', 'admin-layout')
+        router.push('/assistant')
+    }
     else {
         store.commit('SET_LAYOUT', 'simple-layout')
         router.push('/')
     }
 
-    return next();
+    //return next();
 }

@@ -37,7 +37,7 @@ const mutations = {
         }
     },
     SET_INITIAL_LAYOUT(state) {
-        if(state.AppActiveUser.role == "admin")
+        if(state.AppActiveUser.role == "admin" || state.AppActiveUser.role == "assistant")
         {
             state.layout = "admin-layout"
         }
