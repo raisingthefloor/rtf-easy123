@@ -32,8 +32,11 @@ import HomeWorking from "@/components/HomeWorking"
 
 //admin components
 import AdminUser from "@/components/admin/user/List"
+import AssistantUser from "@/components/assistant/user/List"
+import AssistantCreateUser from "@/components/assistant/user/Create"
 
 import admin from "../middleware/admin"
+import assistant from "../middleware/assistant"
 import subscribed from "../middleware/subscribed"
 
 Vue.use(Router)
@@ -78,6 +81,24 @@ const router = new Router({
             component: AdminUser,
             meta: {
                 middleware: admin
+            }
+        },
+
+        //Assistant Routes
+        {
+            path: '/assistant',
+            name: 'Assistant',
+            component: AssistantUser,
+            meta: {
+                middleware: assistant
+            }
+        },
+        {
+            path: '/assistant/create-user',
+            name: 'AssistantCreateUser',
+            component: AssistantCreateUser,
+            meta: {
+                middleware: assistant
             }
         }
     ]

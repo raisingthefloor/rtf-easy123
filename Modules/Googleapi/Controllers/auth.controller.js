@@ -128,7 +128,8 @@ class AuthController {
             data = await User.create({
                 name: name,
                 email: email,
-                password: hash
+                password: hash,
+                role: 'assistant'
             })
 
             // generate token and save

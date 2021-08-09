@@ -39,19 +39,7 @@ export default {
   name: 'App',
   computed: {
     layout () {
-      let user = localStorage.getItem("user")
-      if (user !== null) {
-        user = JSON.parse(user)
-        if (user.role == "admin") {
-          return 'admin-layout'
-        } else {
-          return this.$store.getters.layout
-        }
-      }
-      else {
-        return this.$store.getters.layout
-      }
-
+      return this.$store.getters.layout
     }
   },
   components: {

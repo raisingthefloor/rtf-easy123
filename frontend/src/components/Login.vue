@@ -163,6 +163,12 @@ export default {
           self.$router.push({ 'name': 'Admin' })
           self.$store.commit('SET_LAYOUT', 'admin-layout')
         }
+        else if(user.role == "assistant")
+        {
+          self.$router.push({ 'name': 'Assistant' })
+          //console.log("redirect to assistant")
+          self.$store.commit('SET_LAYOUT', 'admin-layout')
+        }
         else
         {
           self.$router.push({ 'name': 'HomeWorking' })

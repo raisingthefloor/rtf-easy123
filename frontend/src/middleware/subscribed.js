@@ -29,6 +29,7 @@ import router from "../router/index";
 export default function subscribed({ next, to }) {
 //export default function subscribed({ next }) {
     store.commit('INITIALISE_STORE')
+    console.log("assistant middleware")
     if(store.state.AppActiveUser.role == "subscribed")
     {
         return next();
@@ -37,6 +38,12 @@ export default function subscribed({ next, to }) {
     {
         store.commit('SET_LAYOUT', 'admin-layout')
         router.push('/admin')
+    }
+    else if (store.state.AppActiveUser.role == "assistant")
+    {
+        console.log("assistant user")
+        store.commit('SET_LAYOUT', 'admin-layout')
+        router.push('/assistant')
     }
     else
     {
