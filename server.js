@@ -32,6 +32,7 @@ const path = require('path')
 let tls = require('tls');
 const Sentry = require("@sentry/node");
 const Tracing = require("@sentry/tracing");
+const upload = require('express-fileupload')
 
 
 Sentry.init({
@@ -51,6 +52,7 @@ const app = module.exports = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors())
+app.use(upload())
 
 
 app.use(bodyParser.urlencoded({extended: true}));

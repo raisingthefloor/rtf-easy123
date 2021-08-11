@@ -1,14 +1,15 @@
 <template>
   <div class="row">
     <div class="col-md-12">
-      <a href="javascript:void(0)" class="btn btn-sm btn-primary float-end mb-3" @click="addContact">Add Contact</a>
+
     </div>
     <div class="col-md-3">
+      <a href="javascript:void(0)" class="btn btn-sm btn-primary mb-3 me-4" @click="addContact" v-show="!show_add_contact_form">Add Contact</a>
       <div class="address-book" style="position: relative;">
         <input type="text" style="width: 100%; height: 35px;" v-model="search_contact" placeholder="Search All Contacts">
         <div class="list-group address-book-contact-list" id="address-book-contact-list" style="max-height: 75vh; overflow-y: scroll;">
           <a href="#" class="list-group-item list-group-item-action address-book-list-item" v-bind:class="(current_contact.id == contact.id)?'active':''"  v-for="contact in contacts" :key="contact.id" @click="showContact(contact.id)">
-            {{ contact.first_name + " " + contact.last_name }}
+            {{ contact.name }}
           </a>
 
         </div>
@@ -51,31 +52,75 @@
     <div class="col-md-9">
       <div class="card">
         <div class="card-body">
+
           <div class="row g-0">
             <div v-show="show_add_contact_form">
-              <div class="mb-3 mt-3">
-                <label for="firstname" class="form-label">First Name</label>
-                <input type="text" class="form-control" id="firstname" v-model="first_name">
-              </div>
-              <div class="mb-3">
-                <label for="lastname" class="form-label">Last Name</label>
-                <input type="text" class="form-control" id="lastname" v-model="last_name">
-              </div>
-              <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" v-model="email">
-              </div>
-              <file-pond
-                  name="test"
-                  ref="pond"
-                  label-idle="Drop files here..."
-                  v-bind:allow-multiple="true"
-                  accepted-file-types="image/jpeg, image/png"
-                  server="/api"
-                  v-bind:files="myFiles"
-                  v-on:init="handleFilePondInit"
-              />
-              <button class="btn btn-primary" @click="saveContact">Add</button>
+              <form @submit.prevent="saveContact()">
+                <file-pond
+                    name="avatar"
+                    ref="avatarpond"
+                    allow-image-crop="true"
+                    image-crop-aspect-ratio="200:250"
+                    label-idle="Drop profile picture here... or choose from library"
+                    v-bind:allow-multiple="false"
+                    accepted-file-types="image/jpeg, image/png"
+                    :server="getUploadURL"
+                    max-files="1"
+                    v-bind:files="myFiles"
+                    v-on:init="handleFilePondInit"
+                    v-on:processfile="handleFilePondProcessfile"
+                    v-bind:required="true"
+                />
+                <span class="form-text text-danger" v-show="errors.avatar">Please select image</span>
+
+                <div class="mb-3 mt-3">
+                  <label for="name" class="form-label">Name</label>
+                  <input type="text" class="form-control" id="name" v-model="name" required>
+                  <span class="form-text text-danger" v-show="errors.name">Please enter name</span>
+                </div>
+                <div class="mb-3 mt-3">
+                  <label for="skypeid" class="form-label">Skype ID</label>
+                  <input type="text" class="form-control" id="skypeid" v-model="skypeid">
+                </div>
+                <div class="mb-3 mt-3">
+                  <label for="zoom_meeting_url" class="form-label">Zoom Meeting URL</label>
+                  <input type="text" class="form-control" id="zoom_meeting_url" v-model="zoom_meeting_url">
+                  <span class="form-text text-danger" v-show="errors.name">Please enter Zoom Meeting URL</span>
+                </div>
+                <div class="mb-3 mt-3">
+                  <label for="notes" class="form-label">Notes</label>
+                  <textarea name="notes" id="notes" rows="3" class="form-control" v-model="notes"></textarea>
+                  <span class="form-text text-danger" v-show="errors.name">Please enter Notes</span>
+                </div>
+                <div class="mb-3">
+                  <div class="row">
+                    <div class="col-md-6">
+                      <label for="email" class="form-label">Email</label>
+                      <div style="position:relative;">
+                        <input type="email" class="form-control" id="email" v-model="email" required>
+                        <span style="position: absolute; right: 5px; top: 9px;">X</span>
+                      </div>
+
+
+
+                    </div>
+                    <div class="col-md-12">
+                      <div class="d-grid gap-2 mt-2">
+                        <button class="btn btn-sm btn-info btn-block" type="button">Add Email</button>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <span class="form-text text-danger" v-show="errors.email">Please enter email</span>
+                </div>
+
+                <div>
+                  <button class="btn btn-primary me-2" type="submit">Save</button>
+                  <button class="btn btn-danger" @click="saveContactCancel" type="button">Cancel</button>
+                </div>
+              </form>
+
             </div>
             <div class="col-md-4" v-show="!show_add_contact_form">
 <!--              <img src="https://picsum.photos/200/250" class="img-fluid rounded-start" alt="...">-->
@@ -84,9 +129,13 @@
             <div class="col-md-8" v-show="!show_add_contact_form">
 
               <div class="card-body">
-                <h5 class="card-title">{{ current_contact.first_name }} {{ current_contact.last_name }}</h5>
-                <p class="card-text">{{ current_contact.email }}</p>
+                <h5 class="card-title">{{ current_contact.name }} </h5>
+                <p class="card-text">{{ current_contact.email.join(", ") }}</p>
+                <p class="card-text">Skype ID: {{ current_contact.skypeid }}</p>
+                <p class="card-text">Zoom Meeting URL: {{ current_contact.zoom_meeting_url }}</p>
+                <p>{{ current_contact.notes }}</p>
                 <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                <a href="javascript:void(0)" class="btn btn-sm btn-info me-2" @click="editContatct(current_contact.id)">Edit Contact</a>
                 <a href="javascript:void(0)" class="btn btn-sm btn-danger" @click="deleteContatct(current_contact.id)">Delete Contact</a>
               </div>
             </div>
@@ -158,10 +207,10 @@ import FilePondPluginImagePreview from "filepond-plugin-image-preview";
 // Create component
 const FilePond = vueFilePond(
     FilePondPluginFileValidateType,
-    FilePondPluginImagePreview
+    FilePondPluginImagePreview,
+    FilePondPluginImageCrop
 );
 
-FilePond.registerPlugin(FilePondPluginImageCrop)
 
 
 import contacts from './fackcontacts.json'
@@ -176,12 +225,26 @@ export default {
       current_contact: {},
       search_contact: null,
       show_add_contact_form: false,
-      first_name: null,
-      last_name: null,
-      email: null,
+      name: null,
+      skypeid: null,
+      zoom_meeting_url: null,
+      notes: null,
+      email: [],
 
       id: 2000,
-      myFiles: []
+      edit_id: null,
+      myFiles: [],
+      current_filepond_image_url: null,
+      errors: {
+        name: false,
+        email: false,
+        avatar: false
+      }
+    }
+  },
+  computed: {
+    getUploadURL() {
+      return process.env.VUE_APP_API_HOST_NAME + "/api/upload-image"
     }
   },
   watch: {
@@ -203,7 +266,7 @@ export default {
   },
   mounted() {
     this.contacts.sort(function (a, b) {
-      return a.first_name.localeCompare(b.first_name)
+      return a.name.localeCompare(b.name)
     })
     this.current_contact = this.contacts[0]
     //this.getContacts()
@@ -236,7 +299,7 @@ export default {
       let move_to_index = 0
       for (let i = 0; i < this.contacts.length; i++)
       {
-        if(this.contacts[i].first_name.charAt(0) == name || this.contacts[i].first_name.charAt(0) == name.toUpperCase())
+        if(this.contacts[i].name.charAt(0) == name || this.contacts[i].name.charAt(0) == name.toUpperCase())
         {
           move_to_index = i
           if(move_to_index > 1)
@@ -263,26 +326,90 @@ export default {
       this.contacts = this.contacts.filter(obj => obj.id != id)
       this.current_contact = this.contacts[0]
     },
+    editContatct(id) {
+      this.edit_id = id
+      this.show_add_contact_form = true
+      this.current_filepond_image_url = null
+      this.name = this.current_contact.name
+      this.skypeid = this.current_contact.skypeid
+      this.zoom_meeting_url = this.current_contact.zoom_meeting_url
+      this.notes = this.current_contact.notes
+      this.email = this.current_contact.email
+    },
     addContact() {
       this.show_add_contact_form = true
+      this.current_filepond_image_url = null
+      this.name = null
+      this.email = []
+      this.skypeid = null
+      this.zoom_meeting_url = null
+      this.notes = null
+      this.id++
+      this.$refs.avatarpond.removeFile()
+    },
+    saveContactCancel() {
+      this.show_add_contact_form = false
     },
     saveContact() {
-      this.contacts.push({
-        id: this.id,
-        first_name: this.first_name,
-        last_name: this.last_name,
-        email: this.email
-      })
-      this.contacts.sort(function (a, b) {
-        return a.first_name.localeCompare(b.first_name)
-      })
-      this.show_add_contact_form = false
-      this.id = this.id + 1
+      //check the contact validation
+      if(!(this.name && this.email && this.current_filepond_image_url))
+      {
+        if(!this.name) {
+          this.errors.name = true
+        }
+        else {
+          this.errors.name = false
+        }
+        if (!this.email) {
+          this.errors.email = true
+        }
+        else {
+          this.errors.email = false
+        }
+        if (!this.current_filepond_image_url)
+        {
+          this.errors.avatar = true
+        }
+        else {
+          this.errors.avatar = false
+        }
+        return
+      }
+      else {
+        this.errors.name = false
+        this.errors.email = false
+        this.errors.avatar = false
+
+        this.contacts.push({
+          id: ++this.id,
+          name: this.name,
+          skypeid: this.skypeid,
+          zoom_meeting_url: this.zoom_meeting_url,
+          notes: this.notes,
+          email: [this.email],
+          image: this.current_filepond_image_url
+        })
+        this.contacts.sort(function (a, b) {
+          return a.name.localeCompare(b.name)
+        })
+        this.show_add_contact_form = false
+      }
+
+
+
     },
     handleFilePondInit: function () {
-      console.log("FilePond has initialized");
+      //console.log("FilePond has initialized");
 
       // FilePond instance methods are available on `this.$refs.pond`
+    },
+    handleFilePondProcessfile: function (err, file) {
+      //console.log("FilePond has handleFilePondProcessfile");
+      let imageData = JSON.parse(file.serverId)
+
+      this.current_filepond_image_url = imageData.data
+
+      //console.log("imageURL", imageData)
     },
   }
 }

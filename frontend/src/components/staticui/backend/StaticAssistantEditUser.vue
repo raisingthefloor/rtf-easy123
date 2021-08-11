@@ -23,53 +23,17 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 * Consumer Electronics Association Foundation
 -->
 <template>
-  <main class="container-fluid pb-3 flex-grow-1 d-flex flex-column flex-sm-row overflow-auto">
-    <div class="row flex-grow-1 flex-grow-0 mt-2">
-      <div class="col-sm-2 flex-grow-sm-1 flex-shrink-1 flex-grow-0 sticky-top pb-sm-0 pb-3">
-        <div class="bg-light border rounded-3 p-1 h-100 sticky-top">
+  <div class="container-fluid">
+    <nav class="mt-3" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item"> <router-link to="/static/assistant/users">Members</router-link></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit Member</li>
+      </ol>
+    </nav>
 
-          <ul class="nav nav-pills flex-sm-column flex-row mb-auto justify-content-between text-truncate">
-            <li class="nav-item">
-              <a href="#" class="nav-link px-2 text-truncate">
-                <i class="bi bi-house fs-4"></i>
-                <span class="d-none d-sm-inline">Profile</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link px-2 text-truncate">
-                <i class="bi bi-speedometer fs-4"></i>
-                <span class="d-none d-sm-inline">IMAP Details</span>
-              </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link px-2 text-truncate"><i class="bi bi-card-text fs-4"></i>
-                <span class="d-none d-sm-inline">Address Book</span> </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link px-2 text-truncate"><i class="bi bi-bricks fs-4"></i>
-                <span class="d-none d-sm-inline">Photos</span> </a>
-            </li>
-            <li>
-              <a href="#" class="nav-link px-2 text-truncate"><i class="bi bi-people fs-4"></i>
-                <span class="d-none d-sm-inline">EasyWeb</span> </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div class="col overflow-auto h-100">
-
-        <nav class="mt-3" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"> <router-link to="/static/assistant/users">Users</router-link></li>
-          <li class="breadcrumb-item active" aria-current="page">Edit End User</li>
-        </ol>
-      </nav>
-
-
-
-        <div class="row">
+    <div class="row">
         <div class="col-md-12">
-          <h4 class="mb-3">Edit End User</h4>
+          <h4 class="mb-3">Edit Member</h4>
 
           <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
@@ -104,7 +68,21 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
               </div>
               <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password">
+                <div style="position:relative;">
+                  <input :type="(show_password_protected)?'password':'text'" class="form-control" id="password">
+                  <i class="far fa-eye" style="position: absolute;right: 9px; top: 12px; cursor: pointer;" @click="show_password_protected=false" v-show="show_password_protected"></i>
+                  <i class="fas fa-eye-slash" style="position: absolute;right: 9px; top: 12px; cursor: pointer;" @click="show_password_protected=true" v-show="!show_password_protected"></i>
+                </div>
+
+
+              </div>
+              <div class="mb-3">
+                <label for="role" class="form-label">Role</label>
+                <select name="role" id="role" class="form-control" aria-label="Default select example">
+                  <option value="End User">End User</option>
+                  <option value="Family & Friends">Family & Friends</option>
+                  <option value="Assistant">Assistant</option>
+                </select>
               </div>
               <button type="submit" class="btn btn-primary mb-5">Submit</button>
             </div>
@@ -123,7 +101,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
               </div>
               <div class="mb-3">
                 <label for="imap_password" class="form-label">IMAP Password</label>
-                <input type="text" class="form-control" id="imap_password">
+                <input type="password" class="form-control" id="imap_password">
               </div>
 
               <button type="submit" class="btn btn-primary mb-5">Submit</button>
@@ -136,10 +114,10 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           </div>
 
         </div>
-      </div>
-      </div>
     </div>
-  </main>
+
+  </div>
+
 
 </template>
 
@@ -197,7 +175,8 @@ export default {
   },
   data() {
     return {
-      users: []
+      users: [],
+      show_password_protected: true
     }
   },
   mounted() {

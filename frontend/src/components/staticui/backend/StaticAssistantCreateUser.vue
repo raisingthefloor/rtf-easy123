@@ -26,8 +26,8 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
   <div class="container-fluid">
     <nav class="mt-3" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"> <router-link to="/static/assistant/users">Users</router-link></li>
-        <li class="breadcrumb-item active" aria-current="page">Create End User</li>
+        <li class="breadcrumb-item"> <router-link to="/static/assistant/users">Members</router-link></li>
+        <li class="breadcrumb-item active" aria-current="page">Create Member</li>
       </ol>
     </nav>
 
@@ -37,7 +37,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
       <div class="col-md-3">
       </div>
       <div class="col-md-6">
-        <h4 class="mb-3">Create End User</h4>
+        <h4 class="mb-3">Create Member</h4>
         <form class="">
           <div class="mb-3">
             <label for="firstname" class="form-label">First Name</label>
@@ -54,6 +54,14 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           <div class="mb-3">
             <label for="password" class="form-label">Password</label>
             <input type="password" class="form-control" id="password">
+          </div>
+          <div class="mb-3">
+            <label for="role" class="form-label">Role</label>
+            <select name="role" id="role" class="form-control" aria-label="Default select example">
+              <option value="End User">End User</option>
+              <option value="Family & Friends">Family & Friends</option>
+              <option value="Assistant">Assistant</option>
+            </select>
           </div>
           <button type="submit" class="btn btn-primary mb-5">Submit</button>
         </form>

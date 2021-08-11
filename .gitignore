@@ -12,3 +12,6 @@ node_modules
 access.log
 /uploads
 /db
+
+#ignore below
+/public/uploads/*

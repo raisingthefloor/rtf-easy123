@@ -26,13 +26,14 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
   <div class="container-fluid">
     <nav class="mt-3" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item active" aria-current="page"> Users</li>
+        <li class="breadcrumb-item active" aria-current="page"> Members</li>
       </ol>
     </nav>
 
     <div class="table-responsive">
       <div>
-        <router-link to="/static/assistant/create-user" class="float-end btn btn-primary">Create End User</router-link>
+        <h3 class="float-start">John Doe Family</h3>
+        <router-link to="/static/assistant/create-user" class="float-end btn btn-primary">Create Member</router-link>
       </div>
       <table class="table mt-5">
         <thead>
@@ -50,8 +51,8 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           <td>{{ user.role }}</td>
           <td>
             <!--            <button type="button" class="btn btn-danger btn-sm" @click="deleteUser(user.id)" v-show="user.role != 'admin'">Delete</button>-->
-            <button type="button" class="btn btn-info btn-sm me-2" @click="editUser(user.id)">Edit</button>
-            <button type="button" class="btn btn-danger btn-sm" @click="deleteUserAlert(user.id)" v-show="user.role != 'admin'">Delete</button>
+            <button type="button" v-show="user.role != 'Assistant/Owner'" class="btn btn-info btn-sm me-2" @click="editUser(user.id)">Edit</button>
+            <button type="button" class="btn btn-danger btn-sm" @click="deleteUserAlert(user.id)" v-show="user.role != 'admin' && user.role != 'Assistant/Owner'">Delete</button>
           </td>
         </tr>
         <tr v-if="!users.length" >
@@ -81,27 +82,34 @@ export default {
       users: [
         {
           id: 1,
+          first_name: "John",
+          last_name: "Doe",
+          email: "john.doe@plenartech.com",
+          role: "Assistant/Owner"
+        },
+        {
+          id: 2,
           first_name: "Jatin",
           last_name: "Raikwar",
           email: "jatin.raikwar@plenartech.com",
           role: "End User"
         },
         {
-          id: 2,
+          id: 3,
           first_name: "Mayur",
           last_name: "Upadhayay",
           email: "mayur.upadhayay@plenartech.com",
           role: "End User"
         },
         {
-          id: 3,
+          id: 4,
           first_name: "Parikshit",
           last_name: "Thakur",
           email: "parikshit.thakur@plenartech.com",
           role: "Family & Friends"
         },
         {
-          id: 4,
+          id: 5,
           first_name: "Hardik",
           last_name: "Shah",
           email: "hardik.shah@plenartech.com",

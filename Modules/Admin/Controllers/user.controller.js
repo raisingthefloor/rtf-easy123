@@ -77,6 +77,40 @@ class UserController {
             response.send(data)
         }
     }
+
+    /**
+     * Upload image
+     * @param request
+     * @param response
+     * @returns URL
+     */
+    async uploadImage(request, response) {
+        var url = require('url');
+
+        let avatar = request.files.avatar
+        let filename = avatar.name
+
+        avatar.mv('./public/uploads/'+filename, function (err) {
+            if(err) {
+                response.status(406).send({
+                    status: false,
+                    data: err,
+                    message: 'failed'
+                })
+            }
+            else {
+                response.status(200).send({
+                    status: true,
+                    data: url.format({
+                        protocol: request.protocol,
+                        host: request.get('host'),
+                        pathname: '/uploads/'+filename
+                    }),
+                    message: 'success'
+                })
+            }
+        })
+    }
 }
 
 module.exports = new UserController()

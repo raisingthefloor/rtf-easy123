@@ -33,7 +33,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="#">Users</a>
+              <a class="nav-link active" aria-current="page" href="#">Members</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="javascript:void(0)" @click="logoutUser">Logout</a>
@@ -49,9 +49,13 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
 <style scoped src="../assets/bootstrap-5/css/bootstrap.min.css">
 </style>
+<style src="../assets/fontawesome/css/all.css"></style>
+
+<script src="../assets/bootstrap-5/js/popper.min.js"></script>
+<script src="../assets/bootstrap-5/js/bootstrap.js"></script>
+
 
 <script>
-import 'bootstrap/dist/js/bootstrap.bundle'
 export default {
   methods: {
     logoutUser() {
