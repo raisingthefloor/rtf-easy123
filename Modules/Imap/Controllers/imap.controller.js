@@ -28,8 +28,8 @@ const logger = require('../../../logger/api.logger')
 //const {Buffer} = require('buffer');
 const simpleParser = require('mailparser').simpleParser;
 
-const { StringDecoder } = require('string_decoder');
-const decoder = new StringDecoder('utf8');
+//const { StringDecoder } = require('string_decoder');
+//const decoder = new StringDecoder('utf8');
 
 //Imap connection handler to handle imap connection to remote IMAP server
 //Configurations are hard coded for now
@@ -73,14 +73,15 @@ class ImapController{
                         
                         //message body is loaded
                         msg.on('body', (stream, info) => {
-                            let bufferedData = "";
+                            //let bufferedData = "";
                             //receive data from buffer
-                            stream.on('data', async (chunk) => {
+                            /*stream.on('data', async (chunk) => {
                                 bufferedData += chunk.toString('utf-8');
                                 //parser.write(chunk.toString("utf8"));
-                                /*let parsed = await simpleParser(bufferedData);
-                                console.log(parsed);*/
-                            });
+                                let parsed = await simpleParser(bufferedData);
+                                console.log(parsed);
+                            });*/
+                            
                             //using mailparser to parse message body
                             simpleParser(stream, (err, mail) => {
                                 const {to, from, subject, text, html, date, attachments, messageId } = mail;

@@ -697,7 +697,7 @@ export default {
     initMount() {
       var self = this
 
-      if(this.$store.state.AppActiveUser.googleEmail == null || this.$store.state.AppActiveUser.googleEmail == "")
+      /*if(this.$store.state.AppActiveUser.googleEmail == null || this.$store.state.AppActiveUser.googleEmail == "")
       {
         swal({
           text: self.$t('connect_google_account_desc'),
@@ -735,11 +735,11 @@ export default {
           }
         })
 
-      }
+      }*/
 
       //get unread mails
-      if(this.$store.state.AppActiveUser.googleEmail != "")
-      {
+      //if(this.$store.state.AppActiveUser.googleEmail != "")
+      //{
         axios.get(process.env.VUE_APP_API_HOST_NAME+'/api/users/1/messages', {
         })
             .then(function (response) {
@@ -807,7 +807,7 @@ export default {
             .catch(function (error) {
               console.log(error);
             });
-      }
+      //}
 
 
       this.people[0]=new Array("Adam Smith","Anna Johnson","Becky Jones");  //AB
