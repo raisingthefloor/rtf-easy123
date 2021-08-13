@@ -62,7 +62,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
       <Polaroid2
           :mail="mail"
-          :key="mail.id"
+          :key="mail.messageId"
           v-for="mail in mails"
           @mousedown="polaroidMousedown($event)"
           @mouseup="polaroidMouseup($event)"
@@ -697,7 +697,7 @@ export default {
     initMount() {
       var self = this
 
-      if(this.$store.state.AppActiveUser.googleEmail == null || this.$store.state.AppActiveUser.googleEmail == "")
+      /*if(this.$store.state.AppActiveUser.googleEmail == null || this.$store.state.AppActiveUser.googleEmail == "")
       {
         swal({
           text: self.$t('connect_google_account_desc'),
@@ -735,12 +735,12 @@ export default {
           }
         })
 
-      }
+      }*/
 
       //get unread mails
-      if(this.$store.state.AppActiveUser.googleEmail != "")
-      {
-        axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/get-unread-mails/', {
+      //if(this.$store.state.AppActiveUser.googleEmail != "")
+      //{
+        axios.get(process.env.VUE_APP_API_HOST_NAME+'/api/users/1/messages', {
         })
             .then(function (response) {
               if(response.data.error)
@@ -748,66 +748,66 @@ export default {
                 //console.log("Mails did not came")
                 return
               }
-              self.mails = response.data
+              self.mails = response.data.data
               self.loading_mails = false
-              self.mails.forEach(function(mail, index) {
-                if (!mail.r) {
-                  mail.r = "unread"
-                }
-                if (!mail.t) {
-                  mail.t = "none"
-                }
-                if (!mail.in) {
-                  mail.in = "c"
-                }
-
-                //add attachment HTML in mail
-                let attachmentHTML = ""
-                if(mail.decoded_attachments && mail.decoded_attachments.length)
-                {
-                  let i = 0
-                  for (let decodedAttachment of mail.decoded_attachments)
-                  {
-                    if (decodedAttachment.attachment_data.data.length > 0)
-                    {
-                      let dataBase64Rep = decodedAttachment.attachment_data.data.replace(/-/g, '+').replace(/_/g, '/')
-                      let urlBlob = self.b64toBlob(dataBase64Rep, decodedAttachment.mimeType, decodedAttachment.attachment_data.size)
-
-                      attachmentHTML += `<a href="`+urlBlob+`" download="`+decodedAttachment.filename+`"> <div style="margin-top: 0.5rem; padding: 0.3rem; border: 1px solid #ccc; cursor: pointer;">
-                `+decodedAttachment.filename+`
-            </div></a>`
-                      URL.revokeObjectURL(urlBlob)
-                    }
-
-
-                    i++
+              /*self.mails.forEach(function(mail, index) {
+                  if (!mail.r) {
+                    mail.r = "unread"
+                  }
+                  if (!mail.t) {
+                    mail.t = "none"
+                  }
+                  if (!mail.in) {
+                    mail.in = "c"
                   }
 
-                  if(mail.payload.mimeType == "multipart/mixed")
+                  //add attachment HTML in mail
+                  let attachmentHTML = ""
+                  if(mail.decoded_attachments && mail.decoded_attachments.length)
                   {
-                    //check if </body> exist
-                    if(mail.decoded_body[0].includes("</body>"))
+                    let i = 0
+                    for (let decodedAttachment of mail.decoded_attachments)
                     {
-                      //<body> exists
-                      attachmentHTML += "</body>"
-                      mail.decoded_body[0].replace("</body>", attachmentHTML)
+                      if (decodedAttachment.attachment_data.data.length > 0)
+                      {
+                        let dataBase64Rep = decodedAttachment.attachment_data.data.replace(/-/g, '+').replace(/_/g, '/')
+                        let urlBlob = self.b64toBlob(dataBase64Rep, decodedAttachment.mimeType, decodedAttachment.attachment_data.size)
+
+                        attachmentHTML += `<a href="`+urlBlob+`" download="`+decodedAttachment.filename+`"> <div style="margin-top: 0.5rem; padding: 0.3rem; border: 1px solid #ccc; cursor: pointer;">
+                        `+decodedAttachment.filename+`
+                        </div></a>`
+                        URL.revokeObjectURL(urlBlob)
+                      }
+
+
+                      i++
                     }
-                    else
+
+                    if(mail.payload.mimeType == "multipart/mixed")
                     {
-                      //<body> does not exists
-                      mail.decoded_body[0] += attachmentHTML
+                      //check if </body> exist
+                      if(mail.decoded_body[0].includes("</body>"))
+                      {
+                        //<body> exists
+                        attachmentHTML += "</body>"
+                        mail.decoded_body[0].replace("</body>", attachmentHTML)
+                      }
+                      else
+                      {
+                        //<body> does not exists
+                        mail.decoded_body[0] += attachmentHTML
+                      }
                     }
-                  }
 
                 }
-              })
+              })*/
               //console.log(self.mails)
               //self.generateMailsHTML()
             })
             .catch(function (error) {
               console.log(error);
             });
-      }
+      //}
 
 
       this.people[0]=new Array("Adam Smith","Anna Johnson","Becky Jones");  //AB

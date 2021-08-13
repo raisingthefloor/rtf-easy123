@@ -20,10 +20,12 @@
     "express-validator": "^6.12.0",
     "googleapis": "^73.0.0",
     "jsonwebtoken": "^8.5.1",
+    "mailparser": "^3.3.0",
     "mongodb": "^3.6.3",
     "mongoose": "^5.11.10",
     "node-mailjet": "^3.3.4",
-    "pine": "^1.1.1"
+    "pine": "^1.1.1",
+    "qboxmail-imap": "^0.8.26"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"
