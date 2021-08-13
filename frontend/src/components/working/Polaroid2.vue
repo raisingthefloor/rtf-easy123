@@ -43,17 +43,17 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
     <div id='frontcontents' style='display:none;'>
       <div style='position:absolute; left: 12px; top: 5px; font:Times New Roman; font-size:20px'> From</div>
-      <div id="from" style='position:absolute; left: 12px; top: 29px; font:Times New Roman; font-size:20px;width:191px'>{{ strip_html_tags(findMailHeader('From')) }}</div>
+      <div id="from" style='position:absolute; left: 12px; top: 29px; font:Times New Roman; font-size:20px;width:191px'>{{ strip_html_tags(mail.from) }}</div>
       <div style='position:absolute; left: 120px; top: 104px; font:Times New Roman; font-size:20px' class="mail-to"> To</div>
-      <div style='position:absolute; left: 120px; top: 128px; font:Times New Roman; font-size:20px'> {{ strip_html_tags(findMailHeader('To')) }}</div>
+      <div style='position:absolute; left: 120px; top: 128px; font:Times New Roman; font-size:20px'> {{ strip_html_tags(mail.to) }}</div>
       <div style='position:absolute; width:300px; left: 10px; top: 204px; font:Times New Roman; font-size:18px; color:#333333' class="mail-subject">About:
-        {{ strip_html_tags(findMailHeader('Subject')) }}</div>
-      <input type="hidden" name="mail_subject" id="mail-subject" :value="findMailHeader('Subject')">
-      <input type="hidden" name="mail_header_from" id="mail-header-from" :value="findMailHeader('From')">
-      <input type="hidden" name="message_id" id="mail-header-message-id" :value="findMailHeader('Message-ID')">
-      <input type="hidden" name="references" id="mail-header-references" :value="findMailHeader('References')">
+        {{ strip_html_tags(mail.subject) }}</div>
+      <input type="hidden" name="mail_subject" id="mail-subject" :value="mail.subject">
+      <input type="hidden" name="mail_header_from" id="mail-header-from" :value="mail.from">
+      <!-- <input type="hidden" name="message_id" id="mail-header-message-id" :value="findMailHeader('Message-ID')">
+      <input type="hidden" name="references" id="mail-header-references" :value="findMailHeader('References')"> -->
       <div style='position:absolute; left: 214px; top: 74px; font:Times New Roman; font-size:13px; color:66665c'>
-        {{ findMailHeader('Date') }}</div>
+        {{ mail.date }}</div>
 
       <div style='position:absolute; left: 281px; top: 5px;'> <img src='mail/sframe1.png' /></div>
       <div style='position:absolute; left: 288px; top: 11px;' ><img src='profile/Becky.jpg'  width='48' height='56'/></div>
@@ -69,20 +69,28 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 import * as moment from 'moment';
 export default {
   name: 'Polaroid2',
-  props: ['mail'],
+  props: {
+    mail: {
+      type: Object,
+      required: true
+    }
+  },
   mounted() {
     //console.log("mounted", moment())
+    if(this.hasAttachments()){
+      this.parseAttachments();
+    }
   },
   computed: {
     getMailBody() {
-      if(this.mail.decoded_parts)
+      if(this.mail.body)
       {
-        return this.mail.decoded_parts[0]
+        return this.mail.body
       }
-      else if(this.mail.decoded_body)
+      /*else if(this.mail.decoded_body)
       {
         return this.mail.decoded_body[0]
-      }
+      }*/
       else {
         return  ""
       }
@@ -96,13 +104,11 @@ export default {
         return ''*/
     },
     getDecodedMailBody() {
-      if(this.mail.decoded_body)
+      if(this.mail.html)
       {
-        return this.mail.decoded_body[0]
+        return this.mail.html
       }
-      else {
-        return this.mail.decoded_parts[0]
-      }
+      return this.mail.text
     }
   },
   methods: {
@@ -143,6 +149,42 @@ export default {
       else
         str = str.toString();
       return str.replace(/<[^>]*>/g, '');
+    },
+
+    hasAttachments(){
+      return this.mail.attachments.length
+    },
+
+    parseAttachments(){
+      //check if mail body has a body tag
+      let index = this.mail.html.indexOf("</body>");
+      let attachmentHTML = `<hr /><p style="font-weight:bold">${this.mail.attachments.filter(attachment => attachment.filename).length} attachments</p>`;
+      if(index !== -1){
+        this.mail.html = [this.mail.html.slice(0, index), attachmentHTML, this.mail.html.slice(index)].join(' ');
+      }
+      else{
+        this.mail.html += attachmentHTML;
+      }
+      //Create a download url for each attachment
+      for(let attachment of this.mail.attachments){
+        //has a file attachment
+        if(attachment.filename){
+          let blobData = new Blob([new Uint8Array(attachment.content.data)], {type: attachment.contentType});
+          let blobURL = URL.createObjectURL(blobData);
+          let fileLinks = `<p style="background-color:#d4cdcd73;border: 1px solid transparent;font-weight: bold;padding: 4px 4px 4px 8px;"><a style="text-decoration:none" href="${blobURL}" download="${attachment.filename}" title="Click to download attachment">
+            ${attachment.filename} <span style="color:#777">(${Math.round(attachment.size / 1000)}K</span>)
+            </a></p>`
+          let index = this.mail.html.indexOf("</body>");
+          //console.log(anchor, index);
+          if(index !== -1){
+            //
+            this.mail.html = [this.mail.html.slice(0, index), fileLinks, this.mail.html.slice(index)].join(' ');
+          }
+          else{
+            this.mail.html += fileLinks;
+          }
+        }
+      }
     }
   }
 }
