@@ -55,16 +55,16 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           <div class="tab-content" id="myTabContent">
             <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
               <div class="mb-3 mt-3">
-                <label for="firstname" class="form-label">First Name</label>
-                <input type="text" class="form-control" id="firstname">
+                <label for="name" class="form-label">Name</label>
+                <input type="text" class="form-control" id="name">
+              </div>
+              <div class="mb-3 mt-3">
+                <label for="nickname" class="form-label">Nickname</label>
+                <input type="text" class="form-control" id="nickname">
               </div>
               <div class="mb-3">
-                <label for="lastname" class="form-label">Last Name</label>
-                <input type="text" class="form-control" id="lastname">
-              </div>
-              <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" class="form-control" id="username">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email">
               </div>
               <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
@@ -73,16 +73,6 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                   <i class="far fa-eye" style="position: absolute;right: 9px; top: 12px; cursor: pointer;" @click="show_password_protected=false" v-show="show_password_protected"></i>
                   <i class="fas fa-eye-slash" style="position: absolute;right: 9px; top: 12px; cursor: pointer;" @click="show_password_protected=true" v-show="!show_password_protected"></i>
                 </div>
-
-
-              </div>
-              <div class="mb-3">
-                <label for="role" class="form-label">Role</label>
-                <select name="role" id="role" class="form-control" aria-label="Default select example">
-                  <option value="End User">End User</option>
-                  <option value="Family & Friends">Family & Friends</option>
-                  <option value="Assistant">Assistant</option>
-                </select>
               </div>
               <button type="submit" class="btn btn-primary mb-5">Submit</button>
             </div>
@@ -109,7 +99,9 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
             <div class="tab-pane fade" id="addressbook" role="tabpanel" aria-labelledby="addressbook-tab">
               <AddressBook class="mt-3"></AddressBook>
             </div>
-            <div class="tab-pane fade" id="photos" role="tabpanel" aria-labelledby="photos-tab">Photos</div>
+            <div class="tab-pane fade" id="photos" role="tabpanel" aria-labelledby="photos-tab">
+              <Photos></Photos>
+            </div>
             <div class="tab-pane fade" id="easyweb" role="tabpanel" aria-labelledby="easyweb-tab">EasyWeb</div>
           </div>
 
@@ -121,7 +113,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
 </template>
 
-<style scoped src="@/assets/bootstrap-5/css/bootstrap.min.css">
+<style scoped src="@/assets/bootstrap-5/css/bootstrap.css">
 </style>
 <style scoped>
 /*
@@ -162,12 +154,14 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
 <script>
 import AddressBook from './components/AddressBook'
+import Photos from './components/Photos'
 import swal from 'sweetalert';
 const axios = require('axios')
 export default {
   name: 'NewUser',
   components: {
-    AddressBook: AddressBook
+    AddressBook: AddressBook,
+    Photos: Photos
   },
   metaInfo: {
     // if no subcomponents specify a metaInfo.title, this title will be used

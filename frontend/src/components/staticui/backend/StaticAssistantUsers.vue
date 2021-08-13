@@ -65,7 +65,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
   </div>
 </template>
 
-<style scoped src="@/assets/bootstrap-5/css/bootstrap.min.css">
+<style scoped src="@/assets/bootstrap-5/css/bootstrap.css">
 </style>
 
 <script>
@@ -92,28 +92,28 @@ export default {
           first_name: "Jatin",
           last_name: "Raikwar",
           email: "jatin.raikwar@plenartech.com",
-          role: "End User"
+          role: "User"
         },
         {
           id: 3,
-          first_name: "Mayur",
-          last_name: "Upadhayay",
-          email: "mayur.upadhayay@plenartech.com",
-          role: "End User"
+          first_name: "John",
+          last_name: "Doe",
+          email: "john.doe@plenartech.com",
+          role: "Assistant"
         },
         {
           id: 4,
           first_name: "Parikshit",
           last_name: "Thakur",
           email: "parikshit.thakur@plenartech.com",
-          role: "Family & Friends"
+          role: "Friends & Family"
         },
         {
           id: 5,
           first_name: "Hardik",
           last_name: "Shah",
           email: "hardik.shah@plenartech.com",
-          role: "Family & Friends"
+          role: "Friends & Family"
         }
       ]
     }

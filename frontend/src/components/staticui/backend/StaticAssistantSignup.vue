@@ -40,32 +40,35 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
             </span>
           </p>
         </div>
-        <div class="form-floating mb-3">
-          <input type="text" class="form-control" id="floatingFirstName" placeholder="First Name" v-model="first_name" autofocus required>
-          <label for="floatingFirstName">First Name</label>
+        <div class="mb-3" style="text-align: left !important;">
+          <label for="floatingFirstName">Name</label>
+          <input type="text" class="form-control" id="floatingFirstName" placeholder="Enter users full name" v-model="name" autofocus required>
         </div>
-        <div class="form-floating mb-3">
-          <input type="text" class="form-control" id="floatingLastName" placeholder="Last Name" v-model="last_name" autofocus required>
-          <label for="floatingLastName">Last Name</label>
+        <div class="mb-3" style="text-align: left !important;">
+          <label for="floatingLastName">Nick Name</label>
+          <input type="text" class="form-control" id="floatingLastName" placeholder="Enter users nick name" v-model="nick_name" autofocus required>
+        </div>
+        <div style="padding: 15px; border: 1px solid #a9a9a9;" class="mb-3">
+          <h6>Assistant Details (your details)</h6>
+          <div class="mb-3" style="text-align: left !important;">
+            <label for="floatingFirstName">Name</label>
+            <input type="text" class="form-control" id="floatingFirstName" placeholder="Enter your full name" v-model="name" autofocus required>
+          </div>
+
+          <div class="mb-3" style="text-align: left !important;">
+            <label for="floatingInput">{{ $t('email_address') }}</label>
+            <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" v-model="email" required>
+          </div>
+
+          <div class="" style="text-align: left !important;">
+            <label for="floatingPassword">{{ $t('password') }}</label>
+            <input type="password" class="form-control" id="floatingPassword" placeholder="Enter Password" v-model="password" min="8" max="15" required>
+          </div>
+          <p class="text-muted text-start"><small style="font-size: 1rem;">{{
+              $t('password_help')
+            }}</small></p>
         </div>
 
-        <div class="form-floating mb-3">
-          <input type="text" class="form-control" id="floatingName" placeholder="Group Name" v-model="group_name" autofocus required>
-          <label for="floatingName">Group Name</label>
-        </div>
-        <div class="form-floating mb-3">
-          <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" v-model="email" required>
-          <label for="floatingInput">{{ $t('email_address') }}</label>
-        </div>
-
-
-        <div class="form-floating">
-          <input type="password" class="form-control" id="floatingPassword" placeholder="Password" v-model="password" min="8" max="15" required>
-          <label for="floatingPassword">{{ $t('password') }}</label>
-        </div>
-        <p class="text-muted text-start"><small style="font-size: 1rem;">{{
-            $t('password_help')
-          }}</small></p>
 
         <button class="w-100 btn btn-lg btn-primary" type="submit" :disabled="registerSubmitClicked" :readonly="registerSubmitClicked">
           <span v-if="!registerSubmitClicked">{{ $t('submit') }}</span>
@@ -195,13 +198,13 @@ export default {
       var self = this
       this.registerSubmitClicked = true
       self.nodeErrorArr = []
-      if(!this.email || !this.first_name || !this.last_name || !this.group_name || !this.password || this.password.length < 8)
+      /*if(!this.email || !this.first_name || !this.last_name || !this.group_name || !this.password || this.password.length < 8)
       {
         this.registerSubmitClicked = false
         this.showError = true
         return
       }
-      this.showError = false
+      this.showError = false*/
 
       swal({
         title: self.getTranslation('congratulations'),
@@ -214,7 +217,7 @@ export default {
         console.log("success",swalResponse)
         if(swalResponse)
         {
-          this.$router.push('/static/assistant/create-user')
+          this.$router.push('/static/assistant/edit-user')
         }
       })
 

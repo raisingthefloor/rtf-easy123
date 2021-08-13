@@ -69,7 +69,6 @@
                     v-bind:files="myFiles"
                     v-on:init="handleFilePondInit"
                     v-on:processfile="handleFilePondProcessfile"
-                    v-bind:required="true"
                 />
                 <span class="form-text text-danger" v-show="errors.avatar">Please select image</span>
 
@@ -94,19 +93,22 @@
                 </div>
                 <div class="mb-3">
                   <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                       <label for="email" class="form-label">Email</label>
-                      <div style="position:relative;">
-                        <input type="email" class="form-control" id="email" v-model="email" required>
-                        <span style="position: absolute; right: 5px; top: 9px;">X</span>
+                      <div class="row">
+                        <div class="col-md-6 mb-3" style="position:relative;" v-for="(email_field, index) in email" :key="index">
+                          <input type="email" class="form-control" :name="'email'+index" v-model="email[index]" required>
+                          <span style="position: absolute; right: 20px; top: 9px;" v-show="index > 0"><a href="javascript:void(0)" @click="removeEmail(index)" style="text-decoration: none;">X</a></span>
+                        </div>
                       </div>
+
 
 
 
                     </div>
                     <div class="col-md-12">
                       <div class="d-grid gap-2 mt-2">
-                        <button class="btn btn-sm btn-info btn-block" type="button">Add Email</button>
+                        <button class="btn btn-sm btn-info btn-block" type="button" @click="addEmail()">Add Email</button>
                       </div>
                     </div>
 
@@ -117,7 +119,7 @@
 
                 <div>
                   <button class="btn btn-primary me-2" type="submit">Save</button>
-                  <button class="btn btn-danger" @click="saveContactCancel" type="button">Cancel</button>
+                  <button class="btn btn-secondary" @click="saveContactCancel" type="button">Cancel</button>
                 </div>
               </form>
 
@@ -335,25 +337,31 @@ export default {
       this.zoom_meeting_url = this.current_contact.zoom_meeting_url
       this.notes = this.current_contact.notes
       this.email = this.current_contact.email
+      let image_url = this.current_contact.image.split('?')
+      this.myFiles.push(image_url[0])
     },
     addContact() {
       this.show_add_contact_form = true
       this.current_filepond_image_url = null
       this.name = null
-      this.email = []
       this.skypeid = null
       this.zoom_meeting_url = null
       this.notes = null
       this.id++
       this.$refs.avatarpond.removeFile()
+      this.email = []
+      this.addEmail()
     },
     saveContactCancel() {
       this.show_add_contact_form = false
     },
     saveContact() {
+
+      this.errors.name = false
+      this.errors.email = false
+      this.errors.avatar = false
       //check the contact validation
-      if(!(this.name && this.email && this.current_filepond_image_url))
-      {
+
         if(!this.name) {
           this.errors.name = true
         }
@@ -366,34 +374,62 @@ export default {
         else {
           this.errors.email = false
         }
-        if (!this.current_filepond_image_url)
+        if (!this.current_filepond_image_url && !this.edit_id)
         {
           this.errors.avatar = true
         }
         else {
           this.errors.avatar = false
         }
-        return
-      }
-      else {
-        this.errors.name = false
-        this.errors.email = false
-        this.errors.avatar = false
 
-        this.contacts.push({
-          id: ++this.id,
-          name: this.name,
-          skypeid: this.skypeid,
-          zoom_meeting_url: this.zoom_meeting_url,
-          notes: this.notes,
-          email: [this.email],
-          image: this.current_filepond_image_url
-        })
-        this.contacts.sort(function (a, b) {
-          return a.name.localeCompare(b.name)
-        })
-        this.show_add_contact_form = false
-      }
+        if(this.errors.name || this.errors.email || this.errors.avatar)
+        {
+          return
+        }
+
+        //check if edit form
+        if(this.edit_id)
+        {
+          for (let i = 0; i < this.contacts.length ; i++)
+          {
+            if(this.contacts[i].id == this.edit_id)
+            {
+              this.contacts[i].name = this.name
+              this.contacts[i].skypeid = this.skypeid
+              this.contacts[i].zoom_meeting_url = this.zoom_meeting_url
+              this.contacts[i].notes = this.notes
+              this.contacts[i].email = this.email
+              if(this.current_filepond_image_url)
+              {
+                this.contacts[i].image = this.current_filepond_image_url
+              }
+              this.contacts.sort(function (a, b) {
+                return a.name.localeCompare(b.name)
+              })
+              this.show_add_contact_form = false
+              return
+            }
+          }
+
+        }
+        else {
+          this.contacts.push({
+            id: ++this.id,
+            name: this.name,
+            skypeid: this.skypeid,
+            zoom_meeting_url: this.zoom_meeting_url,
+            notes: this.notes,
+            email: this.email,
+            image: this.current_filepond_image_url
+          })
+          this.contacts.sort(function (a, b) {
+            return a.name.localeCompare(b.name)
+          })
+          this.show_add_contact_form = false
+        }
+
+
+
 
 
 
@@ -411,6 +447,14 @@ export default {
 
       //console.log("imageURL", imageData)
     },
+    addEmail() {
+      this.email.push("")
+    },
+    removeEmail(index) {
+      if (index > -1) {
+        this.email.splice(index, 1);
+      }
+    }
   }
 }
 </script>

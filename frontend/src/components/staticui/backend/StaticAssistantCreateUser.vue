@@ -40,16 +40,12 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         <h4 class="mb-3">Create Member</h4>
         <form class="">
           <div class="mb-3">
-            <label for="firstname" class="form-label">First Name</label>
-            <input type="text" class="form-control" id="firstname">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name">
           </div>
           <div class="mb-3">
-            <label for="lastname" class="form-label">Last Name</label>
-            <input type="text" class="form-control" id="lastname">
-          </div>
-          <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email">
           </div>
           <div class="mb-3">
             <label for="password" class="form-label">Password</label>
@@ -58,8 +54,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           <div class="mb-3">
             <label for="role" class="form-label">Role</label>
             <select name="role" id="role" class="form-control" aria-label="Default select example">
-              <option value="End User">End User</option>
-              <option value="Family & Friends">Family & Friends</option>
+              <option value="Friends & Family">Friends & Family</option>
               <option value="Assistant">Assistant</option>
             </select>
           </div>
@@ -75,7 +70,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
   </div>
 </template>
 
-<style scoped src="@/assets/bootstrap-5/css/bootstrap.min.css">
+<style scoped src="@/assets/bootstrap-5/css/bootstrap.css">
 </style>
 <style scoped>
 body {
