@@ -1,39 +1,57 @@
 <template>
   <div class="container-fluid row">
     <div class="col-md-12">
-      <button class="btn btn-primary float-end mt-3" @click="addFolder" v-if="current_folder == null">Add Folder</button>
-      <button class="btn btn-primary float-end mt-3" @click="uploadImages" v-if="current_folder != null">Upload Images</button>
+
+      <button class="btn btn-primary float-end mt-3" @click="addFolder">Add Folder</button>
+<!--      <button class="btn btn-primary float-end mt-3" @click="uploadImages" v-if="current_folder != null">Upload Images</button>-->
 
     </div>
     <div class="col-md-12">
         <!--      <i class="fas fa-folder-open"></i>-->
-
-      <div v-if="current_folder == null">
-        <draggable
-            v-model="folders"
-            group="people"
-            @start="drag=true"
-            @end="drag=false"
-            style="display:flex; flex-wrap: wrap;"
-        >
-          <div class="user-folder me-3 mt-3" v-for="folder in folders" :key="folder.id" @dblclick="openFolder(folder.id)">
-            <i class="fas fa-folder folder-icon me-2"></i>
-            <div>{{ folder.name }}</div>
+      <div class="row">
+        <div class="col-md-3">
+          <div>
+            <draggable
+                v-model="folders"
+                group="people"
+                @start="drag=true"
+                @end="drag=false"
+                style=""
+            >
+              <div class="user-folder me-3 mb-3" style="cursor: pointer;" v-for="folder in folders" :key="folder.id" @dblclick="openFolder(folder.id)">
+                <i class="fas fa-folder folder-icon me-2"></i>
+                <div>{{ folder.name }}</div>
+              </div>
+            </draggable>
           </div>
-        </draggable>
-      </div>
-      <div v-if="current_folder != null">
-        <div class="row">
-          <div class="col-md-12">
-
+        </div>
+        <div class="col-md-4">
+          <div class="photos-list" style="position: relative;" v-if="current_folder != null">
+            <file-pond
+                name="avatar"
+                ref="avatarpond"
+                allow-image-crop="true"
+                label-idle="Drop picture here... or choose from library"
+                v-bind:allow-multiple="false"
+                accepted-file-types="image/jpeg, image/png"
+                :server="getUploadURL"
+                max-files="1"
+                v-bind:files="myFiles"
+                v-on:init="handleFilePondInit"
+                v-on:processfile="handleFilePondProcessfile"
+                class="mt-2"
+            />
+            <div class="list-group address-book-contact-list" id="address-book-contact-list" style="max-height: 75vh; overflow-y: scroll;">
+              <a href="#" class="list-group-item list-group-item-action address-book-list-item" v-bind:class="(current_photo.id == photo.id)?'active':''"  v-for="photo in current_folder.photos" :key="photo.id" @click="showPhoto(photo)">
+                {{ photo.name }}
+              </a>
+            </div>
           </div>
-          <div class="col-md-3">
-
-          </div>
-          <div class="col-md-9"></div>
+        </div>
+        <div class="col-md-5">
+          <img :src="current_photo.path" alt="" style="max-height: 100%; max-width: 100%;" class="mb-3">
         </div>
       </div>
-
 
     </div>
   </div>
@@ -54,24 +72,75 @@
   padding: 15px;
   font-size: 20px;
   width: 200px;
+  cursor: pointer;
+}
+
+/* width */
+.address-book-contact-list::-webkit-scrollbar {
+  width: 3px;
+}
+
+/* Track */
+.address-book-contact-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+.address-book-contact-list::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+.address-book-contact-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 </style>
 
 <script>
+// Import Vue FilePond
+import vueFilePond from "vue-filepond";
+
+// Import FilePond styles
+import "filepond/dist/filepond.min.css";
+
+// Import image preview plugin styles
+import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css";
+// Import the plugin code
+import FilePondPluginImageCrop from 'filepond-plugin-image-crop';
+
+// Import image preview and file type validation plugins
+import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type";
+import FilePondPluginImagePreview from "filepond-plugin-image-preview";
+
+// Create component
+const FilePond = vueFilePond(
+    FilePondPluginFileValidateType,
+    FilePondPluginImagePreview,
+    FilePondPluginImageCrop
+)
+
 import swal from 'sweetalert'
 import draggable from 'vuedraggable'
 
 export default {
   name: 'Photos',
   components: {
-    draggable
+    draggable,
+    FilePond
   },
   data() {
     return {
       id: 1,
+      photo_id: null,
       folders: [],
       current_folder: null,
-      show_upload_image_form: false
+      myFiles: [],
+      current_photo: {}
+    }
+  },
+  computed: {
+    getUploadURL() {
+      return process.env.VUE_APP_API_HOST_NAME + "/api/upload-image"
     }
   },
   methods: {
@@ -94,7 +163,8 @@ export default {
           {
             self.folders.push({
               "id": ++self.id,
-              "name": value
+              "name": value,
+              "photos": []
             })
           }
 
@@ -107,8 +177,31 @@ export default {
     openFolder(id) {
       this.current_folder = this.folders.find(obj => obj.id == id)
     },
-    uploadImages() {
-      this.show_upload_image_form = true
+    handleFilePondInit: function () {
+      //console.log("FilePond has initialized");
+
+      // FilePond instance methods are available on `this.$refs.pond`
+    },
+    handleFilePondProcessfile: function (err, file) {
+      console.log("FilePond has handleFilePondProcessfile", file);
+      let imageData = JSON.parse(file.serverId)
+
+      this.current_folder.photos.push({
+        id: ++this.photo_id,
+        name: file.file.name,
+        path: imageData.data
+      })
+
+      this.$refs.avatarpond.removeFile()
+
+      //console.log("imageURL", imageData)
+    },
+    showPhoto(photo) {
+      this.current_photo = photo
+    },
+    redirectToAllFolders() {
+      this.current_folder = null
+      this.current_photo = null
     }
   }
 }

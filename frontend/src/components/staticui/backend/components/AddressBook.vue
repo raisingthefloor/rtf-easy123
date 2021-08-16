@@ -211,9 +211,7 @@ const FilePond = vueFilePond(
     FilePondPluginFileValidateType,
     FilePondPluginImagePreview,
     FilePondPluginImageCrop
-);
-
-
+)
 
 import contacts from './fackcontacts.json'
 export default {
