@@ -102,7 +102,9 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
             <div class="tab-pane fade" id="photos" role="tabpanel" aria-labelledby="photos-tab">
               <Photos></Photos>
             </div>
-            <div class="tab-pane fade" id="easyweb" role="tabpanel" aria-labelledby="easyweb-tab">EasyWeb</div>
+            <div class="tab-pane fade" id="easyweb" role="tabpanel" aria-labelledby="easyweb-tab">
+              <EasyWeb></EasyWeb>
+            </div>
           </div>
 
         </div>
@@ -155,13 +157,15 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 <script>
 import AddressBook from './components/AddressBook'
 import Photos from './components/Photos'
+import EasyWeb from './components/EasyWeb'
 import swal from 'sweetalert';
 const axios = require('axios')
 export default {
   name: 'NewUser',
   components: {
     AddressBook: AddressBook,
-    Photos: Photos
+    Photos: Photos,
+    EasyWeb: EasyWeb
   },
   metaInfo: {
     // if no subcomponents specify a metaInfo.title, this title will be used

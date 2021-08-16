@@ -148,7 +148,7 @@
   </div>
 </template>
 
-<style scoped src="@/assets/bootstrap-5/css/bootstrap.min.css">
+<style scoped src="@/assets/bootstrap-5/css/bootstrap.css">
 </style>
 
 <style scoped>
