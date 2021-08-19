@@ -50,7 +50,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
 </template>
 
-<style scoped src="../assets/bootstrap-5/css/bootstrap.min.css">
+<style scoped src="../assets/bootstrap-5/css/bootstrap.css">
 </style>
 
 <script>
