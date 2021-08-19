@@ -22,13 +22,10 @@
  * Adobe Foundation
  * Consumer Electronics Association Foundation
  **/
-let express = require('express');
-let app = require('./server');
-let router = express.Router();
+const imapController = require('./Controllers/imap.controller')
+const validateToken = require('../Googleapi/utils').validateToken
 
-require('./Modules/Googleapi/route')(router);
-require('./Modules/Admin/route')(router);
-require('./Modules/Assistant/route')(router);
-require('./Modules/Imap/route')(router);
-app.use(router)
-module.exports = router;
+module.exports = router => {
+    //protected routes
+    router.get('/api/users/:id/messages',validateToken, imapController.getAllMails.bind(imapController))
+}
