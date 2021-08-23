@@ -1,6 +1,7 @@
 {
   "//": "Common",
   "easy123": "Easy123",
+  "processing": "Processing...",
   "email_address": "Email address",
   "password": "Password",
   "submit": "Submit",
@@ -16,7 +17,7 @@
   "resend_verification_email": "Resend Verification Email",
   "sending_verification_email": "Sending Verification Email...",
   "verification_email_sent_to": "Verification email sent to",
-  "please_enter_correct_username_or_password": "Please enter correct username or password",
+  "please_enter_correct_username_or_password": "Please enter correct email address or password",
   "not_a_user": "Not a user?",
 
   "//": "Register",
@@ -25,9 +26,11 @@
   "name_should_be_string": "<b>Name</b> should be a string <br>",
   "email_should_be_proper_proper_address": "<b>Email</b> should be a proper email address",
   "password_should_be_string_of_8_char_long": "<b>Password</b> should be a string of 8 char long",
+  "register_client_validation": "Please fill all details correctly <br> <b>Name</b> should be a string <br> <b>Email</b> should be a proper email address <b>Password</b> should be a string of 8 char long",
   "enter_your_full_name": "Enter your full name",
   "password_help": "Create new password for Easy123 System. Password must be 8 character long.",
   "register_success_message": "You are now signed up with Easy123. Currently Easy123 is Free to use!",
+  "already_a_user": "Already have an account? ",
 
   "//": "Verfiy Email",
   "verifying_email": "Verifying Email...",

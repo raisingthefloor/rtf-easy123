@@ -22,13 +22,10 @@
  * Adobe Foundation
  * Consumer Electronics Association Foundation
  **/
-let express = require('express');
-let app = require('./server');
-let router = express.Router();
+const UserController = require('./Controllers/user.controller')
+const validateToken = require('../Googleapi/utils').validateToken
 
-require('./Modules/Googleapi/route')(router);
-require('./Modules/Admin/route')(router);
-require('./Modules/Assistant/route')(router);
-require('./Modules/Imap/route')(router);
-app.use(router)
-module.exports = router;
+module.exports = function (router) {
+    router.post('/api/assistant/get-users', validateToken, UserController.getUsers.bind(UserController))
+    router.post('/api/assistant/delete-user', validateToken, UserController.deleteUser.bind(UserController))
+}

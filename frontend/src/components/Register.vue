@@ -30,11 +30,11 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         <h1 class="h3 mb-3 fw-normal">Register</h1>
         <div class="form-floating">
           <p v-show="showError" style="color: red; font-size: 15px;">
-            <span v-show="!nodeErrorArr.length">
-              {{ $t('please_fill_all_details_correctly') }} <br>
+            <span v-show="!nodeErrorArr.length" v-html="$t('register_client_validation')">
+<!--              {{ $t('please_fill_all_details_correctly') }} <br>
               {{ $t('name_should_be_string') }} <br>
               {{ $t('email_should_be_proper_proper_address') }} <br>
-              {{ $t('password_should_be_string_of_8_char_long') }}
+              {{ $t('password_should_be_string_of_8_char_long') }}-->
             </span>
             <span v-show="nodeErrorArr.length">
               {{ $t('please_fill_all_details_correctly') }} <br>
@@ -45,12 +45,12 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           </p>
         </div>
         <div class="form-floating">
-          <input type="text" class="form-control" id="floatingName" placeholder="Name" v-model="name" autofocus>
+          <input type="text" class="form-control" id="floatingName" placeholder="Name" v-model="name" autofocus required>
           <label for="floatingName">Name</label>
         </div>
         <p class="text-muted text-start"><small style="font-size: 1rem;">{{ $t('enter_your_full_name') }}</small></p>
         <div class="form-floating mb-3">
-          <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" v-model="email">
+          <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" v-model="email" required>
           <label for="floatingInput">{{ $t('email_address') }}</label>
         </div>
 
@@ -63,7 +63,12 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
             $t('password_help')
           }}</small></p>
 
-        <button class="w-100 btn btn-lg btn-primary" type="submit">{{ $t('submit') }}</button>
+        <button class="w-100 btn btn-lg btn-primary" type="submit" :disabled="registerSubmitClicked" :readonly="registerSubmitClicked">
+          <span v-if="!registerSubmitClicked">{{ $t('submit') }}</span>
+          <span v-if="registerSubmitClicked">{{ $t('processing') }}</span>
+        </button>
+
+        <p class="mt-4">{{ $t('already_a_user') }} <router-link to="/">{{ $t('login') }}</router-link> </p>
 
       </form>
 
@@ -134,7 +139,8 @@ export default {
       password: null,
       user: {},
       showError: false,
-      nodeErrorArr: []
+      nodeErrorArr: [],
+      registerSubmitClicked: false
     }
   },
   mounted() {
@@ -181,9 +187,11 @@ export default {
     formSubmit()
     {
       var self = this
+      this.registerSubmitClicked = true
       self.nodeErrorArr = []
       if(!this.email || !this.name || !this.password || this.password.length < 8)
       {
+        this.registerSubmitClicked = false
         this.showError = true
         return
       }
@@ -196,6 +204,7 @@ export default {
         confirmedPassword: self.password,
       })
       .then((response) => {
+        self.registerSubmitClicked = false
         //console.log(response)
         if(response.data && response.data.status)
         {
@@ -218,6 +227,11 @@ export default {
                 self.$store.commit('SET_LAYOUT', 'admin-layout')
                 self.$router.push({ 'name': 'Admin' })
               }
+              else if(response.data.data.role == "assistant")
+              {
+                self.$store.commit('SET_LAYOUT', 'admin-layout')
+                self.$router.push({ 'name': 'Assistant' })
+              }
               else {
                 self.$store.commit('SET_LAYOUT', 'simple-layout')
                 self.$router.push({ 'name': 'HomeWorking' })
@@ -230,7 +244,8 @@ export default {
           })
         }
       }, (error) => {
-        if(error && error.response.status == 422)
+        self.registerSubmitClicked = false
+        if(error && error.response && error.response.status == 422)
         {
           self.nodeErrorArr = error.response.data.data
           this.showError = true

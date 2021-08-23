@@ -20,7 +20,7 @@ services:
       - "2000:2000"
     container_name: backend
     environment:
-      - FRONT_URL=http://easy123.plenartech.com:1000/
+      - FRONT_URL=https://easy123.plenartech.com/
       - DOCKER=1
       - NODE_LOCAL_HOST=false
       - MJ_APIKEY_PUBLIC=da8c89436c3b7b0d8cc27023ff6ca9a8

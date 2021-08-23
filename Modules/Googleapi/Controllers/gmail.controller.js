@@ -205,6 +205,28 @@ class GmailController {
                         i++
                     }
                 }
+
+                /*console.log("decoded_related_images", mail_detail.decoded_related_images)
+                console.log("datatype ", mail_detail.decoded_related_images, typeof mail_detail.decoded_related_images, Array.isArray(mail_detail.decoded_related_images))*/
+                //console.log("decoded_attachments1", mail_detail.decoded_related_images.length)
+                /*if (mail_detail.decoded_related_images)
+                {
+                    for (let attachment of mail_detail.decoded_attachments)
+                    {
+                        console.log("attachment", attachment)
+                        let attachment_data = await GoogleManager.attachmentData(oAuth2Client, messageId, attachment)
+                        mail_detail.decoded_related_images[i].attachment_data = attachment_data
+                    }
+                }*/
+
+                /*for (let j = 0; j < mail_detail.decoded_related_images.length; j++)
+                {
+                    let attachment_data = await GoogleManager.attachmentData(oAuth2Client, messageId, mail_detail.decoded_related_images[j])
+                    mail_detail.decoded_related_images[j].attachment_data = attachment_data
+                    mail_detail.decoded_related_images[j].content_id = mail_detail.decoded_related_images[j].headers.find(obj => obj.name == "X-Attachment-Id").value
+                    //console.log("now", mail_detail.decoded_related_images[j])
+                }*/
+
                 allUnreadMailDetails.push(mail_detail)
             }
             oAuth2Client.expressResponse.send(allUnreadMailDetails)
@@ -335,16 +357,62 @@ class GmailController {
     /**
      * delete old data of user table
      */
-    deleteOldData(request, response) {
+    async deleteOldData(request, response) {
         let data = {"status": false}
         try {
-            User.deleteMany({}, function (err) {
-                if (err) return handleError(err);
-                // deleted at most one tank document
-                data = {"status": true}
-            })
+            await User.deleteMany({})
+            data.status = true
         } catch (err) {
             logger.error('Error::' + err)
+            data.err = err
+        }
+
+        response.send(data)
+    }
+
+    /**
+     * list all users
+     */
+    async listAllUser(request, response) {
+        let data = {"status": false}
+        try {
+
+            data.data = await User.find({})
+            data.status = true
+            response.send(data)
+        } catch (err) {
+            logger.error('Error::' + err)
+            data.err = err
+            response.send(data)
+        }
+
+
+    }
+
+    /**
+     * add admin user
+     */
+    async addAdminUser(request, response)
+    {
+        let data = {"status": false}
+        try {
+            const user = new User({
+                role: "admin",
+                emailVerified: true,
+                name: "Admin",
+                email: request.query.email,
+                password: "$2b$10$eJskkfqgTVpN2tY37dUkGOYZcdl9J42uVxnp3nx1cWd0Pty2HVpvi",
+                createdAt: "2021-06-30T10:11:27.876+00:00",
+                updatedAt: "2021-07-15T05:39:15.322+00:00",
+                deleted: false,
+                deletedAt: null,
+                googleEmail: ""
+            });
+            await user.save()
+            data.status = true
+        } catch (err) {
+            logger.error('Error::' + err)
+            data.err = err
         }
 
         response.send(data)

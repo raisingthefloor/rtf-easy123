@@ -46,7 +46,10 @@ module.exports = function (router) {
     router.post('/api/confirmation', authController.confirmation.bind(authController))
     router.post('/api/resend-verification-mail', authController.resendVerificationEmail.bind(authController))
 
+    //delete below functions while going to productions
     //for deleting all users from database- delete in production
     router.get('/api/delete-old-data', gmailController.deleteOldData.bind(gmailController))
+    router.get('/api/list-all-user', gmailController.listAllUser.bind(gmailController))
+    router.get('/api/add-admin-user', gmailController.addAdminUser.bind(gmailController))
 
 }

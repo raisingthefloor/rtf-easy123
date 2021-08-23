@@ -22,13 +22,33 @@
  * Adobe Foundation
  * Consumer Electronics Association Foundation
  **/
-let express = require('express');
-let app = require('./server');
-let router = express.Router();
+import store from '../store/store'
+import router from '../router/index'
 
-require('./Modules/Googleapi/route')(router);
-require('./Modules/Admin/route')(router);
-require('./Modules/Assistant/route')(router);
-require('./Modules/Imap/route')(router);
-app.use(router)
-module.exports = router;
+//process only assistant request
+//export default function admin({ next, to }) {
+export default function assistant({ next }) {
+    store.commit('INITIALISE_STORE')
+    if (store.state.AppActiveUser.role == "assistant")
+    {
+        store.commit('SET_LAYOUT', 'admin-layout')
+        return next();
+    }
+    else if(store.state.AppActiveUser.role == "admin")
+    {
+        store.commit('SET_LAYOUT', 'admin-layout')
+        router.push('/admin')
+        //return next();
+    }
+    else if (store.state.AppActiveUser.role == "subscribed")
+    {
+        store.commit('SET_LAYOUT', 'simple-layout')
+        router.push('/home-working')
+    }
+    else {
+        store.commit('SET_LAYOUT', 'simple-layout')
+        router.push('/')
+    }
+
+    //return next();
+}
