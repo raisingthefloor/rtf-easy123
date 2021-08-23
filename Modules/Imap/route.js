@@ -27,5 +27,9 @@ const validateToken = require('../Googleapi/utils').validateToken
 
 module.exports = router => {
     //protected routes
-    router.get('/api/users/:id/messages',validateToken, imapController.getAllMails.bind(imapController))
+    router.get('/api/users/:id/messages',validateToken, imapController.getAllMails.bind(imapController));
+    router.delete('/api/message/:id/delete',validateToken, imapController.deleteEmailMessages.bind(imapController))
+    router.post('/api/message/send', validateToken, imapController.sendMail.bind(imapController));
+    router.put('/api/message/move/:box', validateToken, imapController.moveMail.bind(imapController));
+    router.put('/api/message/:uid/set-flag/:flag', validateToken, imapController.setFlags.bind(imapController));
 }
