@@ -146,7 +146,13 @@ const mutations = {
         localStorage.setItem("userInfo", JSON.stringify(userInfo))
     },
 
+    updateMailUserName(state, userName){
+        state.mailTo.name = userName;
+    },
 
+    updateMailUserAddress(state, emailAddress){
+        state.mailTo.email = emailAddress;
+    }
 
 }
 

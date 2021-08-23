@@ -21,9 +21,11 @@
     "googleapis": "^73.0.0",
     "jsonwebtoken": "^8.5.1",
     "mailparser": "^3.3.0",
+    "mimemessage": "^1.0.5",
     "mongodb": "^3.6.3",
     "mongoose": "^5.11.10",
     "node-mailjet": "^3.3.4",
+    "nodemailer": "^6.6.3",
     "pine": "^1.1.1",
     "qboxmail-imap": "^0.8.26"
   },

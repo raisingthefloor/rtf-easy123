@@ -102,6 +102,10 @@ const state = {
     polaroid_class : {
         top: 0,
         left: 0
+    },
+    mailTo:{
+        name: '',
+        email: ''
     }
 }
 

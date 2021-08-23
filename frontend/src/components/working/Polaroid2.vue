@@ -23,7 +23,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 * Consumer Electronics Association Foundation
 -->
 <template>
-  <div class='polaroid' :r='mail.r' :t='mail.t' :in='mail.in' @mousedown="thisMousedown($event)" @mouseup="thisMouseup($event)">
+  <div :id="mail.messageId" class='polaroid' :r='mail.r' :t='mail.t' :in='mail.in' @mousedown="thisMousedown($event)" @mouseup="thisMouseup($event)">
     <img src='mail/mailinbox.png' id='mailinbox' style='display:none'>
     <div class='envcontents' style='display:none; width:355px'>
       <img src='mail/envelope.png'   id='envelope' style='position:absolute;'/>
@@ -33,8 +33,8 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         <div id='message' style='position:absolute; width:300px; padding: 35px;  font:Times New Roman; font-size:18px; '>
           <iframe :srcdoc="getDecodedMailBody" frameborder="0" style="height: 535px; width: 430px;"></iframe>
           <button class='reply' @click="replyClick($event)" style=' padding-left:10px; position:absolute; top:580px; left:25px; '> <span style=' font-size:19px;'>Reply</span></button>
-          <button class='close' @click="closeClick($event)" style=' padding-left:10px;position:absolute; top:580px; left:120px; padding-right:10px; '> <span style=' font-size:19px;'>Keep</span></button>
-          <button class='throwaway' @click="throwawayClick($event)" style=' padding-left:10px;  padding-right:10px; position:absolute; top:580px; left: 315px; position: absolute '> <span style=' font-size:19px;'>Throw Away</span></button>
+          <button class='close' @click="closeClick($event, mail)" style=' padding-left:10px;position:absolute; top:580px; left:120px; padding-right:10px; '> <span style=' font-size:19px;'>Keep</span></button>
+          <button class='throwaway' @click="throwawayClick($event, mail.messageId)" style=' padding-left:10px;  padding-right:10px; position:absolute; top:580px; left: 315px; position: absolute '> <span style=' font-size:19px;'>Throw Away</span></button>
         </div>
       </div>
       <img src='mail/back2_2.png'   id='rot3' style='position:absolute; top: 128px; display:none;'/>
@@ -50,8 +50,8 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         {{ strip_html_tags(mail.subject) }}</div>
       <input type="hidden" name="mail_subject" id="mail-subject" :value="mail.subject">
       <input type="hidden" name="mail_header_from" id="mail-header-from" :value="mail.from">
-      <!-- <input type="hidden" name="message_id" id="mail-header-message-id" :value="findMailHeader('Message-ID')">
-      <input type="hidden" name="references" id="mail-header-references" :value="findMailHeader('References')"> -->
+      <input type="hidden" name="message_id" id="mail-header-message-id" :value="mail.messageId">
+      <!--<input type="hidden" name="references" id="mail-header-references" :value="findMailHeader('References')"> -->
       <div style='position:absolute; left: 214px; top: 74px; font:Times New Roman; font-size:13px; color:66665c'>
         {{ mail.date }}</div>
 
@@ -67,6 +67,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
 <script>
 import * as moment from 'moment';
+import axios from 'axios';
 export default {
   name: 'Polaroid2',
   props: {
@@ -136,11 +137,21 @@ export default {
     replyClick(event) {
       this.$emit('replyClick', event)
     },
-    closeClick(event) {
-      this.$emit('closeClick', event)
+    closeClick(event, mail) {
+      if(!mail.attrs.flags.includes("\\Seen")){
+        let uid = mail.attrs.uid;
+        axios.put(process.env.VUE_APP_API_HOST_NAME+`/api/message/${uid}/set-flag/seen`)
+          .then(response => {
+            console.log(response);
+            //this.$emit('closeClick', event);
+          })
+          .catch(err => console.log(err));
+      }
+      this.$emit('closeClick', event);
     },
-    throwawayClick(event) {
-      this.$emit('throwawayClick', event)
+    throwawayClick(event, messageId) {
+      let payload = {event, messageId};
+      this.$emit('throwawayClick', payload);
     },
     strip_html_tags(str)
     {

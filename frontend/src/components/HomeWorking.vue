@@ -72,7 +72,9 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
       ></Polaroid2>
 
 
-
+      <MailLetterPrompt v-if="showMailLetter" 
+        @sendMailDiscard="sendMailDiscard($event)"
+      />
 
       <div id="photocontent"></div>
     </div>
@@ -129,7 +131,9 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
     <img class="spiral" src="mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
 
     <div id="contact" style="position:absolute;left:60px; top:306px; z-index:2;   width:120px; height:143px; display:none">
-
+      <MailToPrompt v-if="showMailToPrompt" 
+        @writeMailClicked="writeMailClicked"
+      />
       <table id="newspaper-b" style="display:none">
 
         <tbody>
@@ -165,8 +169,21 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
         </tbody>
       </table>
-    </div>
 
+      
+    </div>
+    <!--Write Mail button-->
+    <div id="mail-btn">
+      <div class="button write-mail-btn" @click="openMailPrompt">      
+        <div style="background:beige;margin-left:15px">
+            <img src="mail/contact.png">
+          </div>
+        <div style="font-size:23px">
+          <span>Write Mail</span>
+        </div>
+      </div>
+    </div>
+    <img id='paper_big' src='mail/paper2.png' style="display:none;width:500px;height:700px;position:absolute;left:670px;z-index:99"/>
     <img src="mail/trash1_1.png" class="trash1 trash" @mousedown="trashMousedown" @mouseup="trashMouseup" />
     <img src="mail/trash1_2.png" class="trash2 trash" @mousedown="trashMousedown" @mouseup="trashMouseup" />
     <img src="mail/desk.png" class="tray" @mousedown="trayMousedown" width="133" height="133" style="position:absolute; top:100px;"/>
@@ -197,6 +214,20 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 }
 .swal-button--connect:active {
   background-color: #13425d !important;
+}
+.write-mail-btn{
+  cursor:pointer;
+  display:flex !important;
+  position:absolute; 
+  bottom:25px; 
+  left:650px;
+  height:80px !important;
+  align-items:center
+}
+.write-mail-btn img{
+  width:40px;
+  height:40px;
+  margin:5px;
 }
 </style>
 <style scoped src="../assets/css/newcss.css">
@@ -264,6 +295,8 @@ export default {
 const axios = require('axios')
 import Polaroid from "./working/Polaroid"
 import Polaroid2 from "./working/Polaroid2"
+import MailToPrompt from "./working/MailToPrompt";
+import MailLetterPrompt from "./working/MailLetterPrompt"
 const toBlobURL = require('stream-to-blob-url')
 
 function mySideChange(front) {
@@ -623,7 +656,9 @@ export default {
   },
   components: {
     "Polaroid": Polaroid,
-    "Polaroid2": Polaroid2
+    "Polaroid2": Polaroid2,
+    "MailToPrompt" : MailToPrompt,
+    "MailLetterPrompt": MailLetterPrompt
   },
   data() {
     return {
@@ -662,7 +697,14 @@ export default {
       mcimg: null,
 
       mails: [],
-      loading_mails: true
+      loading_mails: true,
+      trashedMails: [],
+      showMailToPrompt: false,
+      showMailLetter: false,
+      previousStyle: {
+        left: 500,
+        'z-index': 0
+      }
     }
   },
   computed: {
@@ -750,6 +792,7 @@ export default {
               }
               self.mails = response.data.data
               self.loading_mails = false
+              self.trashedMails = self.mails.filter(mail => mail.t === "trash");
               /*self.mails.forEach(function(mail, index) {
                   if (!mail.r) {
                     mail.r = "unread"
@@ -1118,10 +1161,17 @@ export default {
           delay=1000;
         }
 
+        if(this.showMailToPrompt){
+          this.showMailToPrompt = false;
+          this.showMailLetter = false;
+          this.contactin();
+        }
+
         setTimeout(function(){
           //console.log("this", this)
           //return;
           self.mailOpened=1;
+          $('#mail-btn').show();
           $('.tray').show();
           $('.trash1').show();
           $('.trash2').show();
@@ -1364,6 +1414,7 @@ export default {
     },
     icontactClick() {
       var self = this
+      this.showMailToPrompt = false;
       if(self.contactOpened==0)
       {
         var delay=0;
@@ -1382,7 +1433,12 @@ export default {
           delay=1000;
           self.albumin();
         }
+        else if(this.showMailLetter){
+          this.contactin();
+          this.sendMailDiscard();
+        }
         $('.tray').hide();
+        $('#mail-btn').hide();
         $('.trash1').show();
         $('.trash2').show();
         setTimeout(function(){
@@ -1426,7 +1482,7 @@ export default {
       var subject = $(polar).find("#mail-subject").val()
       var mail_header_from = $(polar).find("#mail-header-from").val()
       var mail_header_message_id = $(polar).find("#mail-header-message-id").val()
-      var mail_header_references = $(polar).find("#mail-header-references").val()
+      var mail_header_references = $(polar).find("#mail-header-message-id").val()
       self.destination=$(polar).find('#from').html();
       var LEFT;
       var TOP;
@@ -1548,12 +1604,14 @@ export default {
             $(this).find('.send').bind('click',function() {
               var p=$(this).parent().parent();
               //send message
-              axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/reply-mail', {
-                message: $(p).find('#inputpaper').val(),
+              axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/message/send', {
+                html: '',
+                text: $(p).find('#inputpaper').val(),
                 subject: $(p).find('#reply-subject').val(),
-                from: $(p).find('#reply-mail-header-from').val(),
-                message_id: $(p).find('#reply-mail-header-message-id').val(),
-                references: $(p).find('#reply-mail-header-references').val()
+                from: self.$store.state.AppActiveUser.email,
+                to: $(p).find('#reply-mail-header-from').val(),
+                replyTo: $(p).find('#reply-mail-header-message-id').val(),
+                inReplyTo: $(p).find('#reply-mail-header-references').val()
               })
               .then((response) => {
                 if(!response.data.status)
@@ -1793,7 +1851,10 @@ export default {
 
       });
     },
-    throwawayClick(e) {
+    throwawayClick(ev) {
+      let e = ev.event;
+      let messageId = ev.messageId;
+      this.moveMailToTrash(messageId);
       var self = this
       var p = $(e.currentTarget).parent().parent();
 
@@ -1886,8 +1947,8 @@ export default {
               csstrash1.top = self.trash_y+128-73+'px';
               $(polar).animate(csstrash1,0,function() {
                 $(polar).css('z-index',z123);
-                $(self.deletedEmail).css('display','none');
-                $(self.deletedEmail).attr('t','deleted');
+                /*$(self.deletedEmail).css('display','none');
+                $(self.deletedEmail).attr('t','deleted');*/
                 self.deletedEmail=$(polar);
 
                 self.openedDeleted=flag123;
@@ -1899,7 +1960,6 @@ export default {
       });
     },
     closeClick(e) {
-
       var self = this
       var p = $(e.currentTarget).parent().parent();
       var z = parseInt($(p).parent().parent().css('z-index'));
@@ -2044,58 +2104,101 @@ export default {
       }
     },
     trashMousedown() {
-      var self = this
-      var dE1;
-      self.lastDragged=dE1;
-      if(self.deletedEmail!=undefined)
-      {
-        //console.log('trash mousedown');
-        var deletedEmail1 = self.deletedEmail;
-        console.log("trashMousedown live", deletedEmail1)
-        self.deletedEmail=dE1;
-        $(deletedEmail1).attr('t','none');
-
-        var csstrash1 = {
-          position:'absolute'
-        };
-        csstrash1.top = self.trash_y-128+'px';
-
-        $( deletedEmail1 ).draggable({disabled: false});
-        var nowz = $(deletedEmail1).css('z-index');
-        $('.polaroid').each(function() {
-          if($(this).css('z-index') > nowz)
-            $(this).css('z-index',$(this).css('z-index')-1);
-        });
-
-        $(deletedEmail1).css('z-index', self.z+2);
-        $(deletedEmail1).animate(csstrash1,500,function(){
-          $(deletedEmail1).find('.envcontents').find('#envelope').attr('src','mail/envelope.png');
-          $(deletedEmail1).css('z-index', self.curr_index);
-          $(deletedEmail1).find('#frontcontents').show();
-          if($(deletedEmail1).attr('r')=="read")
+      const self = this;
+      if(this.trashedMails.length){
+        let mail = this.trashedMails.shift();
+        axios.put(process.env.VUE_APP_API_HOST_NAME+`/api/message/move/inbox`, [mail])
+        .then(response => {
+          console.log(response);
+          /*var self = this
+          var dE1;
+          self.lastDragged=document.getElementById(mail.messageId);
+          if(self.deletedEmail!=undefined)
           {
-            $(deletedEmail1).find('.envcontents').find('#rot2').show();
-            $(deletedEmail1).find('.envcontents').find('#envelope').css('top','128px');
-            $(deletedEmail1).find('#frontcontents').css('position','absolute');
-            $(deletedEmail1).find('#frontcontents').css('top','128px');
+            //console.log('trash mousedown');
+            var deletedEmail1 = document.getElementById(mail.messageId);
+            //console.log("trashMousedown live", deletedEmail1)
+            self.deletedEmail=document.getElementById(mail.messageId);
+            $(deletedEmail1).attr('t','none');
 
-            self.openedDeleted=dE1;
-          }
-          $(deletedEmail1).css('z-index', self.curr_index);
-          csstrash1.top = self.trash_y-128-239+'px';
-          csstrash1.left = self.trash_x+34-355+'px';
+            var csstrash1 = {
+              position:'absolute'
+            };
+            csstrash1.top = self.trash_y-128+'px';
 
-          $(deletedEmail1).css(csstrash1);
+            $( deletedEmail1 ).draggable({disabled: false});
+            var nowz = $(deletedEmail1).css('z-index');
+            $('.polaroid').each(function() {
+              if($(this).css('z-index') > nowz)
+                $(this).css('z-index',$(this).css('z-index')-1);
+            });
 
-          csstrash1.top = self.trash_y-128-239-50+'px';
-          csstrash1.left = self.trash_x+34-355-75+'px';
-          $(deletedEmail1).animate(csstrash1,500,function() {
+            $(deletedEmail1).css('z-index', self.z+2);
+            $(deletedEmail1).animate(csstrash1,500,function(){
+              $(deletedEmail1).find('.envcontents').find('#envelope').attr('src','mail/envelope.png');
+              $(deletedEmail1).css('z-index', self.curr_index);
+              $(deletedEmail1).find('#frontcontents').show();
+              if($(deletedEmail1).attr('r')=="read")
+              {
+                $(deletedEmail1).find('.envcontents').find('#rot2').show();
+                $(deletedEmail1).find('.envcontents').find('#envelope').css('top','128px');
+                $(deletedEmail1).find('#frontcontents').css('position','absolute');
+                $(deletedEmail1).find('#frontcontents').css('top','128px');
 
+                self.openedDeleted=document.getElementById(mail.messageId);
+              }
+              $(deletedEmail1).css('z-index', self.curr_index);
+              csstrash1.top = self.trash_y-128-239+'px';
+              csstrash1.left = self.trash_x+34-355+'px';
 
+              $(deletedEmail1).css(csstrash1);
+
+              csstrash1.top = self.trash_y-128-239-50+'px';
+              csstrash1.left = self.trash_x+34-355-75+'px';
+              $(deletedEmail1).animate(csstrash1,500,function() {
+
+              });
+            });
+
+          //}*/
+
+          //move polaroid trash ball up -128px
+          let deletedMailPolaroid = $(document.getElementById(mail.messageId));
+          let polaroidStyles = {
+            top: +deletedMailPolaroid.css('top').substring(0, deletedMailPolaroid.css('top').length-2),
+            left: +deletedMailPolaroid.css('left').substring(0, deletedMailPolaroid.css('left').length-2),
+            'z-index': deletedMailPolaroid.css('z-index')
+          };
+          //change the attribute from trash to none
+          deletedMailPolaroid.attr('t', 'none');
+
+          //animate the polaroid
+          deletedMailPolaroid.animate({'top': (polaroidStyles.top - 128)+"px"}, 500, function(){
+            //hide the ball icon and show envelope icon
+            $(deletedMailPolaroid).find('.envcontents').find("#envelope").attr('src', 'mail/envelope.png');
+
+            //show front contents of envelope also set its position and top
+            $(deletedMailPolaroid).find('#frontcontents').css({'position':'absolute', 'top':'128px'}).show();            
+
+            //show fullback img
+            $(deletedMailPolaroid).find('.envcontents').find('#rot2').show();
+            //set top for #envelope
+            $(deletedMailPolaroid).find('.envcontents').find("#envelope").css('top', '128px');
+            
+            //animate the polaroid to top of 128px
+            self.previousStyle.left+=100;
+
+            //animate the polaroid and make it draggable
+            $(deletedMailPolaroid).animate({'top':'128px', 'left':self.previousStyle.left+"px"}, 500, function(){
+              $(this).css('z-index', self.previousStyle['z-index'] += 1);
+              //finally make the polaroid draggable
+              $(this).draggable({disabled: false});
+            })
           });
-        });
-
-      }
+        })
+        .catch(err => console.log(err));
+      }     
+     
     },
     trayMousedown() {
       var self = this
@@ -2177,44 +2280,44 @@ export default {
             $(lastDragged1).find('.envcontents').find('#rot2').css('display','none');
             flag123 = 1;
           }
-          else
+          /*else
             flag123 = undefined;
-          $( lastDragged1 ).draggable({disabled: true});
-          $(lastDragged1).find('.envcontents').find('#envelope').css('left','0px');
-          $(lastDragged1).find('.envcontents').find('#envelope').css('top','0px');
-          $(lastDragged1).css('z-index',self.z+2);
-          $(lastDragged1).find('.envcontents').find('#envelope').attr('src','mail/trash_ball.png');
-          $(lastDragged1).find('#frontcontents').css('display','none');
-          $(lastDragged1).draggable(false);
+            $( lastDragged1 ).draggable({disabled: true});
+            $(lastDragged1).find('.envcontents').find('#envelope').css('left','0px');
+            $(lastDragged1).find('.envcontents').find('#envelope').css('top','0px');
+            $(lastDragged1).css('z-index',self.z+2);
+            $(lastDragged1).find('.envcontents').find('#envelope').attr('src','mail/trash_ball.png');
+            $(lastDragged1).find('#frontcontents').css('display','none');
+            $(lastDragged1).draggable(false);
 
-          var csstrash1 = {left:'1100px',
+            var csstrash1 = {left:'1100px',
 
-            position:'absolute'
-          };
+              position:'absolute'
+            };
 
 
-          $(lastDragged1).css('left',self.trash_x+34+'px');
-          csstrash1.top = self.trash_y + 128 - 73+'px';
-          csstrash1.left = self.trash_x + 34+'px';
-          $(lastDragged1).animate(csstrash1,1000,function(){
-            csstrash1.top = self.trash_y+128-73-20+'px';
-            $(lastDragged1).animate(csstrash1,0,function(){
-
-              csstrash1.top = self.trash_y+128-73+'px';
+            $(lastDragged1).css('left',self.trash_x+34+'px');
+            csstrash1.top = self.trash_y + 128 - 73+'px';
+            csstrash1.left = self.trash_x + 34+'px';
+            $(lastDragged1).animate(csstrash1,1000,function(){
+              csstrash1.top = self.trash_y+128-73-20+'px';
               $(lastDragged1).animate(csstrash1,0,function(){
-                $(lastDragged1).css('z-index',z123);
-                $(lastDragged1).attr('t','trash');
-                //alert($(this).css('z-index'));
-                $(self.deletedEmail).css('display','none');
-                $(self.deletedEmail).attr('t','deleted');
-                self.deletedEmail=$(lastDragged1);
-                self.openedDeleted = flag123;
+
+                csstrash1.top = self.trash_y+128-73+'px';
+                $(lastDragged1).animate(csstrash1,0,function(){
+                  $(lastDragged1).css('z-index',z123);
+                  $(lastDragged1).attr('t','trash');
+                  //alert($(this).css('z-index'));
+                  //$(self.deletedEmail).css('display','none');
+                  //$(self.deletedEmail).attr('t','deleted');
+                  self.deletedEmail=$(lastDragged1);
+                  self.openedDeleted = flag123;
+                });
+
               });
 
-            });
-
-          });
-        }
+            }*/
+          }
       }
     },
     polaroidMouseup(e) {
@@ -2259,6 +2362,9 @@ export default {
           $(e.currentTarget).css('z-index',self.z+2);
           $(e.currentTarget).find('.envcontents').find('#envelope').attr('src','mail/trash_ball.png');
           $(e.currentTarget).attr('t','trash');
+          //Method called when a message is moved to trash
+          let messageId = target.find("#frontcontents").find("#mail-header-message-id").val();
+          self.moveMailToTrash(messageId);
           $(e.currentTarget).find('#frontcontents').css('display','none');
           $(e.currentTarget).draggable(false);
 
@@ -2277,8 +2383,8 @@ export default {
               csstrash1.top = self.trash_y+128-73+'px';
               $(this).animate(csstrash1,0,function(){
                 $(this).css('z-index',z123);
-                $(self.deletedEmail).css('display','none');
-                $(self.deletedEmail).attr('t','deleted');
+                /*$(self.deletedEmail).css('display','none');
+                $(self.deletedEmail).attr('t','deleted');*/
                 self.deletedEmail=$(this);
                 self.openedDeleted = flag123;
                 //alert($(this).css('z-index'));
@@ -2687,6 +2793,67 @@ export default {
       $(targetElement).rotate3Di('unflip',1);
       $(targetElement).find('#envelope').rotate3Di('unflip',1);
       $(targetElement).find('#rot2').rotate3Di('unflip',1);
+    },
+
+    openMailPrompt(){
+      let delay = 500;
+      /**Close Opened Mail Box or Album */
+      if(this.mailOpened==1)
+      {
+        this.mailin(this.mcimg);
+      }
+      else if(this.albumOpened==1)
+      {
+        this.albumin();
+      }
+      else if(this.showMailToPrompt || this.showMailLetter){
+        this.showMailToPrompt = this.showMailLetter = false;
+      }
+      //Open the contact view via jquery animate
+      $('#contact')
+        .animate({'position':'absolute','left':'300px', 'top':'20px', 'width':'550px','height':'650px'},delay, () => {
+          this.showMailToPrompt = true;
+          $('.spiral').show();
+          $('.spiral').css('left','267px');
+        });
+    },
+
+    writeMailClicked(){
+      if(!this.showMailLetter){
+        this.showMailLetter = true;
+        setTimeout(() => {
+          let p = $("#composeEmailFacade").find("#letter");        
+          $(p).animate({'left':'-125px', 'top': '170px'},1000,() => {
+            $(p).css('z-index',99);
+            $(p).animate({'top':'130px'},1000,() => {
+              $(".compose_envcontents").draggable({
+                  containment: "#composeEmailFacade", 
+                  scroll: false,
+              });
+            });
+          });
+        }, 100);
+      }
+    },
+
+    sendMailDiscard(e){
+      let p = $("#composeEmailFacade").find("#letter");
+      $(p).animate({'left':'125px', 'top': '0'},500,() => {
+          $(p).css('z-index',0);
+          $(p).animate({'top':'130px'},100,() => {
+            this.showMailLetter = false;
+          });
+        });
+    },
+
+    moveMailToTrash(messageId){
+      let mail = this.mails.find(mail => mail.messageId === messageId);
+      axios.put(process.env.VUE_APP_API_HOST_NAME+`/api/message/move/trash`, [mail])
+        .then(response => {
+          console.log(response);
+          this.trashedMails.push(mail);
+        })
+        .catch(err => console.log(err));
     }
   }
 }
