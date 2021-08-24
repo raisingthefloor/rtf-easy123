@@ -23,6 +23,7 @@
  * Consumer Electronics Association Foundation
  **/
 const logger = require('../../../logger/api.logger')
+const bcrypt = require("bcrypt");
 const {User} = require('../../Googleapi/Models/user.model')
 
 class UserController {
@@ -42,9 +43,17 @@ class UserController {
         try {
             data.status = true
             data.data = await User.find({
-                deleted: false,
-                assistant_id: request.decoded.id
+                $or:[
+                    {
+                        createdBy: request.decoded.id
+                    },
+                    {
+                        _id: request.decoded.id
+                    }
+                ],
+                deleted: false
             })
+            //console.log("dat", data)
             response.send(data)
         } catch (err) {
             logger.error('Error::' + err)
@@ -74,6 +83,128 @@ class UserController {
             data.status = true
             data.data = await User.find({deleted:false})
 
+            response.send(data)
+        } catch (err) {
+            logger.error('Error::' + err)
+            response.send(data)
+        }
+    }
+
+    /**
+     * get user details
+     * @param request
+     * @param response
+     * @returns {Promise<void>}
+     */
+    async userDetails(request, response) {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+        try {
+            data.status = true
+            data.data = await User.findOne({
+                _id: request.body.id
+            })
+            response.send(data)
+        } catch (err) {
+            logger.error('Error::' + err)
+            response.send(data)
+        }
+
+    }
+
+    /**
+     * save user profile tab
+     */
+    async userProfileSave(request, response) {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+
+        try {
+            //get user with id
+            const user_exists = await User.findOne({
+                _id: { $ne: request.body.id },
+                email: request.body.email
+            })
+
+            if(user_exists)
+            {
+                data.status = false
+                data.message = "user_exists"
+                response.send(data)
+                return
+            }
+            else // user does not exists with the same email id
+            {
+                let update_data = {
+                    email: request.body.email
+                }
+
+                if(request.body.password)
+                {
+                    const saltRounds = 10
+                    let hash = await bcrypt.hash(request.body.password, saltRounds)
+                    update_data.password = hash
+                }
+
+                await User.findOneAndUpdate({
+                    _id: request.body.id
+                }, update_data)
+
+                const user = await User.findOne({
+                    _id: request.body.id
+                })
+
+                data.status = true
+                data.data = user
+                data.message = "success"
+                response.send(data)
+
+            }
+
+        } catch (err) {
+            logger.error('Error::' + err)
+            response.send(data)
+        }
+    }
+
+    /**
+     * Save IMAP & SMTP details
+     */
+    async userImapSmtpSave(request, response) {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+
+        try {
+            let update_data = {
+                imapUsername: request.body.imap_username,
+                imapPassword: request.body.imap_password,
+                imapHost: request.body.imap_host,
+                smtpUsername: request.body.smtp_username,
+                smtpPassword: request.body.smtp_password,
+                smtpHost: request.body.smtp_host,
+                smtpPortNumber: request.body.smtp_port
+            }
+
+            await User.findOneAndUpdate({
+                _id: request.body.id
+            }, update_data)
+
+            const user = await User.findOne({
+                _id: request.body.id
+            })
+
+            data.status = true
+            data.data = user
+            data.message = "success"
             response.send(data)
         } catch (err) {
             logger.error('Error::' + err)

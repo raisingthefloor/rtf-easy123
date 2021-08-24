@@ -56,6 +56,9 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 <script>
 import 'bootstrap/dist/js/bootstrap.bundle'
 export default {
+  mounted() {
+    document.querySelector('body').style.overflowY = 'initial'
+  },
   methods: {
     logoutUser() {
       this.$store.commit('LOGOUT_USER', this.$router)

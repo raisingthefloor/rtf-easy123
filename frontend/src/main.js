@@ -33,7 +33,15 @@ import axios from 'axios'
 import Toasted from 'vue-toasted'
 import VueI18n from 'vue-i18n'
 import messages from './lang/index'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faEye, faEyeSlash } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import Vuelidate from 'vuelidate'
 
+Vue.use(Vuelidate)
+
+library.add([faEye, faEyeSlash])
+Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Sentry.init({
   Vue,
@@ -52,6 +60,7 @@ Vue.use(Vuex)
 Vue.use(VueRouter)
 Vue.use(VueMeta)
 Vue.use(VueI18n)
+
 
 export const i18n = new VueI18n({
   locale: 'en',

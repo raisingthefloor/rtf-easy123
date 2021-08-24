@@ -34,6 +34,7 @@ import HomeWorking from "@/components/HomeWorking"
 import AdminUser from "@/components/admin/user/List"
 import AssistantUser from "@/components/assistant/user/List"
 import AssistantCreateUser from "@/components/assistant/user/Create"
+import AssistantEditUser from "@/components/assistant/user/Edit"
 
 import admin from "../middleware/admin"
 import assistant from "../middleware/assistant"
@@ -97,6 +98,14 @@ const router = new Router({
             path: '/assistant/create-user',
             name: 'AssistantCreateUser',
             component: AssistantCreateUser,
+            meta: {
+                middleware: assistant
+            }
+        },
+        {
+            path: '/assistant/member/:id/edit',
+            name: 'AssistantEditUser',
+            component: AssistantEditUser,
             meta: {
                 middleware: assistant
             }

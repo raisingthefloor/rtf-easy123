@@ -27,20 +27,25 @@ const mongoose = require('mongoose');
 const modelName = "user"
 const schema = new mongoose.Schema({
     name: {type: String, trim: true},
-    role: {type: String, default: "subscribed"},
+    nickname: {type: String, trim: true},
+    role: {type: String, default: "user"},
     email: {
         type: String,
         trim: true,
         unique: true
     },
     password: {type: String, trim: true},
-    googleEmail: {
-        type: String,
-        trim: true,
-        default: ''
-    },
-    google_authentication_code: {type: String},
+
+    imapUsername: { type: String, default: null },
+    imapPassword: { type: String, default: null },
+    imapHost: { type: String, default: null },
+    smtpUsername: { type: String, default: null },
+    smtpPassword: { type: String, default: null },
+    smtpHost: { type: String, default: null },
+    smtpPortNumber: { type: Number, default: null },
+
     emailVerified: {type: Boolean, default: false},
+    createdBy: mongoose.Schema.ObjectId,
     deleted: {type: Boolean},
     deletedAt: {type: Date}
 }, {
