@@ -30,6 +30,8 @@ const simpleParser = require('mailparser').simpleParser;
 const nodemailer = require("nodemailer");
 const mimemessage = require('mimemessage'); //using this module to construct mime message
 
+const {User} = require('../../Googleapi/Models/user.model');
+
 //const { StringDecoder } = require('string_decoder');
 //const decoder = new StringDecoder('utf8');
 
@@ -64,95 +66,120 @@ class ImapController{
         //openBox(mailboxName, readOnly, callback)
         imapClient.openBox(boxType, readOnly, callback);
     }
-
+    //gets all messages from inbox + trash
     getAllMails(req, res){
         //Variables used for response status and payload
         let error = false, responseCode = 200;
         let data = [], status = 'success', payload = {};
 
-        //Imap Connection is Established
-        imapClient.once('ready', () => {
-            //Opening the Inbox via IMAP
-            this.openMailBox('INBOX', true, (err, box) => {
-                if(!err){
-                    let fetchedMessagesEvent = imapClient.seq.fetch((box.messages.total)+":1", {
-                        bodies: '',
-                        struct: true
-                    });
-        
-                    //a message is received
-                    fetchedMessagesEvent.on('message', (msg, seqno) => {
-                        
-                        //message body is loaded
-                        msg.on('body', (stream, info) => {
-                            
-                            //all the data is received from stream
-                            stream.once('end', () => {                                
-                            })
-                            //handling message attributes
-                            msg.once('attributes', attrs => {
-                                //using mailparser to parse message body
-                                simpleParser(stream, (err, mail) => {
-                                    let isRead = "unread" , isTrashed = "none";
-                                    if(attrs.flags.includes("\\Seen")){
-                                        isRead = "read";
-                                        isTrashed = "tray";
-                                    }
-                                    const {to, from, subject, text, html, date, attachments, messageId } = mail;
-                                    payload = {date, to: to ? to.text : 'Mayur Upadhayay', from: from.text, subject, text, html, 
-                                        r: isRead, t: isTrashed, in:'c', attachments, messageId, attrs};
-                                    data.push(payload);
-                                })
-                            });
-                        });
-
-                        
-                        msg.once('end', async () => {
-                        });
-                    });
-        
-                    //an error occurs on fetching messages
-                    fetchedMessagesEvent.once('error', (err) => {
-                        error = true;
-                        responseCode = 500;
-                        logger.error('Imap Fetch Error :: '+err);
-                    });
-        
-                    //all messages from inbox  are fetched
-                    fetchedMessagesEvent.once('end', () => {
-                        //close inbox and open trashbox
-                        imapClient.closeBox((err) => {
+        //Check whether user exists for the decoded id
+        User.findOne({_id: req.decoded.id})
+            .then(user => {
+                //user is found
+                if(user){
+                    //Imap Connection is Established
+                    imapClient.once('ready', () => {
+                        //Opening the Inbox via IMAP
+                        this.openMailBox('INBOX', true, (err, box) => {
                             if(!err){
-                                //method to get messages from trash box
-                                this.getTrashedMessages(imapClient, data, payload);
+                                let fetchedMessagesEvent = imapClient.seq.fetch((box.messages.total)+":1", {
+                                    bodies: '',
+                                    struct: true
+                                });
+                    
+                                //a message is received
+                                fetchedMessagesEvent.on('message', (msg, seqno) => {
+                                    
+                                    //message body is loaded
+                                    msg.on('body', (stream, info) => {
+                                        
+                                        //all the data is received from stream
+                                        stream.once('end', () => {                                
+                                        })
+                                        //handling message attributes
+                                        msg.once('attributes', attrs => {
+                                            //using mailparser to parse message body
+                                            simpleParser(stream, (err, mail) => {
+                                                let isRead = "unread" , isTrashed = "none";
+                                                if(attrs.flags.includes("\\Seen")){
+                                                    isRead = "read";
+                                                    isTrashed = "tray";
+                                                }
+                                                const {to, from, subject, text, html, date, attachments, messageId } = mail;
+                                                payload = {date, to: to ? to.text : user.name, from: from.text, subject, text, html, 
+                                                    r: isRead, t: isTrashed, in:'c', attachments, messageId, attrs};
+                                                data.push(payload);
+                                            })
+                                        });
+                                    });
+
+                                    
+                                    msg.once('end', async () => {
+                                    });
+                                });
+                    
+                                //an error occurs on fetching messages
+                                fetchedMessagesEvent.once('error', (err) => {
+                                    error = true;
+                                    responseCode = 500;
+                                    logger.error('Imap Fetch Error :: '+err);
+                                });
+                    
+                                //all messages from inbox  are fetched
+                                fetchedMessagesEvent.once('end', () => {
+                                    //close inbox and open trashbox
+                                    imapClient.closeBox((err) => {
+                                        if(!err){
+                                            //method to get messages from trash box
+                                            this.getTrashedMessages(imapClient, data, payload);
+                                        }
+                                    });
+                                    //imapClient.end();
+                                })
+                            }
+                            else{
+                                error = true;
                             }
                         });
-                        //imapClient.end();
-                    })
+                    });
+                
+                    imapClient.once('error', (err) => {
+                        imapClient.end();
+                        error = true;
+                        responseCode = 500;
+                        logger.error('imap connection error :: '+err);
+                    });
+                    
+                    imapClient.once('end', () => {
+                        res.status(responseCode).send({error, 
+                            total: !error ? data.length : 0,
+                            data,
+                            message: !error ? status : 'Some error has occured.'
+                        });
+                    });
+
+                    //Establish Connection using imap client to an imap server
+                    imapClient.connect();
                 }
                 else{
+                    responseCode = 400;
                     error = true;
+                    res.status(responseCode).send({
+                        error,
+                        message: "Authentication Error"
+                    });
                 }
+            })
+            .catch(err => {
+                error = true;
+                responseCode = 500;
+                res.status(responseCode).send({error, 
+                    total: !error ? data.length : 0,
+                    data,
+                    message: !error ? status : 'Some error has occured.'
+                });
             });
-        });
-    
-        imapClient.once('error', (err) => {
-            imapClient.end();
-            error = true;
-            responseCode = 500;
-            logger.error('imap connection error :: '+err);
-        });
-          
-        imapClient.once('end', () => {
-            res.status(responseCode).send({error, 
-                total: !error ? data.length : 0,
-                data,
-                message: !error ? status : 'Some error has occured.'
-            });
-        });
-
-        //Establish Connection using imap client to an imap server
-        imapClient.connect();
+        
     }
 
     //this method is called after all the messages from inbox are fetched
