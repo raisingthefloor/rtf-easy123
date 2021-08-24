@@ -29,8 +29,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         <thead>
         <tr>
           <th scope="col">Name</th>
-          <th scope="col">Login Email</th>
-          <th scope="col">Google Account</th>
+          <th scope="col">Email</th>
           <th scope="col">Role</th>
           <th scope="col">Actions</th>
         </tr>
@@ -39,11 +38,10 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         <tr v-for="user in users" :key="user.id">
           <td>{{ user.name }}</td>
           <td>{{ user.email }}</td>
-          <td>{{ user.googleEmail }}</td>
           <td style="text-transform: capitalize;">{{ user.role }}</td>
           <td>
-            <!--            <button type="button" class="btn btn-danger btn-sm" @click="deleteUser(user.id)" v-show="user.role != 'admin'">Delete</button>-->
-            <button type="button" class="btn btn-danger btn-sm" @click="deleteUserAlert(user.id)" v-show="user.role != 'admin'">Delete</button>
+            <button type="button" class="btn btn-info btn-sm me-2" v-if="$store.state.AppActiveUser.email != user.email" @click="editUser(user)" v-show="user.role != 'admin'">Edit</button>
+            <button type="button" class="btn btn-danger btn-sm"  v-if="$store.state.AppActiveUser.email != user.email" @click="deleteUserAlert(user.id)" v-show="user.role != 'admin'">Delete</button>
           </td>
         </tr>
         </tbody>
@@ -83,11 +81,7 @@ export default {
       axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/assistant/get-users/',{})
           .then((response) => {
             self.users = response.data.data
-            if(!self.users.length)
-            {
-              self.$router.push('/assistant/create-user')
-              return
-            }
+
             //console.log(self.users)
           }, (error) => {
             console.log(error)
@@ -119,6 +113,9 @@ export default {
           }, (error) => {
             console.log(error)
           })
+    },
+    editUser(user) {
+      this.$router.push('/assistant/member/'+user.id+'/edit/')
     }
   }
 }

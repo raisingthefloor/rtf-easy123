@@ -45,6 +45,8 @@ module.exports = function (router) {
     router.post('/api/register', middelware.createUser, authController.register.bind(authController))
     router.post('/api/confirmation', authController.confirmation.bind(authController))
     router.post('/api/resend-verification-mail', authController.resendVerificationEmail.bind(authController))
+    router.get('/api/check-email-exists', authController.checkIfEmailExists.bind(authController))
+
 
     //delete below functions while going to productions
     //for deleting all users from database- delete in production

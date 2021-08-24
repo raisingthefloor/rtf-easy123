@@ -120,7 +120,7 @@ class AuthController {
         try {
             const saltRounds = 10
             let data = {}
-            const { email, password, name } = request.body
+            const { account_name, account_nickname, email, password, name } = request.body
 
             let hash = await bcrypt.hash(password, saltRounds)
 
@@ -130,6 +130,13 @@ class AuthController {
                 email: email,
                 password: hash,
                 role: 'assistant'
+            })
+            console.log("data", data)
+            //create a user
+            let account_user = await User.create({
+                name: account_name,
+                nickname: account_nickname,
+                createdBy: data._id
             })
 
             // generate token and save
@@ -334,6 +341,55 @@ class AuthController {
             },
             message: 'success'
         })
+    }
+
+    /**
+     * check if email exists
+     */
+    async checkIfEmailExists(request, response) {
+        try {
+            if(!request.query.email)
+            {
+                response.send({
+                    status: true,
+                    data: null,
+                    message: 'user_exists'
+                })
+            }
+
+            const user = await User.findOne({
+                _id: { $ne: request.query.id },
+                email: request.query.email
+            })
+
+            if(!user)
+            {
+                response.send({
+                    status: true,
+                    data: null,
+                    message: 'user_not_exists'
+                })
+            }
+            else {
+                response.send({
+                    status: true,
+                    data: null,
+                    message: 'user_exists'
+                })
+            }
+
+            //console.log('users:::', users);
+            //response.send(user);
+        } catch (err) {
+            logger.error('Error::' + err)
+            response.send({
+                status: false,
+                data: null,
+                message: 'failed'
+            })
+        }
+
+
     }
 }
 

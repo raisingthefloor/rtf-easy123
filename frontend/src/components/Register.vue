@@ -27,14 +27,10 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
     <main class="form-signin text-center">
       <form @submit.prevent="formSubmit">
 
-        <h1 class="h3 mb-3 fw-normal">Register</h1>
+        <h1 class="h3 mb-3 fw-normal">{{ $t('register') }}</h1>
         <div class="form-floating">
           <p v-show="showError" style="color: red; font-size: 15px;">
             <span v-show="!nodeErrorArr.length" v-html="$t('register_client_validation')">
-<!--              {{ $t('please_fill_all_details_correctly') }} <br>
-              {{ $t('name_should_be_string') }} <br>
-              {{ $t('email_should_be_proper_proper_address') }} <br>
-              {{ $t('password_should_be_string_of_8_char_long') }}-->
             </span>
             <span v-show="nodeErrorArr.length">
               {{ $t('please_fill_all_details_correctly') }} <br>
@@ -44,31 +40,44 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
             </span>
           </p>
         </div>
-        <div class="form-floating">
-          <input type="text" class="form-control" id="floatingName" placeholder="Name" v-model="name" autofocus required>
-          <label for="floatingName">Name</label>
+        <div class="mb-3" style="text-align: left !important;">
+          <label for="account_name">{{ $t('account_name') }}</label>
+          <input type="text" class="form-control" id="account_name" :placeholder="$t('account_name_placeholder')" v-model="account_name" autofocus required>
         </div>
-        <p class="text-muted text-start"><small style="font-size: 1rem;">{{ $t('enter_your_full_name') }}</small></p>
-        <div class="form-floating mb-3">
-          <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" v-model="email" required>
-          <label for="floatingInput">{{ $t('email_address') }}</label>
+        <div class="mb-3" style="text-align: left !important;">
+          <label for="account_nickname">{{ $t('account_nickname') }}</label>
+          <input type="text" class="form-control" id="account_nickname" :placeholder="$t('account_nickname_placeholder')" v-model="account_nickname" required>
+        </div>
+        <div style="padding: 15px; border: 1px solid #a9a9a9;" class="mb-3">
+          <h6>{{ $t('assistant_details') }}</h6>
+          <div class="mb-3" style="text-align: left !important;">
+            <label for="name">{{ $t('name') }}</label>
+            <input type="text" class="form-control" id="name" :placeholder="$t('enter_your_full_name')" v-model="name" required>
+          </div>
+
+          <div class="mb-3" style="text-align: left !important;">
+            <label for="email">{{ $t('email_address') }}</label>
+            <input type="email" class="form-control" id="email" placeholder="name@example.com" v-model="email" required>
+          </div>
+
+          <div class="" style="text-align: left !important;">
+            <label for="password">{{ $t('password') }}</label>
+            <input type="password" class="form-control" id="password" :placeholder="$t('password_placeholder')" v-model="password" min="8" max="15" required>
+          </div>
+          <p class="text-muted text-start"><small style="font-size: 1rem;">{{
+              $t('password_help')
+            }}</small></p>
         </div>
 
-
-        <div class="form-floating">
-          <input type="password" class="form-control" id="floatingPassword" placeholder="Password" v-model="password" min="8" max="15" required>
-          <label for="floatingPassword">{{ $t('password') }}</label>
-        </div>
-        <p class="text-muted text-start"><small style="font-size: 1rem;">{{
-            $t('password_help')
-          }}</small></p>
 
         <button class="w-100 btn btn-lg btn-primary" type="submit" :disabled="registerSubmitClicked" :readonly="registerSubmitClicked">
           <span v-if="!registerSubmitClicked">{{ $t('submit') }}</span>
           <span v-if="registerSubmitClicked">{{ $t('processing') }}</span>
         </button>
 
-        <p class="mt-4">{{ $t('already_a_user') }} <router-link to="/">{{ $t('login') }}</router-link> </p>
+        <p class="mt-4">
+          {{ $t('already_a_user') }} <router-link to="/" class="mt-4">{{ $t('login') }}</router-link>
+        </p>
 
       </form>
 
@@ -134,9 +143,13 @@ export default {
   data() {
     return{
       id: null,
+      account_name: null,
+      account_nickname: null,
+
       email: null,
       name: null,
       password: null,
+
       user: {},
       showError: false,
       nodeErrorArr: [],
@@ -189,7 +202,7 @@ export default {
       var self = this
       this.registerSubmitClicked = true
       self.nodeErrorArr = []
-      if(!this.email || !this.name || !this.password || this.password.length < 8)
+      if(!this.email || !this.name || !this.password || this.password.length < 8 || !this.account_name || !this.account_nickname)
       {
         this.registerSubmitClicked = false
         this.showError = true
@@ -198,6 +211,8 @@ export default {
       this.showError = false
 
       axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/register/',{
+        account_name: self.account_name,
+        account_nickname: self.account_nickname,
         name: self.name,
         email: self.email,
         password: self.password,
