@@ -29,7 +29,7 @@ const logger = require('../../../logger/api.logger')
 const simpleParser = require('mailparser').simpleParser;
 const nodemailer = require("nodemailer");
 const mimemessage = require('mimemessage'); //using this module to construct mime message
-
+const ImapManager =  require("../../../Managers/ImapManager")
 const {User} = require('../../Googleapi/Models/user.model');
 
 //const { StringDecoder } = require('string_decoder');
@@ -37,37 +37,130 @@ const {User} = require('../../Googleapi/Models/user.model');
 
 //Imap connection handler to handle imap connection to remote IMAP server
 //Configurations are hard coded for now
-const imapClient = new Imap({
-    user: 'mayur@raisingthefloor.org',
-    password: 'vtjatsvmvtzadkzi',
-    host: 'imap.gmail.com',
-    port: 993,
-    tls: true,
-    tlsOptions: {
-        rejectUnauthorized: false
-    },
-    authTimeout: 30000
-});
+
 
 //SMTP Tansport
-const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 587,
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: "mayur@raisingthefloor.org", 
-      pass: "vtjatsvmvtzadkzi"
-    },
-});
-class ImapController{
+
+class ImapController {
+    imapClient
+
+    /**
+     * construct IMAP obj
+     * @param req
+     * @param res
+     */
+    async constructIMAP(req, res) {
+        const requestUser = await User.findOne({
+            _id: req.decoded.id
+        })
+        if(requestUser.role == "assistant")
+        {
+            //find user
+            const user = await User.findOne({
+                createdBy: requestUser.id,
+                role: 'user'
+            })
+            this.imapClient = new Imap({
+                user: user.imapUsername,
+                password: user.imapPassword,
+                host: user.imapHost,
+                port: 993,
+                tls: true,
+                tlsOptions: {
+                    rejectUnauthorized: false
+                },
+                authTimeout: 30000
+            })
+        }
+        else if (requestUser.role == "user")
+        {
+            this.imapClient = new Imap({
+                user: requestUser.imapUsername,
+                password: requestUser.imapPassword,
+                host: requestUser.imapHost,
+                port: 993,
+                tls: true,
+                tlsOptions: {
+                    rejectUnauthorized: false
+                },
+                authTimeout: 30000
+            })
+        }
+
+        /*this.imapClient = new Imap({
+            user: "mayur@raisingthefloor.org",
+            password: "vtjatsvmvtzadkzi",
+            host: "imap.gmail.com",
+            port: 993,
+            tls: true,
+            tlsOptions: {
+                rejectUnauthorized: false
+            },
+            authTimeout: 30000
+        })*/
+    }
+
+    /**
+     * construct SMTP obj
+     * @param req
+     * @param res
+     */
+    async constructSMTP(req, res) {
+        const requestUser = await User.findOne({
+            _id: req.decoded.id
+        })
+        if(requestUser.role == "assistant")
+        {
+            //find user
+            const user = await User.findOne({
+                createdBy: requestUser.id,
+                role: 'user'
+            })
+            this.transporter = nodemailer.createTransport({
+                host: user.smtpHost,
+                port: user.smtpPortNumber,
+                secure: false, // true for 465, false for other ports
+                auth: {
+                    user: user.smtpUsername,
+                    pass: user.smtpPassword
+                },
+            })
+        }
+        else if (requestUser.role == "user")
+        {
+            this.transporter = nodemailer.createTransport({
+                host: requestUser.smtpHost,
+                port: requestUser.smtpPortNumber,
+                secure: false, // true for 465, false for other ports
+                auth: {
+                    user: requestUser.smtpUsername,
+                    pass: requestUser.smtpPassword
+                },
+            })
+        }
+        //console.log(req, res)
+        /*this.transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 587,
+            secure: false, // true for 465, false for other ports
+            auth: {
+                user: "mayur@raisingthefloor.org",
+                pass: "vtjatsvmvtzadkzi"
+            },
+        });*/
+
+    }
 
     /**Opens a mailbox and processes the passed callback*/
     openMailBox(boxType, readOnly, callback){
+        this.imapClient.openBox(boxType, readOnly, callback)
         //openBox(mailboxName, readOnly, callback)
-        imapClient.openBox(boxType, readOnly, callback);
+
     }
     //gets all messages from inbox + trash
-    getAllMails(req, res){
+    async getAllMails(req, res){
+        await this.constructIMAP(req, res)
+
         //Variables used for response status and payload
         let error = false, responseCode = 200;
         let data = [], status = 'success', payload = {};
@@ -78,11 +171,11 @@ class ImapController{
                 //user is found
                 if(user){
                     //Imap Connection is Established
-                    imapClient.once('ready', () => {
+                    this.imapClient.once('ready', () => {
                         //Opening the Inbox via IMAP
                         this.openMailBox('INBOX', true, (err, box) => {
                             if(!err){
-                                let fetchedMessagesEvent = imapClient.seq.fetch((box.messages.total)+":1", {
+                                let fetchedMessagesEvent = this.imapClient.seq.fetch((box.messages.total)+":1", {
                                     bodies: '',
                                     struct: true
                                 });
@@ -128,10 +221,10 @@ class ImapController{
                                 //all messages from inbox  are fetched
                                 fetchedMessagesEvent.once('end', () => {
                                     //close inbox and open trashbox
-                                    imapClient.closeBox((err) => {
+                                    this.imapClient.closeBox((err) => {
                                         if(!err){
                                             //method to get messages from trash box
-                                            this.getTrashedMessages(imapClient, data, payload);
+                                            this.getTrashedMessages(this.imapClient, data, payload);
                                         }
                                     });
                                     //imapClient.end();
@@ -143,14 +236,14 @@ class ImapController{
                         });
                     });
                 
-                    imapClient.once('error', (err) => {
-                        imapClient.end();
+                    this.imapClient.once('error', (err) => {
+                        this.imapClient.end();
                         error = true;
                         responseCode = 500;
                         logger.error('imap connection error :: '+err);
                     });
                     
-                    imapClient.once('end', () => {
+                    this.imapClient.once('end', () => {
                         res.status(responseCode).send({error, 
                             total: !error ? data.length : 0,
                             data,
@@ -159,7 +252,7 @@ class ImapController{
                     });
 
                     //Establish Connection using imap client to an imap server
-                    imapClient.connect();
+                    this.imapClient.connect();
                 }
                 else{
                     responseCode = 400;
@@ -326,33 +419,35 @@ class ImapController{
         //console.log(msgBody);
     }*/
     
-    deleteEmailMessages(req, res){
-        imapClient.once('ready', () => {
+    async deleteEmailMessages(req, res){
+        await this.constructIMAP(req, res)
+
+        this.imapClient.once('ready', () => {
             //Opening the Inbox via IMAP
             this.openMailBox('INBOX', false, (err, box) => {
                 if(!err){
                     //sets the \Deleted flag on message 
-                    imapClient.addFlags(req.params.id, 'Deleted', (err) => {
+                    this.imapClient.addFlags(req.params.id, 'Deleted', (err) => {
                         //closing the box with autoexpunge parameter = true removes the message 
                         //from mailbox
                         
-                        imapClient.closeBox(false, err => {
+                        this.imapClient.closeBox(false, err => {
                             if(err) logger.error("Error :: ", err);
-                            imapClient.end();
+                            this.imapClient.end();
                         });
                     });
                 }
             });
         });
 
-        imapClient.once('error', (err) => {
-            imapClient.end();
+        this.imapClient.once('error', (err) => {
+            this.imapClient.end();
             // error = true;
             // responseCode = 500;
             logger.error('imap connection error :: '+err);
         });
           
-        imapClient.once('end', () => {
+        this.imapClient.once('end', () => {
             logger.info("Connection ended");
             // res.status(responseCode).send({error, 
             //     total: !error ? data.length : 0,
@@ -361,12 +456,12 @@ class ImapController{
             // });
         });
 
-        imapClient.connect();
+        this.imapClient.connect();
     }
     
     writeMail(data, isError){
         //Connecttion established
-        imapClient.once('ready', () => {
+        this.imapClient.once('ready', () => {
             let msg, htmlEntity, plainEntity;
 				// Build the top-level multipart MIME message.
 				msg = mimemessage.factory({
@@ -392,23 +487,24 @@ class ImapController{
                 else{
                     msg.body.push(plainEntity);
                 }
-                imapClient.append(msg.toString(), {mailbox: '[Gmail]/Sent Mail'}, (err) => {
+                this.imapClient.append(msg.toString(), {mailbox: '[Gmail]/Sent Mail'}, (err) => {
                     if(err) isError.error = true;
                     logger.info("Message sent!!!");
-                    imapClient.end();
+                    this.imapClient.end();
                 });
         });
-        imapClient.once('error', (err) => {
+        this.imapClient.once('error', (err) => {
             isError.error = true;
         })
-        imapClient.once('end', () => {
+        this.imapClient.once('end', () => {
             return;
         })
         //Attempt to connect
-        imapClient.connect();
+        this.imapClient.connect();
     }
 
     async sendMail(req, res){
+        await this.constructSMTP(req, res)
         let isError = {error: false};
         const {from, to, subject, html, text, replyTo, inReplyTo} = req.body;
         let msg = {
@@ -423,14 +519,15 @@ class ImapController{
         if(replyTo || inReplyTo){
             msg = Object.assign({}, msg, {replyTo, inReplyTo});
         }
-        let info = await transporter.sendMail(msg);
+        let info = await this.transporter.sendMail(msg);
         //writing the sent mail in sender's sent box
         this.writeMail(msg, isError);
         res.send(Object.assign({}, msg, {messageId: info.messageId}, isError));
         //res.send(null);
     }
 
-    moveMail(req, res){
+    async moveMail(req, res){
+        await this.constructIMAP(req, res)
         let error = false, message = "success";
         //move message from inbox to trash
         let source = "INBOX", destination = "[Gmail]/Trash";
@@ -440,23 +537,23 @@ class ImapController{
             destination = "INBOX";
         }
         let mails = req.body;
-        imapClient.once('ready', () => {
+        this.imapClient.once('ready', () => {
             this.openMailBox(source, false, (err, box) => {
                 if(!err && box.messages.total){
                     mails.forEach(mail => {
                         const {from, to, subject, date} = mail;
-                        imapClient.search([['FROM', this.strip_html(from)], ['TO', this.strip_html(to)], ['SUBJECT', subject], ['ON', date]], (err, results) => {
+                        this.imapClient.search([['FROM', this.strip_html(from)], ['TO', this.strip_html(to)], ['SUBJECT', subject], ['ON', date]], (err, results) => {
                             if(!err && results.length){
-                                imapClient.move(results, destination, err => {
+                                this.imapClient.move(results, destination, err => {
                                     if(!err){
                                         logger.info(`Message move from ${source} to ${destination}`);
-                                        imapClient.end();
+                                        this.imapClient.end();
                                     }
                                 });
                             }
                             else{
                                 error = true;
-                                imapClient.end();
+                                this.imapClient.end();
                             }
                         
                         }) 
@@ -464,29 +561,30 @@ class ImapController{
                 }
                 else{
                     logger.error(err);
-                    imapClient.end();
+                    this.imapClient.end();
                 }
             });
         });
 
-        imapClient.once('end', () => {
+        this.imapClient.once('end', () => {
             res.send({error, message: error ? "Something went wrong. Please contact admin" : message});
         });
 
-        imapClient.connect();
+        this.imapClient.connect();
     }
 
-    setFlags(req, res){
+    async setFlags(req, res){
+        await this.constructIMAP(req, res)
         let error = false, message = "success";
         let flag = "\\"+req.params.flag.charAt(0).toUpperCase()+req.params.flag.slice(1);
-        imapClient.once('ready', (err) => {
+        this.imapClient.once('ready', (err) => {
             if(!err){
                 this.openMailBox('INBOX', false, (err, box) => {
                     if(!err){
                         //logger.info(box.messages.new);
-                        imapClient.addFlags(req.params.uid, "\\Seen", () => {
+                        this.imapClient.addFlags(req.params.uid, "\\Seen", () => {
                             //logger.info("Flag added");
-                            imapClient.end();
+                            this.imapClient.end();
                         });
                         //imapClient.end();
                     }
@@ -497,14 +595,13 @@ class ImapController{
             }
         });
 
-        imapClient.once('end', () => {
+        this.imapClient.once('end', () => {
             res.send({error, message: error ? "Something went wrong. Please contact admin":message});
         });
-        imapClient.connect();
+        this.imapClient.connect();
     }
 
-    strip_html(str)
-    {
+    strip_html(str){
       if ((str===null) || (str==='') || str === undefined){
         return '';
       } 
