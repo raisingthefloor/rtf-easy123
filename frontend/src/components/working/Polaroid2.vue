@@ -24,12 +24,12 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 -->
 <template>
   <div :id="mail.messageId" class='polaroid' :r='mail.r' :t='mail.t' :in='mail.in' @mousedown="thisMousedown($event)" @mouseup="thisMouseup($event)">
-    <img src='mail/mailinbox.png' id='mailinbox' style='display:none'>
+    <img src='/mail/mailinbox.png' id='mailinbox' style='display:none'>
     <div class='envcontents' style='display:none; width:355px'>
-      <img src='mail/envelope.png'   id='envelope' style='position:absolute;'/>
-      <img src='mail/fullback2_1.png'  id='rot2' style='position:absolute; display:none; top:11px;' />
+      <img src='/mail/envelope.png'   id='envelope' style='position:absolute;'/>
+      <img src='/mail/fullback2_1.png'  id='rot2' style='position:absolute; display:none; top:11px;' />
       <div id='letter' style='display:none; top:132px;left:25px; position:absolute; '>
-        <img id='paper' src='mail/paper2.png' />
+        <img id='paper' src='/mail/paper2.png' />
         <div id='message' style='position:absolute; width:300px; padding: 35px;  font:Times New Roman; font-size:18px; '>
           <iframe :srcdoc="getDecodedMailBody" frameborder="0" style="height: 535px; width: 430px;"></iframe>
           <button class='reply' @click="replyClick($event)" style=' padding-left:10px; position:absolute; top:580px; left:25px; '> <span style=' font-size:19px;'>Reply</span></button>
@@ -37,8 +37,8 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           <button class='throwaway' @click="throwawayClick($event, mail.messageId)" style=' padding-left:10px;  padding-right:10px; position:absolute; top:580px; left: 315px; position: absolute '> <span style=' font-size:19px;'>Throw Away</span></button>
         </div>
       </div>
-      <img src='mail/back2_2.png'   id='rot3' style='position:absolute; top: 128px; display:none;'/>
-      <img src='mail/uflap.png'  id='rot1' style='position:absolute; top: 128px; display:none '/>
+      <img src='/mail/back2_2.png'   id='rot3' style='position:absolute; top: 128px; display:none;'/>
+      <img src='/mail/uflap.png'  id='rot1' style='position:absolute; top: 128px; display:none '/>
     </div>
 
     <div id='frontcontents' style='display:none;'>
@@ -55,10 +55,10 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
       <div style='position:absolute; left: 214px; top: 74px; font:Times New Roman; font-size:13px; color:66665c'>
         {{ mail.date }}</div>
 
-      <div style='position:absolute; left: 281px; top: 5px;'> <img src='mail/sframe1.png' /></div>
-      <div style='position:absolute; left: 288px; top: 11px;' ><img src='profile/Becky.jpg'  width='48' height='56'/></div>
-      <div style='position:absolute; left: 285px; top: 15px;' ><img src='mail/seal2_1.png'/></div>
-      <div style='position:absolute; left: 195px; top: 40px;' ><img src='mail/seal3_2.png'/></div>
+      <div style='position:absolute; left: 281px; top: 5px;'> <img src='/mail/sframe1.png' /></div>
+      <div style='position:absolute; left: 288px; top: 11px;' ><img src='/profile/Becky.jpg'  width='48' height='56'/></div>
+      <div style='position:absolute; left: 285px; top: 15px;' ><img src='/mail/seal2_1.png'/></div>
+      <div style='position:absolute; left: 195px; top: 40px;' ><img src='/mail/seal3_2.png'/></div>
 
     </div>
 

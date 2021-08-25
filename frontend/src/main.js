@@ -99,7 +99,6 @@ new Vue({
   {
     this.$store.commit('INITIALISE_STORE')
     this.$store.commit('SET_INITIAL_LAYOUT')
-
     let self = this
 
     //request interceptors

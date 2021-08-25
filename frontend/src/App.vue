@@ -32,6 +32,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 <script>
 import SimpleLayout from './layouts/SimpleLayout'
 import AdminLayout from './layouts/AdminLayout'
+import AssistantLayout from "./layouts/AssistantLayout";
 
 require('@/assets/home-style.css')
 
@@ -44,7 +45,8 @@ export default {
   },
   components: {
     'simple-layout': SimpleLayout,
-    'admin-layout': AdminLayout
+    'admin-layout': AdminLayout,
+    'assistant-layout': AssistantLayout
     // define as many layouts you want for the application
   }
 }

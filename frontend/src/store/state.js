@@ -36,6 +36,7 @@ const userDefaults = {
 
 const state = {
     layout : 'simple-layout',
+    route: '/',
     AppActiveUser           : userDefaults,
     setInitialDone: false,
 

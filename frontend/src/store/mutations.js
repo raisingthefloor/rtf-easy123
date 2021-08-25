@@ -22,12 +22,19 @@
  * Adobe Foundation
  * Consumer Electronics Association Foundation
  **/
+
 const mutations = {
+    SET_ROUTE(state, route) {
+        state.route = route
+    },
+
     // /////////////////////////////////////////////
     // User/Account
     // /////////////////////////////////////////////
 
     INITIALISE_STORE(state) {
+        //let arr = state.route.split("/")
+        //console.log("fer", arr)
         if(state.setInitialDone == false)
         {
             state.setInitialDone = true
@@ -37,9 +44,22 @@ const mutations = {
         }
     },
     SET_INITIAL_LAYOUT(state) {
-        if(state.AppActiveUser.role == "admin" || state.AppActiveUser.role == "assistant")
+
+        if(state.AppActiveUser.role == "admin")
         {
             state.layout = "admin-layout"
+        }
+        else if(state.AppActiveUser.role == "assistant")
+        {
+            let path_split = state.route.fullPath.split("/")
+            if(path_split[path_split.length-1] == "impersonate")
+            {
+                state.layout = "simple-layout"
+            }
+            else
+            {
+                state.layout = "assistant-layout"
+            }
         }
         else
         {
