@@ -29,7 +29,6 @@ const logger = require('../../../logger/api.logger')
 const simpleParser = require('mailparser').simpleParser;
 const nodemailer = require("nodemailer");
 const mimemessage = require('mimemessage'); //using this module to construct mime message
-const ImapManager =  require("../../../Managers/ImapManager")
 const {User} = require('../../Googleapi/Models/user.model');
 
 //const { StringDecoder } = require('string_decoder');
