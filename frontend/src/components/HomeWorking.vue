@@ -27,11 +27,11 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
     <div id="containment-wrapper" >
       <a class="button" style=" position: absolute; left: 0px; top: 0px; margin:25px;" id="mail" @click="mailClick()" href="javascript:void(0)">
         <div id="mailbox_cont" style="vertical-align:middle; top:50%; left:50%; position:absolute; margin-top: -88px; margin-left: -88px; z-index:1">
-          <img  id="mailbox" src="mail/mailbox_c.png" />
+          <img  id="mailbox" src="/mail/mailbox_c.png" />
         </div>
 
         <div  style=" position:absolute; left:55%; z-index:2; top:0%" v-show="mails.length || loading_mails">
-          <img  align='right' src='mail/call1.png' width="110" height="110" alt='' style="z-index:2;" />
+          <img  align='right' src='/mail/call1.png' width="110" height="110" alt='' style="z-index:2;" />
         </div>
         <div style=" position:absolute; position:absolute; left:67%; top:10%; z-index:3; width: 130px" v-if="mails.length && !loading_mails">
           <h3>
@@ -45,20 +45,20 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         </div>
       </a>
       <a class="button" style=" position: absolute;  margin:25px;"  href="javascript:void(0)" id="palbum" @click="palbumClick()">
-        <div id="palbum_cont" style="vertical-align:middle; top:50%; left:50%; position:absolute; margin-top:-80px; margin-left:-88px; z-index:3"><img width="175" height="175" id="palbumimg" src="mail/album2.png" /> </div>
+        <div id="palbum_cont" style="vertical-align:middle; top:50%; left:50%; position:absolute; margin-top:-80px; margin-left:-88px; z-index:3"><img width="175" height="175" id="palbumimg" src="/mail/album2.png" /> </div>
       </a>
       <a class="button" style=" position: absolute;  margin:25px;"  href="javascript:void(0)" id="icontact" @click="icontactClick">
         <div id="palbum_cont" style="vertical-align:middle; top:50%; left:50%; position:absolute; margin-top:-70px; margin-left:-75px; z-index:3">
-          <img id="palbumimg" src="mail/contact.png" />
+          <img id="palbumimg" src="/mail/contact.png" />
         </div>
       </a>
 
       <div id="drag-wrapper"></div>
       <p class='pin' style=" display:none">hello</p>
 
-      <img src="mail/trash_ball.png" style="display:none"/>
-      <img src="mail/tray_envelope1.png" style="display:none"/>
-      <img src="mail/tray_envelope2.png" id="tray_envelope2" style="display:none"/>
+      <img src="/mail/trash_ball.png" style="display:none"/>
+      <img src="/mail/tray_envelope1.png" style="display:none"/>
+      <img src="/mail/tray_envelope2.png" id="tray_envelope2" style="display:none"/>
 
       <Polaroid2
           :mail="mail"
@@ -79,56 +79,56 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
       <div id="photocontent"></div>
     </div>
 
-    <div class="flap" style="position:absolute; z-index: 5; left: 852px; top: 61px;" @click="flapClick($event)"> <img src="images/contact1.png"  /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">A B</div> </div>
+    <div class="flap" style="position:absolute; z-index: 5; left: 852px; top: 61px;" @click="flapClick($event)"> <img src="/images/contact1.png"  /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">A B</div> </div>
 
-    <div class="flap" style="position:absolute; z-index: 5; left: 852px; top: 109px;" @click="flapClick($event)"> <img src="images/contact1.png" /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">C D</div></div>
+    <div class="flap" style="position:absolute; z-index: 5; left: 852px; top: 109px;" @click="flapClick($event)"> <img src="/images/contact1.png" /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">C D</div></div>
 
-    <div  class="flap" style="position:absolute;z-index: 5; left: 852px; top: 156px;" @click="flapClick($event)"> <img src="images/contact1.png"  /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">E F</div></div>
+    <div  class="flap" style="position:absolute;z-index: 5; left: 852px; top: 156px;" @click="flapClick($event)"> <img src="/images/contact1.png"  /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">E F</div></div>
 
-    <div class="flap"  style="position:absolute;z-index: 5; left: 852px; top: 203px;" @click="flapClick($event)"> <img src="images/contact1.png"  /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">G H</div></div>
+    <div class="flap"  style="position:absolute;z-index: 5; left: 852px; top: 203px;" @click="flapClick($event)"> <img src="/images/contact1.png"  /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">G H</div></div>
 
-    <div  class="flap" style="position:absolute;z-index: 5; left: 852px; top: 250px;" @click="flapClick($event)"> <img src="images/contact1.png" /> <div style="position:absolute; left: 7px; top: 7px; font-size: 22px">I J</div></div>
+    <div  class="flap" style="position:absolute;z-index: 5; left: 852px; top: 250px;" @click="flapClick($event)"> <img src="/images/contact1.png" /> <div style="position:absolute; left: 7px; top: 7px; font-size: 22px">I J</div></div>
 
-    <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 297px;" @click="flapClick($event)"> <img src="images/contact1.png" /> <div style="position:absolute; left: 7px; top: 7px; font-size: 22px">K L</div> </div>
+    <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 297px;" @click="flapClick($event)"> <img src="/images/contact1.png" /> <div style="position:absolute; left: 7px; top: 7px; font-size: 22px">K L</div> </div>
 
-    <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 344px;" @click="flapClick($event)"> <img src="images/contact1.png" /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">M N</div></div>
+    <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 344px;" @click="flapClick($event)"> <img src="/images/contact1.png" /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">M N</div></div>
 
-    <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 391px;" @click="flapClick($event)"> <img src="images/contact1.png" /> <div style="position:absolute; left: 7px; top: 7px; font-size: 22px">O P</div></div>
+    <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 391px;" @click="flapClick($event)"> <img src="/images/contact1.png" /> <div style="position:absolute; left: 7px; top: 7px; font-size: 22px">O P</div></div>
 
-    <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 438px;" @click="flapClick($event)"> <img src="images/contact1.png" /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">Q R</div></div>
+    <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 438px;" @click="flapClick($event)"> <img src="/images/contact1.png" /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">Q R</div></div>
 
-    <div class="flap" style="position:absolute; z-index: 5;left: 852px; top: 485px;" @click="flapClick($event)"> <img src="images/contact1.png" /> <div style="position:absolute; left: 7px; top: 7px; font-size: 22px">S T</div></div>
+    <div class="flap" style="position:absolute; z-index: 5;left: 852px; top: 485px;" @click="flapClick($event)"> <img src="/images/contact1.png" /> <div style="position:absolute; left: 7px; top: 7px; font-size: 22px">S T</div></div>
 
-    <div class="flap" style="position:absolute; z-index: 5;left: 852px; top: 532px;" @click="flapClick($event)"> <img src="images/contact1.png" /> <div style="position:absolute; left: 7px; top: 7px; font-size: 22px">U V</div></div>
+    <div class="flap" style="position:absolute; z-index: 5;left: 852px; top: 532px;" @click="flapClick($event)"> <img src="/images/contact1.png" /> <div style="position:absolute; left: 7px; top: 7px; font-size: 22px">U V</div></div>
 
-    <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 579px;" @click="flapClick($event)"> <img src="images/contact1.png" /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">W X</div></div>
+    <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 579px;" @click="flapClick($event)"> <img src="/images/contact1.png" /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">W X</div></div>
 
-    <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 626px;" @click="flapClick($event)"> <img src="images/contact1.png" /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">Y Z</div></div>
+    <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 626px;" @click="flapClick($event)"> <img src="/images/contact1.png" /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">Y Z</div></div>
 
     <div id="person" ref="person" style= "position:absolute;left:60px; top:306px;    width:120px; height:143px;border : 1px solid #f0e9eb; display:none; z-index: 3; background-color: #fefefe;     ">
       <div id="person_contact" ref="person_contact" style="display:none;">
-        <img id="person_pic" src="contacts/gregg.gif" width="128" height="128" style="margin:30px;"/>
+        <img id="person_pic" src="/contacts/gregg.gif" width="128" height="128" style="margin:30px;"/>
         <div id="person_name" align="left" style="padding-left:0px;position:absolute; left:188px; top:80px; font-size: 30px"></div>
         <div id ="options" style="position:absolute; left: -1px; top: 203px;" align="center">
 
           <a class="large awesome reply" @click="replyClick($event)" href="javascript:void(0)">
-            <img align="left" style="padding:0px" src="images/mail2.png"  />
+            <img align="left" style="padding:0px" src="/images/mail2.png"  />
             <div id="email" align="left" style="padding-left:80px; padding-top: 17px; font-size: 26px">Write Email to Gregg</div>
           </a>
-          <a class="large awesome" href="#"><img align="left" style="padding:0px" src="images/phone1.png"  ><div id="call" align="left" style="padding-left:80px; padding-top: 17px; font-size: 26px">Call Gregg</div></a>
-          <a class="large awesome" href="#"><img align="left" style="padding:0px" src="images/stack3.png" width="70" height="70" ><div id="photo" align="left" style="padding-left:80px; padding-top: 17px; font-size: 26px">View Gregg's Photos</div></a>
-          <a class="large awesome" href="#"><img align="left" style="padding:0px" src="images/Chat.png"  ><div  id="chat" align="left" style="padding-left:80px; padding-top: 17px; font-size: 26px">Chat with Gregg</div></a>
+          <a class="large awesome" href="#"><img align="left" style="padding:0px" src="/images/phone1.png"  ><div id="call" align="left" style="padding-left:80px; padding-top: 17px; font-size: 26px">Call Gregg</div></a>
+          <a class="large awesome" href="#"><img align="left" style="padding:0px" src="/images/stack3.png" width="70" height="70" ><div id="photo" align="left" style="padding-left:80px; padding-top: 17px; font-size: 26px">View Gregg's Photos</div></a>
+          <a class="large awesome" href="#"><img align="left" style="padding:0px" src="/images/Chat.png"  ><div  id="chat" align="left" style="padding-left:80px; padding-top: 17px; font-size: 26px">Chat with Gregg</div></a>
         </div>
       </div>
     </div>
 
-    <img class="spiral" src="mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
-    <img class="spiral" src="mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
-    <img class="spiral" src="mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
-    <img class="spiral" src="mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
-    <img class="spiral" src="mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
-    <img class="spiral" src="mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
-    <img class="spiral" src="mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
+    <img class="spiral" src="/mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
+    <img class="spiral" src="/mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
+    <img class="spiral" src="/mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
+    <img class="spiral" src="/mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
+    <img class="spiral" src="/mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
+    <img class="spiral" src="/mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
+    <img class="spiral" src="/mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
 
     <div id="contact" style="position:absolute;left:60px; top:306px; z-index:2;   width:120px; height:143px; display:none">
       <MailToPrompt v-if="showMailToPrompt" 
@@ -138,32 +138,32 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
         <tbody>
         <tr id="0" ref="people_ref_0" class="contact" @click="contactClick($event)" style="height:95px;">
-          <td style="padding-right:0px; margin:0px; width: 100px"><img id="contact_pic" src="contacts/Adam.jpg" width="70" height="70" /></td>
+          <td style="padding-right:0px; margin:0px; width: 100px"><img id="contact_pic" src="/contacts/Adam.jpg" width="70" height="70" /></td>
           <td id="contact_name" align="left" style="padding:0px; margin: 0px;" >Adam Smith</td>
         </tr>
 
         <tr id="1" ref="people_ref_1" class="contact" @click="contactClick($event)" style="height:95px;">
-          <td style="padding-right:0px;width: 100px; margin:0px"><img id="contact_pic" src="contacts/Anna.jpg" width="70" height="70" style="" /></td>
+          <td style="padding-right:0px;width: 100px; margin:0px"><img id="contact_pic" src="/contacts/Anna.jpg" width="70" height="70" style="" /></td>
           <td id="contact_name" align="left" style="padding-left:0px; margin:0px">Anna Johnson</td>
         </tr>
 
         <tr id="2" ref="people_ref_2" class="contact" @click="contactClick($event)" style="height:95px;">
-          <td style="padding-right:0px;width: 100px; margin:0px"><img id="contact_pic" src="contacts/Becky.jpg" width="70" height="70" style="" /></td>
+          <td style="padding-right:0px;width: 100px; margin:0px"><img id="contact_pic" src="/contacts/Becky.jpg" width="70" height="70" style="" /></td>
           <td id="contact_name" align="left" style="padding-left:0px; margin:0px">Becky Jones</td>
         </tr>
 
         <tr id="3" ref="people_ref_3" class="contact" @click="contactClick($event)" style="height:95px;">
-          <td style="padding-right:0px;width: 100px; margin:0px"><img id="contact_pic" src="contacts/gregg.gif" width="70" height="70" style="display:none;" /></td>
+          <td style="padding-right:0px;width: 100px; margin:0px"><img id="contact_pic" src="/contacts/gregg.gif" width="70" height="70" style="display:none;" /></td>
           <td id="contact_name" align="left" style="padding-left:0px; margin:0px">&nbsp;</td>
         </tr>
 
         <tr id="4" ref="people_ref_4" class="contact" @click="contactClick($event)" style="height:95px;">
-          <td style="padding-right:0px;width: 100px; margin:0px"><img id="contact_pic" src="contacts/gregg.gif" width="70" height="70" style="display:none;" /></td>
+          <td style="padding-right:0px;width: 100px; margin:0px"><img id="contact_pic" src="/contacts/gregg.gif" width="70" height="70" style="display:none;" /></td>
           <td id="contact_name" align="left" style="padding-left:0px; margin:0px">&nbsp;</td>
         </tr>
 
         <tr class="contact" id="5" ref="people_ref_5" @click="contactClick($event)" style="height:95px;">
-          <td style="padding-right:0px; margin:0px"><img id="contact_pic" src="contacts/gregg.gif" width="70" height="70" style="display:none;" /></td>
+          <td style="padding-right:0px; margin:0px"><img id="contact_pic" src="/contacts/gregg.gif" width="70" height="70" style="display:none;" /></td>
           <td id="contact_name" align="left" style="padding-left:0px; margin:0px">&nbsp;</td>
         </tr>
 
@@ -176,17 +176,17 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
     <div id="mail-btn">
       <div class="button write-mail-btn" @click="openMailPrompt">      
         <div style="background:beige;margin-left:15px">
-            <img src="mail/contact.png">
+            <img src="/mail/contact.png">
           </div>
         <div style="font-size:23px">
           <span>Write Mail</span>
         </div>
       </div>
     </div>
-    <img id='paper_big' src='mail/paper2.png' style="display:none;width:500px;height:700px;position:absolute;left:670px;z-index:99"/>
-    <img src="mail/trash1_1.png" class="trash1 trash" @mousedown="trashMousedown" @mouseup="trashMouseup" />
-    <img src="mail/trash1_2.png" class="trash2 trash" @mousedown="trashMousedown" @mouseup="trashMouseup" />
-    <img src="mail/desk.png" class="tray" @mousedown="trayMousedown" width="133" height="133" style="position:absolute; top:100px;"/>
+    <img id='paper_big' src='/mail/paper2.png' style="display:none;width:500px;height:700px;position:absolute;left:670px;z-index:99"/>
+    <img src="/mail/trash1_1.png" class="trash1 trash" @mousedown="trashMousedown" @mouseup="trashMouseup" />
+    <img src="/mail/trash1_2.png" class="trash2 trash" @mousedown="trashMousedown" @mouseup="trashMouseup" />
+    <img src="/mail/desk.png" class="tray" @mousedown="trayMousedown" width="133" height="133" style="position:absolute; top:100px;"/>
   </div>
 </template>
 <style>
@@ -309,7 +309,7 @@ function mySideChange(front) {
     var a1=$(this).parent('.envcontents').parent('.polaroid').css('top');
     var b1=parseInt((a1.substring(0, a1.length-2)));
 
-    $(this).attr('src', 'mail/fullback2_2.png');
+    $(this).attr('src', '/mail/fullback2_2.png');
     p.find('.envcontents').find('#rot2').css('left','-1px');
 
     if(p.find('#rot2').css('display')=='none')
@@ -332,7 +332,7 @@ function mySideChange1(front) {
     $(this).find('#letter').css('display','none');
     $(this).find('#rot3').css('display','none');
     $(this).find('#rot2').css('left','0px');
-    $(this).find('#envelope').attr('src', 'mail/envelope.png');
+    $(this).find('#envelope').attr('src', '/mail/envelope.png');
   }
 }
 function myComplete1() {
@@ -387,7 +387,7 @@ function myComplete2_reply() {
   $(polaroid).animate({'top':'-50px','left':'350px'},1000,function(){
 
     $(polaroid).find('#frontcontents').hide();
-    $(polaroid).find('.envcontents').find('#envelope').attr('src','mail/truck_env.png');
+    $(polaroid).find('.envcontents').find('#envelope').attr('src','/mail/truck_env.png');
     $(polaroid).animate({'top':'-70px','left':'275px'},1000,function(){
       $('#truck').animate({'left': $(window).width() + 'px'},3000,function(){
         $(this).remove();
@@ -450,7 +450,7 @@ function myComplete() {
         p.find('#letter').animate({'top':'-90px'},300,function(){
           $(this).css('z-index',z+5);
 
-          $(this).find('#paper').attr('src','mail/paper.png');
+          $(this).find('#paper').attr('src','/mail/paper.png');
 
           $(this).find('#paper').css('width','305px');
           $(this).find('#paper').css('height','230px');
@@ -493,7 +493,7 @@ function myComplete() {
       p.find('#letter').find('#paper').show();
       p.find('#letter').animate({'top':'-90px'},300,function(){
         $(this).css('z-index',z+5);
-        $(this).find('#paper').attr('src','mail/paper.png');
+        $(this).find('#paper').attr('src','/mail/paper.png');
         $(this).find('#paper').css('width','305px');
         $(this).find('#paper').css('height','230px');
         $(this).css('height','230px');
@@ -560,7 +560,7 @@ function myComplete_reply() {
         p.find('#letter').animate({'top':'-90px'},0,function(){
           $(this).css('z-index',z+5);
 
-          $(this).find('#paper').attr('src','mail/paper.png');
+          $(this).find('#paper').attr('src','/mail/paper.png');
 
           $(this).find('#paper').css('width','305px');
           $(this).find('#paper').css('height','230px');
@@ -608,7 +608,7 @@ function myComplete_reply() {
       p.find('#letter').find('#paper').show();
       p.find('#letter').animate({'top':'-90px'},300,function(){
         $(this).css('z-index',z+5);
-        $(this).find('#paper').attr('src','mail/paper.png');
+        $(this).find('#paper').attr('src','/mail/paper.png');
         $(this).find('#paper').css('width','305px');
         $(this).find('#paper').css('height','230px');
         $(this).css('height','230px');
@@ -681,7 +681,7 @@ export default {
       buttonwidth: 0,
       savez: 0,
       USERNAME: "Eleanor",
-      USERPIC: "contacts/Martha.jpg",
+      USERPIC: "/contacts/Martha.jpg",
       destination: null,
 
       isPerson: 0,
@@ -916,11 +916,11 @@ export default {
       self.trash_y = (self.viewportheight-128-5);
       this.moimg=new Image();
 
-      $(this.moimg).attr('src','mail/mailbox_o.png');
+      $(this.moimg).attr('src','/mail/mailbox_o.png');
       $(this.moimg).attr('id','mailbox');
 
       this.mcimg=new Image();
-      $(this.mcimg).attr('src','mail/mailbox_c.png');
+      $(this.mcimg).attr('src','/mail/mailbox_c.png');
       $(this.mcimg).attr('id','mailbox');
 
       var csstrash = {
@@ -1000,12 +1000,12 @@ export default {
           mail.in = "c"
         }
         html = `<div class='polaroid' @mousedown="polaroidMousedown($event)" @mouseup="polaroidMouseup($event)" r='`+mail.r+`' t='`+mail.t+`' in='`+mail.in+`'>
-          <img src='mail/mailinbox.png' id='mailinbox' style='display:none'>
+          <img src='/mail/mailinbox.png' id='mailinbox' style='display:none'>
           <div class='envcontents' style='display:none; width:355px'>
-            <img src='mail/envelope.png'   id='envelope' style='position:absolute;'/>
-            <img src='mail/fullback2_1.png'  id='rot2' style='position:absolute; display:none; top:11px;' />
+            <img src='/mail/envelope.png'   id='envelope' style='position:absolute;'/>
+            <img src='/mail/fullback2_1.png'  id='rot2' style='position:absolute; display:none; top:11px;' />
             <div id='letter' style='display:none; top:132px;left:25px; position:absolute; '>
-              <img id='paper' src='mail/paper2.png' />
+              <img id='paper' src='/mail/paper2.png' />
               <div id='message' style='position:absolute; width:300px; padding: 35px;  font:Times New Roman; font-size:18px; '>
                 Hi Granny, <br>  My birthday is next week and I am really excited about it..  <br><br> It would be awesome if you could join us.. :) <br>Love<br> Becky
                 <button class='reply' @click="replyClick($event)" style=' padding-left:10px; position:absolute; top:580px; left:25px; '> <span style=' font-size:19px;'>Reply</span></button>
@@ -1013,8 +1013,8 @@ export default {
                 <button class='throwaway' @click="throwawayClick($event)" style=' padding-left:10px;  padding-right:10px; position:absolute; top:580px; left: 315px; position: absolute '> <span style=' font-size:19px;'>Throw Away</span></button>
               </div>
             </div>
-            <img src='mail/back2_2.png'   id='rot3' style='position:absolute; top: 128px; display:none;'/>
-            <img src='mail/uflap.png'  id='rot1' style='position:absolute; top: 128px; display:none '/>
+            <img src='/mail/back2_2.png'   id='rot3' style='position:absolute; top: 128px; display:none;'/>
+            <img src='/mail/uflap.png'  id='rot1' style='position:absolute; top: 128px; display:none '/>
           </div>
 
           <div id='frontcontents' style='display:none;'>
@@ -1026,10 +1026,10 @@ export default {
 
             <div style='position:absolute; left: 214px; top: 74px; font:Times New Roman; font-size:13px; color:66665c'> 04.25.2012</div>
 
-            <div style='position:absolute; left: 281px; top: 5px;'> <img src='mail/sframe1.png' /></div>
-            <div style='position:absolute; left: 288px; top: 11px;' ><img src='profile/Becky.jpg'  width='48' height='56'/></div>
-            <div style='position:absolute; left: 285px; top: 15px;' ><img src='mail/seal2_1.png'/></div>
-            <div style='position:absolute; left: 195px; top: 40px;' ><img src='mail/seal3_2.png'/></div>
+            <div style='position:absolute; left: 281px; top: 5px;'> <img src='/mail/sframe1.png' /></div>
+            <div style='position:absolute; left: 288px; top: 11px;' ><img src='/profile/Becky.jpg'  width='48' height='56'/></div>
+            <div style='position:absolute; left: 285px; top: 15px;' ><img src='/mail/seal2_1.png'/></div>
+            <div style='position:absolute; left: 195px; top: 40px;' ><img src='/mail/seal3_2.png'/></div>
 
           </div>
 
@@ -1085,7 +1085,7 @@ export default {
         if(p<stop)
         {
           var name = self.people[index][p].split(' ');
-          $('#'+p).find('#contact_pic').attr('src','contacts/'+name[0]+'.jpg');
+          $('#'+p).find('#contact_pic').attr('src','/contacts/'+name[0]+'.jpg');
           $('#'+p).find('#contact_pic').show();
           $('#'+p).find('#contact_name').html(self.people[index][p]);
         }
@@ -1227,7 +1227,7 @@ export default {
               $(this).find('.envcontents').find('#envelope').css('left','0px');
               $(this).find('.envcontents').find('#envelope').css('top','0px');
 
-              $(this).find('.envcontents').find('#envelope').attr('src','mail/trash_ball.png');
+              $(this).find('.envcontents').find('#envelope').attr('src','/mail/trash_ball.png');
               $(this).find('.envcontents').show();
 
 
@@ -1265,13 +1265,13 @@ export default {
               {
 
                 $(this).find('.envcontents').find('#rot2').css('display','none');
-                $(this).find('.envcontents').find('#envelope').attr('src','mail/tray_envelope1.png');
+                $(this).find('.envcontents').find('#envelope').attr('src','/mail/tray_envelope1.png');
                 //     openedDeleted=1;
                 self.trayEmailsFlag[self.trayptr]=1;
               }
               else
               {
-                $(this).find('.envcontents').find('#envelope').attr('src','mail/tray_envelope2.png');
+                $(this).find('.envcontents').find('#envelope').attr('src','/mail/tray_envelope2.png');
                 self.trayEmailsFlag[self.trayptr]=0;
               }
 
@@ -1327,7 +1327,7 @@ export default {
                 {
                   $(this).find("#rot2").show();
                   $(this).find("#frontcontents").css('position','absolute');
-                  $(this).find('#envelope').attr('src', 'mail/envelope.png');
+                  $(this).find('#envelope').attr('src', '/mail/envelope.png');
                   $(this).find('#envelope').css('top', '128px');
                   $(this).find("#frontcontents").css('top','128px');
                 }
@@ -1508,7 +1508,7 @@ export default {
         //$(".trash_ball").css('z-index',self.z+2);
         $(".trash2").css('z-index',self.z+3);
         var names=self.destination.split(" ");
-        $("<div class='polaroid' r='unread' t='none' in='c'><img src='mail/mailinbox.png' id='mailinbox' style='display:none'><div class='envcontents' style='display:none; width:355px'><img src='mail/envelope.png'   id='envelope' style='position:absolute;'/><img src='mail/fullback2_1.png'  id='rot2' style='position:absolute; display:none; top:11px;' /><div id='letter' style='display:none; top:132px;left:25px; position:absolute; '><textarea id='inputpaper' scroll=no style='padding: 35px;   font-size:18px; font-weight:bold; overflow: none;  resize:none; background-image: url(mail/inputpaper.png); border:0; overflow: none;  display:none; width:416px;height:577px' >"+"Hi "+names[0]+"</textarea> <input type='hidden' value='"+subject+"' name='reply_subject' id='reply-subject' /><input type='hidden' value='"+mail_header_from+"' name='reply_mail_header_from' id='reply-mail-header-from' /><input type='hidden' value='"+mail_header_message_id+"' name='mail_header_message_id' id='reply-mail-header-message-id' /><input type='hidden' value='"+mail_header_references+"' name='mail_header_references' id='reply-mail-header-references' /> <img id='paper' src='mail/paper2.png' />    	<div id='message' style='position:absolute; width:300px; padding: 35px;  font:Times New Roman; font-size:18px; '> <button class='send' style=' padding-left:10px; position:absolute; top:580px; left:25px; '> <span style=' font-size:19px;'>Send</span></button>  <button class='throwaway' style=' padding-left:10px;  padding-right:10px; position:absolute; top:580px; left: 315px; position: absolute '> <span style=' font-size:19px;'>Throw Away</span></button>        </div></div><img src='mail/back2_2.png'   id='rot3' style='position:absolute; top: 128px; display:none;'/><img src='mail/uflap.png'  id='rot1' style='position:absolute; top: 128px; display:none '/>   </div><div id='frontcontents' style='display:none;'><div style='position:absolute; left: 12px; top: 5px; font:Times New Roman; font-size:20px'> From</div><div style='position:absolute; left: 12px; top: 29px; font:Times New Roman; font-size:20px;width:191px'>"+self.USERNAME+"</div><div style='position:absolute; left: 120px; top: 104px; font:Times New Roman; font-size:20px'> To</div><div style='position:absolute; width:400px; left: 120px; top: 128px; font:Times New Roman; font-size:20px'>"+self.destination+"</div>	<div style='position:absolute; width:300px; left: 10px; top: 204px; font:Times New Roman; font-size:18px; color:#333333'></div><div style='position:absolute; left: 214px; top: 74px; font:Times New Roman; font-size:13px; color:66665c'></div><div style='position:absolute; left: 281px; top: 5px;'> <img src='mail/sframe1.png' /></div><div style='position:absolute; left: 288px; top: 11px;' ><img src='"+self.USERPIC+"'  width='48' height='56'/></div><div style='position:absolute; left: 285px; top: 15px;' ></div><div style='position:absolute; left: 195px; top: 40px;' ></div></div></div>")
+        $("<div class='polaroid' r='unread' t='none' in='c'><img src='/mail/mailinbox.png' id='mailinbox' style='display:none'><div class='envcontents' style='display:none; width:355px'><img src='/mail/envelope.png'   id='envelope' style='position:absolute;'/><img src='/mail/fullback2_1.png'  id='rot2' style='position:absolute; display:none; top:11px;' /><div id='letter' style='display:none; top:132px;left:25px; position:absolute; '><textarea id='inputpaper' scroll=no style='padding: 35px;   font-size:18px; font-weight:bold; overflow: none;  resize:none; background-image: url(/mail/inputpaper.png); border:0; overflow: none;  display:none; width:416px;height:577px' >"+"Hi "+names[0]+"</textarea> <input type='hidden' value='"+subject+"' name='reply_subject' id='reply-subject' /><input type='hidden' value='"+mail_header_from+"' name='reply_mail_header_from' id='reply-mail-header-from' /><input type='hidden' value='"+mail_header_message_id+"' name='mail_header_message_id' id='reply-mail-header-message-id' /><input type='hidden' value='"+mail_header_references+"' name='mail_header_references' id='reply-mail-header-references' /> <img id='paper' src='/mail/paper2.png' />    	<div id='message' style='position:absolute; width:300px; padding: 35px;  font:Times New Roman; font-size:18px; '> <button class='send' style=' padding-left:10px; position:absolute; top:580px; left:25px; '> <span style=' font-size:19px;'>Send</span></button>  <button class='throwaway' style=' padding-left:10px;  padding-right:10px; position:absolute; top:580px; left: 315px; position: absolute '> <span style=' font-size:19px;'>Throw Away</span></button>        </div></div><img src='/mail/back2_2.png'   id='rot3' style='position:absolute; top: 128px; display:none;'/><img src='/mail/uflap.png'  id='rot1' style='position:absolute; top: 128px; display:none '/>   </div><div id='frontcontents' style='display:none;'><div style='position:absolute; left: 12px; top: 5px; font:Times New Roman; font-size:20px'> From</div><div style='position:absolute; left: 12px; top: 29px; font:Times New Roman; font-size:20px;width:191px'>"+self.USERNAME+"</div><div style='position:absolute; left: 120px; top: 104px; font:Times New Roman; font-size:20px'> To</div><div style='position:absolute; width:400px; left: 120px; top: 128px; font:Times New Roman; font-size:20px'>"+self.destination+"</div>	<div style='position:absolute; width:300px; left: 10px; top: 204px; font:Times New Roman; font-size:18px; color:#333333'></div><div style='position:absolute; left: 214px; top: 74px; font:Times New Roman; font-size:13px; color:66665c'></div><div style='position:absolute; left: 281px; top: 5px;'> <img src='/mail/sframe1.png' /></div><div style='position:absolute; left: 288px; top: 11px;' ><img src='/"+self.USERPIC+"'  width='48' height='56'/></div><div style='position:absolute; left: 285px; top: 15px;' ></div><div style='position:absolute; left: 195px; top: 40px;' ></div></div></div>")
             .css('z-index',1000)
 
             .draggable({drag: function() {
@@ -1545,7 +1545,7 @@ export default {
 
                 $(p).find('#message').hide();
 
-                $(p).find('#paper').attr('src','mail/paper2.png');
+                $(p).find('#paper').attr('src','/mail/paper2.png');
                 $(p).find('#paper').animate({'width':'305px','height':'230px'},0,function() {
                   $(p).find('#paper').css('width','305px');
                   $(p).find('#paper').css('height','230px');
@@ -1568,7 +1568,7 @@ export default {
                   $(polar).find('.envcontents').find('#envelope').css('left','0px');
                   $(polar).find('.envcontents').find('#envelope').css('top','0px');
                   $(polar).css('z-index',self.z+2);
-                  $(polar).find('.envcontents').find('#envelope').attr('src','mail/trash_ball.png');
+                  $(polar).find('.envcontents').find('#envelope').attr('src','/mail/trash_ball.png');
                   $(polar).attr('t','trash');
                   $(polar).find('#rot2').css('display','none');
                   $(polar).find('#frontcontents').css('display','none');
@@ -1624,7 +1624,7 @@ export default {
 
               var q=$(p).parent().parent();
               $(q).css('z-index',self.savez);
-              $("<img id='truck' src='mail/truck.png' style='z-index:100; position: absolute'></img>").appendTo("#containment-wrapper");
+              $("<img id='truck' src='/mail/truck.png' style='z-index:100; position: absolute'></img>").appendTo("#containment-wrapper");
               $("#truck").animate({'left':'400px'},1000);
               var z=parseInt($(p).parent().parent().css('z-index'));
               $(p).parent().parent().attr('in','c');
@@ -1634,7 +1634,7 @@ export default {
               $(p).find('#message').hide();
               $(p).find('#inputpaper').hide();
               $(p).find('#paper').show();
-              $(p).find('#paper').attr('src','mail/paper2.png');
+              $(p).find('#paper').attr('src','/mail/paper2.png');
               $(p).find('#paper').animate({'width':'305px','height':'230px'},650,function(){
                 $(p).find('#paper').css('width','305px');
                 $(p).find('#paper').css('height','230px');
@@ -1687,7 +1687,7 @@ export default {
             if(oc=='read') {
               $(this).find("#rot2").show();
               $(this).find("#frontcontents").css('position','absolute');
-              $(this).find('#envelope').attr('src', 'mail/envelope.png');
+              $(this).find('#envelope').attr('src', '/mail/envelope.png');
               $(this).find('#envelope').css('top', '128px');
               $(this).find("#frontcontents").css('top','128px');
             }
@@ -1711,7 +1711,7 @@ export default {
                         var a1=$(this).parent('.envcontents').parent('.polaroid').css('top');
                         var b1=parseInt((a1.substring(0, a1.length-2)));
 
-                        $(this).attr('src', 'mail/fullback2_2.png');
+                        $(this).attr('src', '/mail/fullback2_2.png');
                         p.find('.envcontents').find('#rot2').css('left','-1px');
 
                         if(p.find('#rot2').css('display')=='none')
@@ -1755,7 +1755,7 @@ export default {
                             p.find('#letter').animate({'top':'-90px'},0,function(){
                               $(this).css('z-index',z+5);
 
-                              $(this).find('#paper').attr('src','mail/paper.png');
+                              $(this).find('#paper').attr('src','/mail/paper.png');
 
                               $(this).find('#paper').css('width','305px');
                               $(this).find('#paper').css('height','230px');
@@ -1803,7 +1803,7 @@ export default {
                           p.find('#letter').find('#paper').show();
                           p.find('#letter').animate({'top':'-90px'},300,function(){
                             $(this).css('z-index',z+5);
-                            $(this).find('#paper').attr('src','mail/paper.png');
+                            $(this).find('#paper').attr('src','/mail/paper.png');
                             $(this).find('#paper').css('width','305px');
                             $(this).find('#paper').css('height','230px');
                             $(this).css('height','230px');
@@ -1874,7 +1874,7 @@ export default {
 
         $(p).find('#message').hide();
 
-        $(p).find('#paper').attr('src','mail/paper2.png');
+        $(p).find('#paper').attr('src','/mail/paper2.png');
         $(p).find('#paper').animate({'width':'305px','height':'230px'},0,function() {
           $(p).find('#paper').css('width','305px');
           $(p).find('#paper').css('height','230px');
@@ -1898,7 +1898,7 @@ export default {
                   $(this).find('#letter').css('display','none');
                   $(this).find('#rot3').css('display','none');
                   $(this).find('#rot2').css('left','0px');
-                  $(this).find('#envelope').attr('src', 'mail/envelope.png');
+                  $(this).find('#envelope').attr('src', '/mail/envelope.png');
                 }
               },
               complete:function() {
@@ -1926,7 +1926,7 @@ export default {
           $(polar).find('.envcontents').find('#envelope').css('left','0px');
           $(polar).find('.envcontents').find('#envelope').css('top','0px');
           $(polar).css('z-index',self.z+2);
-          $(polar).find('.envcontents').find('#envelope').attr('src','mail/trash_ball.png');
+          $(polar).find('.envcontents').find('#envelope').attr('src','/mail/trash_ball.png');
           $(polar).attr('t','trash');
           $(polar).find('#rot2').css('display','none');
           $(polar).find('#frontcontents').css('display','none');
@@ -1967,7 +1967,7 @@ export default {
 
       $(p).find('#message').hide();
 
-      $(p).find('#paper').attr('src','mail/paper2.png');
+      $(p).find('#paper').attr('src','/mail/paper2.png');
       $(p).find('#paper').animate({'width':'305px','height':'230px'},650,function() {
         $(p).find('#paper').css('width','305px');
         $(p).find('#paper').css('height','230px');
@@ -2003,13 +2003,13 @@ export default {
                 {
 
                   $(polaroid).find('.envcontents').find('#rot2').css('display','none');
-                  $(polaroid).find('.envcontents').find('#envelope').attr('src','mail/tray_envelope1.png');
+                  $(polaroid).find('.envcontents').find('#envelope').attr('src','/mail/tray_envelope1.png');
 
                   self.trayEmailsFlag[self.trayptr]=1;
                 }
                 else
                 {
-                  $(polaroid).find('.envcontents').find('#envelope').attr('src','mail/tray_envelope2.png');
+                  $(polaroid).find('.envcontents').find('#envelope').attr('src','/mail/tray_envelope2.png');
                   self.trayEmailsFlag[self.trayptr]=0;
                 }
                 $( polaroid ).draggable({disabled: true});
@@ -2049,7 +2049,7 @@ export default {
       var self = this
       console.log("mail opened 00000000 1")
       self.dragging = $(e.currentTarget).css('left');
-      if($(e.currentTarget).find('.envcontents').find('#envelope').attr('src')=='mail/tray_envelope1.png' || $(e.currentTarget).find('.envcontents').find('#envelope').attr('src')=='mail/tray_envelope2.png')
+      if($(e.currentTarget).find('.envcontents').find('#envelope').attr('src')=='/mail/tray_envelope1.png' || $(e.currentTarget).find('.envcontents').find('#envelope').attr('src')=='/mail/tray_envelope2.png')
       {
         console.log("mail opened 00000000 2")
         if(self.trayptr!=-1)
@@ -2075,7 +2075,7 @@ export default {
           $(deletedEmail1).css('z-index', self.curr_index);
           //$(deletedEmail1).css('z-index', z+2);
           $(deletedEmail1).animate(csstrash1,500,function() {
-            $(deletedEmail1).find('.envcontents').find('#envelope').attr('src','mail/envelope.png');
+            $(deletedEmail1).find('.envcontents').find('#envelope').attr('src','/mail/envelope.png');
 
             $(deletedEmail1).find('#frontcontents').show();
             if(openedT==1)
@@ -2135,7 +2135,7 @@ export default {
 
             $(deletedEmail1).css('z-index', self.z+2);
             $(deletedEmail1).animate(csstrash1,500,function(){
-              $(deletedEmail1).find('.envcontents').find('#envelope').attr('src','mail/envelope.png');
+              $(deletedEmail1).find('.envcontents').find('#envelope').attr('src','/mail/envelope.png');
               $(deletedEmail1).css('z-index', self.curr_index);
               $(deletedEmail1).find('#frontcontents').show();
               if($(deletedEmail1).attr('r')=="read")
@@ -2175,7 +2175,7 @@ export default {
           //animate the polaroid
           deletedMailPolaroid.animate({'top': (polaroidStyles.top - 128)+"px"}, 500, function(){
             //hide the ball icon and show envelope icon
-            $(deletedMailPolaroid).find('.envcontents').find("#envelope").attr('src', 'mail/envelope.png');
+            $(deletedMailPolaroid).find('.envcontents').find("#envelope").attr('src', '/mail/envelope.png');
 
             //show front contents of envelope also set its position and top
             $(deletedMailPolaroid).find('#frontcontents').css({'position':'absolute', 'top':'128px'}).show();            
@@ -2227,7 +2227,7 @@ export default {
         $(deletedEmail1).css('z-index', self.curr_index);
         //$(deletedEmail1).css('z-index', z+2);
         $(deletedEmail1).animate(csstrash1,500,function(){
-          $(deletedEmail1).find('.envcontents').find('#envelope').attr('src','mail/envelope.png');
+          $(deletedEmail1).find('.envcontents').find('#envelope').attr('src','/mail/envelope.png');
 
           $(deletedEmail1).find('#frontcontents').show();
           if(openedT == 1)
@@ -2286,7 +2286,7 @@ export default {
             $(lastDragged1).find('.envcontents').find('#envelope').css('left','0px');
             $(lastDragged1).find('.envcontents').find('#envelope').css('top','0px');
             $(lastDragged1).css('z-index',self.z+2);
-            $(lastDragged1).find('.envcontents').find('#envelope').attr('src','mail/trash_ball.png');
+            $(lastDragged1).find('.envcontents').find('#envelope').attr('src','/mail/trash_ball.png');
             $(lastDragged1).find('#frontcontents').css('display','none');
             $(lastDragged1).draggable(false);
 
@@ -2328,7 +2328,7 @@ export default {
       var target = $(e.currentTarget);
 
       //if(!target.is('.close')&&!target.is('#message'))
-      if($(e.currentTarget).find('.envcontents').find('#envelope').attr('src')!='mail/trash_ball.png'&&$(e.currentTarget).find('.envcontents').find('#envelope').attr('src')!='mail/tray_envelope1.png'&&$(e.currentTarget).find('.envcontents').find('#envelope').attr('src')!='mail/tray_envelope2.png')
+      if($(e.currentTarget).find('.envcontents').find('#envelope').attr('src')!='/mail/trash_ball.png'&&$(e.currentTarget).find('.envcontents').find('#envelope').attr('src')!='/mail/tray_envelope1.png'&&$(e.currentTarget).find('.envcontents').find('#envelope').attr('src')!='/mail/tray_envelope2.png')
       {
         console.log("mail opened 2")
         //console.log("TARGET Id,class :"+$(target).attr('id')+","+$(target).attr('class')+target.html());
@@ -2340,7 +2340,7 @@ export default {
 
 
 
-        if(b+275>self.trash_x && b1>self.trash_y-64-240-20 && $(e.currentTarget).find('.envcontents').find('#envelope').attr('src')=='mail/envelope.png')
+        if(b+275>self.trash_x && b1>self.trash_y-64-240-20 && $(e.currentTarget).find('.envcontents').find('#envelope').attr('src')=='/mail/envelope.png')
         {
           console.log("mail opened 3")
           //alert($(this).css('z-index'));
@@ -2360,7 +2360,7 @@ export default {
           $(e.currentTarget).find('.envcontents').find('#envelope').css('left','0px');
           $(e.currentTarget).find('.envcontents').find('#envelope').css('top','0px');
           $(e.currentTarget).css('z-index',self.z+2);
-          $(e.currentTarget).find('.envcontents').find('#envelope').attr('src','mail/trash_ball.png');
+          $(e.currentTarget).find('.envcontents').find('#envelope').attr('src','/mail/trash_ball.png');
           $(e.currentTarget).attr('t','trash');
           //Method called when a message is moved to trash
           let messageId = target.find("#frontcontents").find("#mail-header-message-id").val();
@@ -2401,7 +2401,7 @@ export default {
           height=240+128;
 
         //CODE FOR TRAY EMAILs
-        if(b<self.trash_x-900+225+133 && b1+height>self.trash_y+64 && $(e.currentTarget).find('.envcontents').find('#envelope').attr('src')=='mail/envelope.png')
+        if(b<self.trash_x-900+225+133 && b1+height>self.trash_y+64 && $(e.currentTarget).find('.envcontents').find('#envelope').attr('src')=='/mail/envelope.png')
         {
           console.log("mail opened2")
           //alert($(this).css('z-index'));
@@ -2414,13 +2414,13 @@ export default {
           {
 
             $(e.currentTarget).find('.envcontents').find('#rot2').css('display','none');
-            $(e.currentTarget).find('.envcontents').find('#envelope').attr('src','mail/tray_envelope1.png');
+            $(e.currentTarget).find('.envcontents').find('#envelope').attr('src','/mail/tray_envelope1.png');
 
             self.trayEmailsFlag[self.trayptr]=1;
           }
           else
           {
-            $(e.currentTarget).find('.envcontents').find('#envelope').attr('src','mail/tray_envelope2.png');
+            $(e.currentTarget).find('.envcontents').find('#envelope').attr('src','/mail/tray_envelope2.png');
             self.trayEmailsFlag[self.trayptr]=0;
           }
           $( e.currentTarget ).draggable({disabled: true});
@@ -2756,13 +2756,13 @@ export default {
           {
 
             $(polaroid).find('.envcontents').find('#rot2').css('display','none');
-            $(polaroid).find('.envcontents').find('#envelope').attr('src','mail/tray_envelope1.png');
+            $(polaroid).find('.envcontents').find('#envelope').attr('src','/mail/tray_envelope1.png');
 
             self.trayEmailsFlag[self.trayptr]=1;
           }
           else
           {
-            $(polaroid).find('.envcontents').find('#envelope').attr('src','mail/tray_envelope2.png');
+            $(polaroid).find('.envcontents').find('#envelope').attr('src','/mail/tray_envelope2.png');
             self.trayEmailsFlag[self.trayptr]=0;
           }
           $( polaroid ).draggable({disabled: true});

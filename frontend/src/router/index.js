@@ -35,10 +35,12 @@ import AdminUser from "@/components/admin/user/List"
 import AssistantUser from "@/components/assistant/user/List"
 import AssistantCreateUser from "@/components/assistant/user/Create"
 import AssistantEditUser from "@/components/assistant/user/Edit"
+import AssistantImpersonateUser from "@/components/HomeWorking"
 
 import admin from "../middleware/admin"
 import assistant from "../middleware/assistant"
 import subscribed from "../middleware/subscribed"
+import store from "../store/store";
 
 Vue.use(Router)
 
@@ -109,6 +111,14 @@ const router = new Router({
             meta: {
                 middleware: assistant
             }
+        },
+        {
+            path: '/assistant/member/:id/impersonate',
+            name: 'AssistantImpersonateUser',
+            component: AssistantImpersonateUser,
+            meta: {
+                //middleware: assistant
+            }
         }
     ]
 })
@@ -143,6 +153,8 @@ router.beforeEach((to, from, next) => {
         const nextMiddleware = nextFactory(context, middleware, 1)
         return middleware[0]({ ...context, next: nextMiddleware })
     }
+
+    store.commit('SET_ROUTE', to)
 
     return next()
 })

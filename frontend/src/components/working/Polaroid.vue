@@ -27,17 +27,17 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
     'left': localPolaroid.easyconfig.left,
     'top': localPolaroid.easyconfig.top
   }" v-show="localPolaroid.easyconfig.show">
-    <img src='mail/mailinbox.png' id='mailinbox' v-show="localPolaroid.mailinbox_show" style='display:none'>
+    <img src='/mail/mailinbox.png' id='mailinbox' v-show="localPolaroid.mailinbox_show" style='display:none'>
     <div class='envcontents' style='display:none; width:355px' v-show="localPolaroid.easyconfig.envcontents_show">
-      <img src='mail/envelope.png' id='envelope'
+      <img src='/mail/envelope.png' id='envelope'
            :style="{
               'position': 'absolute',
               'top': localPolaroid.easyconfig.envelope_top
             }"
       />
-      <img src='mail/fullback2_1.png'  id='rot2' style='position:absolute; display:none; top:11px;' v-show="localPolaroid.easyconfig.rot2_show" />
+      <img src='/mail/fullback2_1.png'  id='rot2' style='position:absolute; display:none; top:11px;' v-show="localPolaroid.easyconfig.rot2_show" />
       <div id='letter' style='display:none; top:132px;left:25px; position:absolute; '>
-        <img id='paper' src='mail/paper2.png' />
+        <img id='paper' src='/mail/paper2.png' />
         <div id='message' style='position:absolute; width:300px; padding: 35px;  font:Times New Roman; font-size:18px; '>
           Hi Granny, <br>  My birthday is next week and I am really excited about it..  <br><br> It would be awesome if you could join us.. :) <br>Love<br> Becky
           <button class='reply' @click="replyClick($event)" style=' padding-left:10px; position:absolute; top:580px; left:25px; '> <span style=' font-size:19px;'>Reply</span></button>
@@ -45,8 +45,8 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           <button class='throwaway' @click="throwawayClick($event)" style=' padding-left:10px;  padding-right:10px; position:absolute; top:580px; left: 315px; position: absolute '> <span style=' font-size:19px;'>Throw Away</span></button>
         </div>
       </div>
-      <img src='mail/back2_2.png'   id='rot3' style='position:absolute; top: 128px; display:none;'/>
-      <img src='mail/uflap.png'  id='rot1' style='position:absolute; top: 128px; display:none '/>
+      <img src='/mail/back2_2.png'   id='rot3' style='position:absolute; top: 128px; display:none;'/>
+      <img src='/mail/uflap.png'  id='rot1' style='position:absolute; top: 128px; display:none '/>
     </div>
 
     <div id='frontcontents'
@@ -63,10 +63,10 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
       <div style='position:absolute; left: 214px; top: 74px; font:Times New Roman; font-size:13px; color:66665c'> 04.25.2012</div>
 
-      <div style='position:absolute; left: 281px; top: 5px;'> <img src='mail/sframe1.png' /></div>
-      <div style='position:absolute; left: 288px; top: 11px;' ><img src='profile/Becky.jpg'  width='48' height='56'/></div>
-      <div style='position:absolute; left: 285px; top: 15px;' ><img src='mail/seal2_1.png'/></div>
-      <div style='position:absolute; left: 195px; top: 40px;' ><img src='mail/seal3_2.png'/></div>
+      <div style='position:absolute; left: 281px; top: 5px;'> <img src='/mail/sframe1.png' /></div>
+      <div style='position:absolute; left: 288px; top: 11px;' ><img src='/profile/Becky.jpg'  width='48' height='56'/></div>
+      <div style='position:absolute; left: 285px; top: 15px;' ><img src='/mail/seal2_1.png'/></div>
+      <div style='position:absolute; left: 195px; top: 40px;' ><img src='/mail/seal3_2.png'/></div>
 
     </div>
 
