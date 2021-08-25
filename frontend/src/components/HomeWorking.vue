@@ -2185,14 +2185,19 @@ export default {
             //set top for #envelope
             $(deletedMailPolaroid).find('.envcontents').find("#envelope").css('top', '128px');
             
-            //animate the polaroid to top of 128px
-            self.previousStyle.left+=100;
-
-            //animate the polaroid and make it draggable
-            $(deletedMailPolaroid).animate({'top':'128px', 'left':self.previousStyle.left+"px"}, 500, function(){
-              $(this).css('z-index', self.previousStyle['z-index'] += 1);
+            self.previousStyle.left+=30;
+            //animate the polaroid to top of 128px and make it draggable
+            $(deletedMailPolaroid).css('z-index', self.previousStyle['z-index'] += 1).animate({'top':'128px', 'left':self.previousStyle.left+"px"}, 500, function(){
               //finally make the polaroid draggable
               $(this).draggable({disabled: false});
+
+              //re-intialize the previousStyle when trash box gets empty
+              if(!self.trashedMails.length){
+                self.previousStyle = {
+                  left: 500,
+                  'z-index': 0
+                }
+              } 
             })
           });
         })
