@@ -22,19 +22,39 @@
  * Adobe Foundation
  * Consumer Electronics Association Foundation
  **/
-const User = require('../Modules/Googleapi/Models/user.model')
+const Imap = require('qboxmail-imap')
+const nodemailer = require("nodemailer")
 
-//get current logged in user from request
-exports.getCurrentUser = async function (request) {
+exports.getIMAPObject = async function () {
     return new Promise((resolve, reject) => {
-        let user = User.findOne({id: request.decoded.id})
-        resolve(user)
-        /*gmail.users.messages.get({
-            userId: 'me',
-            id: message.id
-        }, (err, res) => {
-            if (err) return console.log('The API returned an error: ' + err + ' and Message ID: ' + message.id)
-            resolve(res.data)
-        })*/
+        const imapClient = new Imap({
+            user: 'mayur@raisingthefloor.org',
+            password: 'vtjatsvmvtzadkzi',
+            host: 'imap.gmail.com',
+            port: 993,
+            tls: true,
+            tlsOptions: {
+                rejectUnauthorized: false
+            },
+            authTimeout: 30000
+        })
+
+        resolve(imapClient)
+    })
+}
+
+exports.getSMTPObject = async function () {
+    return new Promise((resolve, reject) => {
+        const transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 587,
+            secure: false, // true for 465, false for other ports
+            auth: {
+                user: "mayur@raisingthefloor.org",
+                pass: "vtjatsvmvtzadkzi"
+            },
+        })
+
+        resolve(transporter)
     })
 }

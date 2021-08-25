@@ -184,6 +184,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
       </div>
     </div>
     <img id='paper_big' src='/mail/paper2.png' style="display:none;width:500px;height:700px;position:absolute;left:670px;z-index:99"/>
+    <router-link to="/assistant" v-if="$store.state.AppActiveUser.role == 'assistant'" style="top: 1rem; right: 1rem; position: absolute; background-color: #6c757d; border-color: #6c757d; color: #fff; text-align: center; text-decoration: none; border: 1px solid transparent; padding: 0.375rem 0.75rem; font-size: 1rem; border-radius: 0.25rem;">Back</router-link>
     <img src="/mail/trash1_1.png" class="trash1 trash" @mousedown="trashMousedown" @mouseup="trashMouseup" />
     <img src="/mail/trash1_2.png" class="trash2 trash" @mousedown="trashMousedown" @mouseup="trashMouseup" />
     <img src="/mail/desk.png" class="tray" @mousedown="trayMousedown" width="133" height="133" style="position:absolute; top:100px;"/>
