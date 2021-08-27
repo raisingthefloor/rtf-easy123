@@ -24,6 +24,7 @@
  **/
 const logger = require('../../../logger/api.logger')
 const bcrypt = require("bcrypt");
+const {Folder} = require("../../Googleapi/Models/folder.model");
 const {User} = require('../../Googleapi/Models/user.model')
 
 class UserController {
@@ -210,6 +211,148 @@ class UserController {
             logger.error('Error::' + err)
             response.send(data)
         }
+    }
+
+    /**
+     * Add folder to database
+     */
+    async addFolder(request, response) {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+        try {
+            let order = 1
+
+            let allFolders = await Folder.find({ deleted: false })
+            order = allFolders.length
+
+            const folder = await Folder.create({
+                name: request.body.name,
+                userId: request.body.id,
+                order: order+1,
+                createdBy: request.decoded.id
+            })
+
+            data.status = true
+            data.data = folder
+            data.message = "success"
+            response.send(data)
+        }
+        catch (err)
+        {
+            logger.error('Error::' + err)
+            response.send(data)
+        }
+
+    }
+
+    /**
+     * get all folders of user
+     */
+    async getAllFolders(request, response) {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+
+        try {
+            const folders = await Folder.find({
+                userId: request.body.id
+            })
+
+            data.status = true
+            data.data = folders
+            data.message = "success"
+            response.send(data)
+        }
+        catch (err)
+        {
+            logger.error('Error::' + err)
+            response.send(data)
+        }
+    }
+
+    /**
+     * upload images
+     */
+    async uploadImage(request, response) {
+        var url = require('url')
+
+        let avatar = request.files.avatar
+        let filename = avatar.name
+
+        //add to database
+        let folder = await Folder.findOne({
+            _id: request.body.folderId
+        })
+        folder.photos.push({
+            name: filename,
+            path: '/uploads/'+filename
+        })
+
+        await folder.save()
+
+        avatar.mv('./public/uploads/'+filename, function (err) {
+            if(err) {
+                response.status(406).send({
+                    status: false,
+                    data: err,
+                    message: 'failed'
+                })
+            }
+            else {
+
+
+                response.status(200).send({
+                    status: true,
+                    data: url.format({
+                        protocol: request.protocol,
+                        host: request.get('host'),
+                        pathname: '/uploads/'+filename
+                    }),
+                    message: 'success'
+                })
+            }
+        })
+    }
+
+    /**
+     * update folders order
+     */
+    async updateFoldersOrder(request, response) {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+
+        try {
+            let requestFolders = request.body.folders
+            //requestFolders.forEach((folder))
+            for (const folder of requestFolders) {
+                await Folder.findOneAndUpdate({
+                    _id: folder.id
+                }, {
+                    order: folder.order
+                })
+            }
+            //let folders = await Folder.collection.insertMany(requestFolders)
+
+            data.status = true
+            data.data = requestFolders
+            data.message = 'success'
+
+            response.send(data)
+        }
+        catch (err) {
+            console.log(err)
+        }
+
+
+
     }
 }
 

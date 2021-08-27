@@ -41,6 +41,8 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                 @start="drag=true"
                 @end="drag=false"
                 style=""
+                :options="{ animation:200 }"
+                @change="folderMoved"
             >
               <div class="user-folder me-3 mb-3" v-bind:class="(current_folder && current_folder.id == folder.id)?'folder-selected':''" v-for="folder in folders" :key="folder.id" @dblclick="openFolder(folder.id)" >
                 <i class="fas fa-folder folder-icon me-2"></i>
@@ -57,7 +59,6 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                 :options="dropzoneOptions"
                 @vdropzone-complete="handleVueDropzoneComplete"
                 class="mb-2"
-
             ></vue-dropzone>
 
             <div class="list-group address-book-contact-list mb-5" id="address-book-contact-list" style="max-height: 75vh; overflow-y: scroll;">
@@ -125,6 +126,7 @@ import draggable from 'vuedraggable'
 //Dropzone
 import vue2Dropzone from 'vue2-dropzone'
 import 'vue2-dropzone/dist/vue2Dropzone.min.css'
+import axios from "axios";
 
 export default {
   name: 'Photos',
@@ -139,24 +141,46 @@ export default {
       folders: [],
       current_folder: null,
       myFiles: [],
-      current_photo: {},
-      dropzoneOptions: {
+      current_photo: {}
+
+    }
+  },
+  computed: {
+    dropzoneOptions() {
+      return {
         paramName: 'avatar',
         url: process.env.VUE_APP_API_HOST_NAME + "/api/upload-image",
         thumbnailWidth: 150,
         maxFilesize: 50, //in MB
-        headers: { "My-Awesome-Header": "header value" }
+        headers: { "My-Awesome-Header": "header value" },
+        params: {
+          folderId: this.current_folder.id
+        }
       }
-    }
-  },
-  computed: {
-    getUploadURL() {
-      return process.env.VUE_APP_API_HOST_NAME + "/api/upload-image"
+
     }
   },
   mounted() {
+    this.loadFolders()
   },
   methods: {
+    /** Load existing folders **/
+    loadFolders() {
+      let self = this
+      axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/assistant/user/get-all-folders', {
+        id: self.$route.params.id
+      }).then((response) => {
+        let folders = response.data.data
+        folders.sort((a, b) => {
+          return a.order - b.order
+        })
+        self.folders = response.data.data
+
+      }, (error) => {
+        console.log(error)
+      })
+    },
+    /** Add folder popup & add folder if not existing **/
     addFolder() {
       let self = this
       swal({
@@ -165,19 +189,37 @@ export default {
         button: {
           text: "Create",
           closeModal: false,
-        }
+        },
+        closeOnClickOutside: false,
+        closeOnEsc: false
       })
           .then((value) => {
             if(value && value != "") {
               //check if folder name already exists
-              let existing = self.folders.find(obj => obj.name == value)
+              let existing = null
+              console.log("folders le", self)
+              if(self.folders.length)
+                existing = self.folders.find(obj => obj.name == value)
 
               if(!existing)
               {
-                self.folders.push({
-                  "id": ++self.id,
-                  "name": value,
-                  "photos": []
+
+
+                //save entry to database
+                axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/assistant/user/add-folder/',{
+                  id: self.$route.params.id,
+                  name: value
+                })
+                .then((response) => {
+                  console.log(response)
+
+                  self.folders.push({
+                    "id": response.data.data.id,
+                    "name": value,
+                    "photos": []
+                  })
+                }, (error) => {
+                  console.log(error)
                 })
               }
 
@@ -191,49 +233,36 @@ export default {
       this.current_folder = this.folders.find(obj => obj.id == id)
       this.current_photo = {}
     },
-    handleFilePondInit: function () {
-      //console.log("FilePond has initialized");
-
-      // FilePond instance methods are available on `this.$refs.pond`
-    },
-    handleFilePondProcessfile: function (err, file) {
-      console.log("FilePond has handleFilePondProcessfile", file);
-      let imageData = JSON.parse(file.serverId)
-
-      this.current_folder.photos.push({
-        id: ++this.photo_id,
-        name: file.file.name,
-        path: imageData.data
-      })
-
-      this.$refs.avatarpond.removeFile()
-
-      //console.log("imageURL", imageData)
-    },
     showPhoto(photo) {
       this.current_photo = photo
-    },
-    redirectToAllFolders() {
-      this.current_folder = null
-      this.current_photo = null
     },
     handleVueDropzoneComplete(response) {
       if(response.status == "success")
       {
         let data = response.xhr.response
-        let filename = response.upload.filename
+        //let filename = response.upload.filename
         data = JSON.parse(data)
 
-        this.current_folder.photos.push({
-          id: ++this.photo_id,
-          name: filename,
-          path: data.data
-        })
+        this.current_folder.photos.push(data.data)
 
         this.$refs.avatarDropzone.removeFile(response)
-        console.log("data", data)
       }
-      console.log("response", response)
+    },
+    folderMoved() {
+
+      this.folders.map((folder, index) => {
+        folder.order = index + 1
+      })
+
+      axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/assistant/user/update-folders-order", {
+        folders: this.folders
+      })
+      .then((response) => {
+        console.log(response)
+      }, (error) => {
+        console.log(error)
+      })
+
     }
   }
 }
