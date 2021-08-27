@@ -114,7 +114,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                       <label for="email" class="form-label">Email</label>
                       <div class="row">
                         <div class="col-md-6 mb-3" style="position:relative;" v-for="(email_field, index) in email" :key="index">
-                          <input type="email" class="form-control" :name="'email'+index" v-model="email[index]" required>
+                          <input type="email" class="form-control" :name="'email'+index" v-model="email[index]" id="email" required>
                           <span style="position: absolute; right: 20px; top: 9px;" v-show="index > 0"><a href="javascript:void(0)" @click="removeEmail(index)" style="text-decoration: none;">X</a></span>
                         </div>
                       </div>
@@ -211,6 +211,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 //Dropzone
 import vue2Dropzone from 'vue2-dropzone'
 import 'vue2-dropzone/dist/vue2Dropzone.min.css'
+import axios from "axios";
 
 export default {
   name: 'AddressBook',
@@ -248,6 +249,7 @@ export default {
       current_contact: {},
       search_contact: null,
       show_add_contact_form: false,
+      image_path: null,
       name: null,
       skypeid: null,
       zoom_meeting_url: null,
@@ -260,19 +262,22 @@ export default {
         name: false,
         email: false,
         avatar: false
-      },
-      dropzoneOptions: {
-        paramName: 'avatar',
-        url: process.env.VUE_APP_API_HOST_NAME + "/api/upload-image",
-        thumbnailWidth: 150,
-        maxFilesize: 50, //in MB
-        headers: { "My-Awesome-Header": "header value" }
       }
     }
   },
   computed: {
-    getUploadURL() {
-      return process.env.VUE_APP_API_HOST_NAME + "/api/upload-image"
+    dropzoneOptions() {
+      return {
+        paramName: 'avatar',
+        url: process.env.VUE_APP_API_HOST_NAME + "/api/upload-contact-avatar-image",
+        thumbnailWidth: 150,
+        maxFilesize: 50, //in MB
+        maxFiles: 1,
+        headers: { "My-Awesome-Header": "header value" },
+        params: {
+          userId: this.$route.params.id
+        }
+      }
     }
   },
   watch: {
@@ -382,7 +387,7 @@ export default {
       this.show_add_contact_form = false
     },
     saveContact() {
-
+      let self = this
       this.errors.name = false
       this.errors.email = false
       this.errors.avatar = false
@@ -439,6 +444,22 @@ export default {
 
       }
       else {
+
+        axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/assistant/user/add-contact", {
+          id: self.$route.params.id,
+          name: this.name,
+          skypeid: this.skypeid,
+          zoom_meeting_url: this.zoom_meeting_url,
+          notes: this.notes,
+          email: this.email,
+          image: this.current_filepond_image_url
+        })
+        .then((response) => {
+          console.log(response.data)
+        }, (error) => {
+          console.log(error)
+        })
+
         this.contacts.push({
           id: ++this.id,
           name: this.name,
@@ -453,38 +474,17 @@ export default {
         })
         this.show_add_contact_form = false
       }
-
-
-
-
-
-
     },
     handleVueDropzoneComplete(response) {
+
       if(response.status == "success")
       {
         let data = response.xhr.response
-        let filename = response.upload.filename
+
         data = JSON.parse(data)
 
-        this.current_folder.photos.push({
-          id: ++this.photo_id,
-          name: filename,
-          path: data.data
-        })
-
-        this.$refs.avatarDropzone.removeFile(response)
-        console.log("data", data)
+        this.current_filepond_image_url = data.data
       }
-      console.log("response", response)
-    },
-    handleFilePondProcessfile: function (err, file) {
-      //console.log("FilePond has handleFilePondProcessfile");
-      let imageData = JSON.parse(file.serverId)
-
-      this.current_filepond_image_url = imageData.data
-
-      //console.log("imageURL", imageData)
     },
     addEmail() {
       this.email.push("")

@@ -65,5 +65,8 @@ module.exports = function (router) {
 
 
     router.post('/api/upload-image', UserController.uploadImage.bind(UserController))
-    router.post('/api/temp/upload-image', EasyWebController.uploadImage.bind(EasyWebController))
+
+    //address book
+    router.post('/api/assistant/user/add-contact', validateToken, UserController.addContact.bind(UserController))
+    router.post('/api/upload-contact-avatar-image', UserController.uploadContactAvatarImage.bind(UserController))
 }
