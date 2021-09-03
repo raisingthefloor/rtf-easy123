@@ -22,7 +22,9 @@
  * Adobe Foundation
  * Consumer Electronics Association Foundation
  **/
+
 const UserController = require('./Controllers/user.controller')
+const EasyWebController = require('./Controllers/easyweb.controller')
 const validateToken = require('../Googleapi/utils').validateToken
 
 module.exports = function (router) {
@@ -34,5 +36,34 @@ module.exports = function (router) {
     router.post('/api/assistant/user/add-folder', validateToken, UserController.addFolder.bind(UserController))
     router.post('/api/assistant/user/get-all-folders', validateToken, UserController.getAllFolders.bind(UserController))
     router.post('/api/assistant/user/update-folders-order', validateToken, UserController.updateFoldersOrder.bind(UserController))
+
+    //easyweb routes
+    router.post('/api/assistant/user/easyweb/add-folder', validateToken, EasyWebController.addFolder.bind(EasyWebController))
+    router.post('/api/assistant/user/easyweb/add-website', validateToken, EasyWebController.addWebsite.bind(EasyWebController))
+    router.post('/api/assistant/user/easyweb/get-all-websites-and-folders', validateToken, EasyWebController.getWebsitesAndFolders.bind(EasyWebController))
+    router.post('/api/assistant/user/easyweb/change-order-websites-and-folders', validateToken, EasyWebController.changeOrderOfWebsitesAndFolders.bind(EasyWebController))
+    router.post('/api/assistant/user/easyweb/get-website-snapshot-from-url', validateToken, EasyWebController.getWebsiteSnapshotFromURL.bind(EasyWebController))
+    router.post('/api/assistant/user/easyweb/delete-website-or-folder', validateToken, EasyWebController.deleteWebsiteOrFolder.bind(EasyWebController))
+    router.post('/api/assistant/user/easyweb/website-fav', validateToken, EasyWebController.websiteFav.bind(EasyWebController))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     router.post('/api/upload-image', UserController.uploadImage.bind(UserController))
+    router.post('/api/temp/upload-image', EasyWebController.uploadImage.bind(EasyWebController))
 }
