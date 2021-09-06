@@ -37,6 +37,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faEye, faEyeSlash, faStar, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import Vuelidate from 'vuelidate'
+import {VueAvatar} from 'vue-avatar-editor-improved'
 
 Vue.use(Vuelidate)
 
@@ -130,6 +131,9 @@ new Vue({
 
       return Promise.reject(error)
     });
+  },
+  components: {
+    VueAvatar
   },
   render: h => h(App),
 }).$mount('#app')

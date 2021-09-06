@@ -67,6 +67,7 @@ module.exports = function (router) {
     router.post('/api/upload-image', UserController.uploadImage.bind(UserController))
 
     //address book
+    router.post('/api/assistant/user/get-all-contacts', validateToken, UserController.getAllContacts.bind(UserController))
     router.post('/api/assistant/user/add-contact', validateToken, UserController.addContact.bind(UserController))
     router.post('/api/upload-contact-avatar-image', UserController.uploadContactAvatarImage.bind(UserController))
 }
