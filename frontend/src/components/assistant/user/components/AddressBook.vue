@@ -32,7 +32,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
       <div class="address-book" style="position: relative;">
         <input type="text" style="width: 100%; height: 35px;" v-model="search_contact" placeholder="Search All Contacts">
         <div class="list-group address-book-contact-list" id="address-book-contact-list" style="max-height: 75vh; overflow-y: scroll;">
-          <a href="#" class="list-group-item list-group-item-action address-book-list-item" v-bind:class="(current_contact.id == contact.id)?'active':''"  v-for="contact in contacts" :key="contact.id" @click="showContact(contact.id)">
+          <a href="javascript:void(0)" class="list-group-item list-group-item-action address-book-list-item" v-bind:class="(current_contact.id == contact.id)?'active':''"  v-for="contact in contacts" :key="contact.id" @click="showContact(contact.id)">
             {{ contact.name }}
           </a>
 
@@ -80,13 +80,23 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           <div class="row g-0">
             <div v-show="show_add_contact_form">
               <form @submit.prevent="saveContact()">
-                <vue-dropzone
+                <vue-avatar
+                    :width=200
+                    :height=200
+                    :rotation="rotation"
+                    :scale="scale"
+                    ref="vueavatar"
+                    @vue-avatar-editor:image-ready="onImageReady"
+                    :image="vueSampleAvatar"
+                >
+                </vue-avatar>
+<!--                <vue-dropzone
                     ref="avatarDropzone"
                     id="dropzone"
                     :options="dropzoneOptions"
                     @vdropzone-complete="handleVueDropzoneComplete"
                     class="mb-2"
-                ></vue-dropzone>
+                ></vue-dropzone>-->
                 <span class="form-text text-danger" v-show="errors.avatar">Please select image</span>
 
                 <div class="mb-3 mt-3">
@@ -114,7 +124,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                       <label for="email" class="form-label">Email</label>
                       <div class="row">
                         <div class="col-md-6 mb-3" style="position:relative;" v-for="(email_field, index) in email" :key="index">
-                          <input type="email" class="form-control" :name="'email'+index" v-model="email[index]" required>
+                          <input type="email" class="form-control" :name="'email'+index" v-model="email[index]" id="email" required>
                           <span style="position: absolute; right: 20px; top: 9px;" v-show="index > 0"><a href="javascript:void(0)" @click="removeEmail(index)" style="text-decoration: none;">X</a></span>
                         </div>
                       </div>
@@ -141,11 +151,11 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
               </form>
 
             </div>
-            <div class="col-md-4" v-show="!show_add_contact_form">
+            <div class="col-md-4" v-show="!show_add_contact_form" v-if="current_contact.image">
               <!--              <img src="https://picsum.photos/200/250" class="img-fluid rounded-start" alt="...">-->
-              <img :src="current_contact.image" class="img-fluid rounded-start" alt="..." width="200" height="250">
+              <img :src="getImageURL(current_contact.image)" class="img-fluid rounded-start" alt="..." width="200" height="250">
             </div>
-            <div class="col-md-8" v-show="!show_add_contact_form">
+            <div class="col-md-8" v-show="!show_add_contact_form" v-if="current_contact.id">
 
               <div class="card-body">
                 <h5 class="card-title">{{ current_contact.name }} </h5>
@@ -209,50 +219,44 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
 <script>
 //Dropzone
-import vue2Dropzone from 'vue2-dropzone'
-import 'vue2-dropzone/dist/vue2Dropzone.min.css'
+//import vue2Dropzone from 'vue2-dropzone'
+//import 'vue2-dropzone/dist/vue2Dropzone.min.css'
+import axios from "axios";
+import {VueAvatar} from 'vue-avatar-editor-improved'
 
 export default {
   name: 'AddressBook',
   components: {
-    vueDropzone: vue2Dropzone
+    //vueDropzone: vue2Dropzone,
+    VueAvatar
   },
   data() {
     return {
       contacts: [
-        {
-          "id": 1,
-          "name": "Nertie Cowdrey",
-          "email": [
-            "ncowdrey0@issuu.com"
-          ],
-          "gender": "Agender",
-          "skypeid": "com.samsung.Opela",
-          "zoom_meeting_url": "http://dummyimage.com/229x100.png/dddddd/000000",
-          "notes": "Unsp fx left patella, subs for opn fx type I/2 w delay heal",
-          "image": "https://robohash.org/itaqueculpacorrupti.png?size=200x250&set=set1"
-        },
-        {
-          "id": 2,
-          "name": "Traci Livett",
-          "email": [
-            "tlivett1@cnbc.com"
-          ],
-          "gender": "Female",
-          "skypeid": "com.cyberchimps.Bitwolf",
-          "zoom_meeting_url": "http://dummyimage.com/202x100.png/dddddd/000000",
-          "notes": "Pedl cyc driver injured in collision w hv veh nontraf, init",
-          "image": "https://robohash.org/doloribusquoaliquid.png?size=200x250&set=set1"
-        }
       ],
-      current_contact: {},
+      current_contact: {
+        id: null,
+        name: null,
+        email: [],
+        gender: null,
+        skypeid: null,
+        zoom_meeting_url: null,
+        notes: null,
+        image: null
+      },
       search_contact: null,
       show_add_contact_form: false,
+      image_path: null,
       name: null,
       skypeid: null,
       zoom_meeting_url: null,
       notes: null,
       email: [],
+
+      vueSampleAvatar: null,
+
+      scale: 1,
+      rotation: 0,
 
       id: 2000,
       edit_id: null,
@@ -260,19 +264,22 @@ export default {
         name: false,
         email: false,
         avatar: false
-      },
-      dropzoneOptions: {
-        paramName: 'avatar',
-        url: process.env.VUE_APP_API_HOST_NAME + "/api/upload-image",
-        thumbnailWidth: 150,
-        maxFilesize: 50, //in MB
-        headers: { "My-Awesome-Header": "header value" }
       }
     }
   },
   computed: {
-    getUploadURL() {
-      return process.env.VUE_APP_API_HOST_NAME + "/api/upload-image"
+    dropzoneOptions() {
+      return {
+        paramName: 'avatar',
+        url: process.env.VUE_APP_API_HOST_NAME + "/api/upload-contact-avatar-image",
+        thumbnailWidth: 150,
+        maxFilesize: 50, //in MB
+        maxFiles: 1,
+        headers: { "My-Awesome-Header": "header value" },
+        params: {
+          userId: this.$route.params.id
+        }
+      }
     }
   },
   watch: {
@@ -293,13 +300,57 @@ export default {
     }
   },
   mounted() {
-    this.contacts.sort(function (a, b) {
-      return a.name.localeCompare(b.name)
-    })
-    this.current_contact = this.contacts[0]
-    //this.getContacts()
+    this.getContacts()
+    if(this.contacts.length)
+    {
+      this.contacts.sort(function (a, b) {
+        return a.name.localeCompare(b.name)
+      })
+
+      this.current_contact = this.contacts[0]
+    }
+
   },
   methods: {
+    getContacts() {
+      let self = this
+      axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/assistant/user/get-all-contacts", {
+        id: self.$route.params.id
+      })
+      .then((response) => {
+        if(response.data.status)
+        {
+          if(response.data.data && response.data.data.length)
+          {
+            for (let i = 0; i < response.data.data.length; i++)
+            {
+              let contact = {
+                id: response.data.data[i].id,
+                name: response.data.data[i].contactName,
+                email: response.data.data[i].email,
+                gender: null,
+                skypeid: response.data.data[i].skypeId,
+                zoom_meeting_url: response.data.data[i].zoomMeetingURL,
+                notes: response.data.data[i].notes,
+                image: response.data.data[i].avatar
+              }
+
+              self.contacts.push(contact)
+              self.contacts.sort(function (a, b) {
+                return a.name.localeCompare(b.name)
+              })
+              self.current_contact = self.contacts[0]
+            }
+          }
+
+        }
+      }, (error) => {
+        console.log(error)
+      })
+    },
+    getImageURL(image) {
+      return process.env.VUE_APP_API_HOST_NAME+"/"+image
+    },
     showContact(id) {
       this.current_contact = this.contacts.find(obj => obj.id == id)
       //console.log(this.current_contact)
@@ -357,7 +408,6 @@ export default {
     editContatct(id) {
       this.edit_id = id
       this.show_add_contact_form = true
-      this.current_filepond_image_url = null
       this.name = this.current_contact.name
       this.skypeid = this.current_contact.skypeid
       this.zoom_meeting_url = this.current_contact.zoom_meeting_url
@@ -368,24 +418,30 @@ export default {
     },
     addContact() {
       this.show_add_contact_form = true
-      this.current_filepond_image_url = null
       this.name = null
       this.skypeid = null
       this.zoom_meeting_url = null
       this.notes = null
-      this.id++
-      this.$refs.avatarpond.removeFile()
       this.email = []
       this.addEmail()
+      this.vueSampleAvatar = null
     },
     saveContactCancel() {
       this.show_add_contact_form = false
     },
     saveContact() {
-
+      let self = this
       this.errors.name = false
       this.errors.email = false
       this.errors.avatar = false
+
+
+      let avatar = this.$refs.vueavatar.getImageScaled().toDataURL()
+      //let avatar = this.$refs.vueavatar.getImageScaled()
+      /*avatar.toBlob(function (blob) {
+        console.log("blob", blob)
+      })
+      console.log("avatar", avatar)*/
       //check the contact validation
 
       if(!this.name) {
@@ -400,7 +456,8 @@ export default {
       else {
         this.errors.email = false
       }
-      if (!this.current_filepond_image_url && !this.edit_id)
+
+      if (!avatar && !this.edit_id)
       {
         this.errors.avatar = true
       }
@@ -425,10 +482,6 @@ export default {
             this.contacts[i].zoom_meeting_url = this.zoom_meeting_url
             this.contacts[i].notes = this.notes
             this.contacts[i].email = this.email
-            if(this.current_filepond_image_url)
-            {
-              this.contacts[i].image = this.current_filepond_image_url
-            }
             this.contacts.sort(function (a, b) {
               return a.name.localeCompare(b.name)
             })
@@ -439,52 +492,48 @@ export default {
 
       }
       else {
-        this.contacts.push({
-          id: ++this.id,
+
+        axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/assistant/user/add-contact", {
+          id: self.$route.params.id,
           name: this.name,
           skypeid: this.skypeid,
           zoom_meeting_url: this.zoom_meeting_url,
           notes: this.notes,
           email: this.email,
-          image: this.current_filepond_image_url
+          avatar: avatar
         })
-        this.contacts.sort(function (a, b) {
-          return a.name.localeCompare(b.name)
+        .then((response) => {
+          self.contacts.push({
+            id: response.data.data.id,
+            name: response.data.data.contactName,
+            skypeid: response.data.data.skypeId,
+            zoom_meeting_url: response.data.data.zoomMeetingURL,
+            notes: response.data.data.notes,
+            email: response.data.data.email,
+            image: response.data.data.avatar
+          })
+
+          self.contacts.sort(function (a, b) {
+            return a.name.localeCompare(b.name)
+          })
+          self.current_contact = self.contacts[0]
+          /*self.contacts.sort(function (a, b) {
+            return a.name.localeCompare(b.name)
+          })*/
+        }, (error) => {
+          console.log(error)
         })
+
+
+
         this.show_add_contact_form = false
       }
-
-
-
-
-
-
     },
-    handleVueDropzoneComplete(response) {
-      if(response.status == "success")
-      {
-        let data = response.xhr.response
-        let filename = response.upload.filename
-        data = JSON.parse(data)
+    saveContact1() {
+      var img = this.$refs.vueavatar.getImageScaled()
+      //this.$refs.image.src = img.toDataURL()
 
-        this.current_folder.photos.push({
-          id: ++this.photo_id,
-          name: filename,
-          path: data.data
-        })
-
-        this.$refs.avatarDropzone.removeFile(response)
-        console.log("data", data)
-      }
-      console.log("response", response)
-    },
-    handleFilePondProcessfile: function (err, file) {
-      //console.log("FilePond has handleFilePondProcessfile");
-      let imageData = JSON.parse(file.serverId)
-
-      this.current_filepond_image_url = imageData.data
-
-      //console.log("imageURL", imageData)
+      console.log(img.toDataURL())
     },
     addEmail() {
       this.email.push("")
@@ -493,6 +542,11 @@ export default {
       if (index > -1) {
         this.email.splice(index, 1);
       }
+    },
+    onImageReady()
+    {
+      this.scale = 1
+      this.rotation = 0
     }
   }
 }

@@ -26,6 +26,10 @@ const logger = require('../../../logger/api.logger')
 const bcrypt = require("bcrypt");
 const {Folder} = require("../../Googleapi/Models/folder.model");
 const {User} = require('../../Googleapi/Models/user.model')
+const {AddressBook} = require('../../Googleapi/Models/addressBook.model')
+const fs = require('fs')
+const HelperManager = require("../../../Managers/HelperManager");
+
 
 class UserController {
     /**
@@ -348,11 +352,146 @@ class UserController {
             response.send(data)
         }
         catch (err) {
+            logger.error('Error::' + err)
             console.log(err)
         }
 
 
 
+    }
+
+    /**
+     * add contact
+     */
+    async addContact(request, response) {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+
+        try {
+            //create image from base64 data
+            /*let base64String = request.body.avatar // Not a real image
+            let buff = new Buffer(base64String, 'base64');
+            fs.writeFileSync('stack-abuse-logo-out.png', buff);
+
+
+            //console.log(base64String)
+            fs.writeFile('image.png', base64String, {encoding: 'base64'}, function(err) {
+                console.log('File created');
+            });*/
+
+            let string = request.body.avatar
+            let regex = /^data:.+\/(.+);base64,(.*)$/;
+
+            let matches = string.match(regex);
+            let ext = matches[1];
+            let data1 = matches[2];
+            let buffer = Buffer.from(data1, 'base64');
+            let filename = await HelperManager.uniqid()
+            let filepath = "public/uploads/avatar/"
+            let complete_filepath = "uploads/avatar/"+filename+'.' + ext
+            fs.writeFileSync(filepath+filename+'.' + ext, buffer);
+
+            // Remove header
+            //let base64Image = base64String.split(';base64,').pop()
+
+
+            let address_book = await AddressBook.create({
+                userId: request.body.id,
+                contactName: request.body.name,
+                skypeId: request.body.skypeid,
+                zoomMeetingURL: request.body.zoom_meeting_url,
+                notes: request.body.notes,
+                email: request.body.email,
+                avatar: complete_filepath,
+                createdBy: request.decoded.id
+            })
+
+            data.status = true
+            data.data = address_book
+            data.message = "success"
+
+            response.send(data)
+        }
+        catch (err) {
+            logger.error('Error::' + err)
+            console.log("error", err)
+        }
+    }
+
+    /**
+     * upload contact avatar
+     */
+    async uploadContactAvatarImage(request, response) {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+
+        try {
+            var url = require('url')
+
+            let avatar = request.files.avatar
+            let filename = avatar.name
+
+            avatar.mv('./public/uploads/'+filename, function (err) {
+                if(err) {
+                    response.status(406).send({
+                        status: false,
+                        data: err,
+                        message: 'failed'
+                    })
+                }
+                else {
+
+
+                    response.status(200).send({
+                        status: true,
+                        data: '/uploads/'+filename,
+                        message: 'success'
+                    })
+                }
+            })
+
+        }
+        catch (err) {
+            logger.error('Error::' + err)
+            console.log("error", err)
+        }
+    }
+
+    /**
+     * get all contacts of user
+     */
+    async getAllContacts(request, response) {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+
+        try {
+            let addressBooks = await AddressBook.find({
+                deleted: false,
+                userId: request.body.id
+            })
+
+            data.status = true
+            data.data = addressBooks
+            data.message = "success"
+
+            response.send(data)
+        }
+        catch (err) {
+            console.log(err)
+            logger.error('Error::' + err)
+
+            data.message = "failed"
+            response.send(data)
+        }
     }
 }
 
