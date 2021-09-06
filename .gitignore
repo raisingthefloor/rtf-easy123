@@ -7,12 +7,9 @@ node_modules
 /Configs/masterConfig.json
 .env
 
-/public/uploads/avatar/*
-/public/uploads/*
-
-
-!/public/uploads/avatar
-!/public/uploads
+/public/uploads/avatar
+/public/uploads/*.jpg
+/public/uploads/*.png
 # phpstorm project files
 .idea
 /backup
