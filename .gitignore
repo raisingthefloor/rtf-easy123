@@ -7,8 +7,9 @@ node_modules
 /Configs/masterConfig.json
 .env
 
-/public/uploads/*
 /public/uploads/avatar/*
+/public/uploads/*
+
 
 !/public/uploads/avatar
 !/public/uploads
