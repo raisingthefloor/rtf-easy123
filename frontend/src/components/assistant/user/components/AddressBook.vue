@@ -100,38 +100,35 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                 <span class="form-text text-danger" v-show="errors.avatar">Please select image</span>
 
                 <div class="mb-3 mt-3">
-                  <label for="name" class="form-label">Name</label>
+                  <label for="name" class="form-label"><b>Name</b></label>
                   <input type="text" class="form-control" id="name" v-model="name" required>
                   <span class="form-text text-danger" v-show="errors.name">Please enter name</span>
                 </div>
                 <div class="mb-3 mt-3">
-                  <label for="skypeid" class="form-label">Skype ID</label>
+                  <label for="skypeid" class="form-label"><b>Skype ID</b></label>
                   <input type="text" class="form-control" id="skypeid" v-model="skypeid">
                 </div>
                 <div class="mb-3 mt-3">
-                  <label for="zoom_meeting_url" class="form-label">Zoom Meeting URL</label>
+                  <label for="zoom_meeting_url" class="form-label"><b>Zoom Meeting URL</b></label>
                   <input type="text" class="form-control" id="zoom_meeting_url" v-model="zoom_meeting_url">
                   <span class="form-text text-danger" v-show="errors.name">Please enter Zoom Meeting URL</span>
                 </div>
                 <div class="mb-3 mt-3">
-                  <label for="notes" class="form-label">Notes</label>
+                  <label for="notes" class="form-label"><b>Notes</b></label>
                   <textarea name="notes" id="notes" rows="3" class="form-control" v-model="notes"></textarea>
                   <span class="form-text text-danger" v-show="errors.name">Please enter Notes</span>
                 </div>
+
                 <div class="mb-3">
                   <div class="row">
                     <div class="col-md-12">
-                      <label for="email" class="form-label">Email</label>
+                      <label for="email" class="form-label"><b>Email</b></label>
                       <div class="row">
                         <div class="col-md-6 mb-3" style="position:relative;" v-for="(email_field, index) in email" :key="index">
                           <input type="email" class="form-control" :name="'email'+index" v-model="email[index]" id="email" required>
                           <span style="position: absolute; right: 20px; top: 9px;" v-show="index > 0"><a href="javascript:void(0)" @click="removeEmail(index)" style="text-decoration: none;">X</a></span>
                         </div>
                       </div>
-
-
-
-
                     </div>
                     <div class="col-md-12">
                       <div class="d-grid gap-2 mt-2">
@@ -143,6 +140,29 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
                   <span class="form-text text-danger" v-show="errors.email">Please enter email</span>
                 </div>
+
+<!--                <div class="mb-3">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <label for="phone_number" class="form-label"><b>Phone Number</b></label>
+                      <div class="row">
+                        <div class="col-md-6">
+                          <label for="phone_number">Phone Number</label>
+                          <input type="text" id="phone_number" class="form-control">
+                        </div>
+                        <div class="col-md-6">
+                          <label for="phone_number_type">Type</label>
+                          <select class="form-select" aria-label="Default select example" id="phone_number_type">
+                            <option selected>Open this select menu</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>-->
 
                 <div>
                   <button class="btn btn-primary me-2" type="submit">Save</button>
@@ -159,11 +179,11 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
               <div class="card-body">
                 <h5 class="card-title">{{ current_contact.name }} </h5>
-                <p class="card-text">{{ current_contact.email.join(", ") }}</p>
+                <p class="card-text">Email: {{ current_contact.email.join(", ") }}</p>
                 <p class="card-text">Skype ID: {{ current_contact.skypeid }}</p>
                 <p class="card-text">Zoom Meeting URL: {{ current_contact.zoom_meeting_url }}</p>
-                <p>{{ current_contact.notes }}</p>
-                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                <p>Notes: {{ current_contact.notes }}</p>
+<!--                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>-->
                 <a href="javascript:void(0)" class="btn btn-sm btn-info me-2" @click="editContatct(current_contact.id)">Edit Contact</a>
                 <a href="javascript:void(0)" class="btn btn-sm btn-danger" @click="deleteContatct(current_contact.id)">Delete Contact</a>
               </div>

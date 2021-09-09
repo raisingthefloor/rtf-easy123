@@ -197,7 +197,9 @@ class UserController {
                 smtpUsername: request.body.smtp_username,
                 smtpPassword: request.body.smtp_password,
                 smtpHost: request.body.smtp_host,
-                smtpPortNumber: request.body.smtp_port
+                smtpPortNumber: request.body.smtp_port,
+                smtpUseTlsSsl: request.body.smtp_use_tls_ssl,
+                smtpAuthentication: request.body.smtp_authentication
             }
 
             await User.findOneAndUpdate({

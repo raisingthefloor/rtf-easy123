@@ -164,6 +164,24 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                     <span v-if="!$v.smtp_port.required">Port is required.</span>
                   </div>
                 </div>
+
+                <div class="form-check mb-3">
+                  <input class="form-check-input" type="checkbox" value="true" id="smtp_use_tls_ssl" v-model="smtp_use_tls_ssl">
+                  <label class="form-check-label" for="smtp_use_tls_ssl">
+                    Use TLS/SSL
+                  </label>
+                </div>
+
+                <div class="mb-3">
+                  <label for="smtp_authentication" class="form-label">Authentication</label>
+                  <select class="form-select" id="smtp_authentication" v-model.trim="$v.smtp_authentication.$model" v-bind:class="{ 'is-invalid': $v.smtp_authentication.$error }">
+                    <option value="None">None</option>
+                    <option value="Password" selected>Password</option>
+                  </select>
+                  <div class="invalid-feedback">
+                    <span v-if="!$v.smtp_authentication.required">Authentication Method is required.</span>
+                  </div>
+                </div>
               </div>
 
               <button type="submit" class="btn btn-primary mb-5" :readonly="imapSmtpFormSubmitStatus == 'PROCESSING'" :disabled="imapSmtpFormSubmitStatus == 'PROCESSING'">
@@ -230,7 +248,9 @@ export default {
         smtpUsername: null,
         smtpPassword: null,
         smtpHost: null,
-        smtpPortNumber: null
+        smtpPortNumber: null,
+        smtpUseTlsSsl: null,
+        smtpAuthentication: null
       },
       name: null,
       nickname: null,
@@ -249,6 +269,8 @@ export default {
       smtp_password: null,
       smtp_host: null,
       smtp_port: null,
+      smtp_use_tls_ssl: false,
+      smtp_authentication: 'Password',
       imapSmtpFormSubmitStatus: 'NOT_SUBMITTED'
     }
   },
@@ -320,9 +342,22 @@ export default {
     },
     smtp_port: {
       required
+    },
+    smtp_authentication: {
+      required
     }
   },
   watch: {
+    smtp_use_tls_ssl: function (newVal) {
+      if(newVal == true)
+      {
+        this.smtp_port = 465
+      }
+      else
+      {
+        this.smtp_port = 587
+      }
+    }
   },
   mounted() {
     this.getUserDetails()
@@ -345,6 +380,8 @@ export default {
         self.smtp_password =  response.data.data.smtpPassword
         self.smtp_host =  response.data.data.smtpHost
         self.smtp_port =  response.data.data.smtpPortNumber
+        self.smtp_use_tls_ssl =  response.data.data.smtpUseTlsSsl
+        self.smtp_authentication =  response.data.data.smtpAuthentication
 
         if(response.data.data.password)
         {
@@ -407,8 +444,9 @@ export default {
       this.$v.smtp_password.$touch()
       this.$v.smtp_host.$touch()
       this.$v.smtp_port.$touch()
+      this.$v.smtp_authentication.$touch()
 
-      if (this.$v.imap_username.$invalid || this.$v.imap_password.$invalid || this.$v.imap_host.$invalid || this.$v.smtp_username.$invalid || this.$v.smtp_password.$invalid || this.$v.smtp_host.$invalid || this.$v.smtp_port.$invalid)
+      if (this.$v.imap_username.$invalid || this.$v.imap_password.$invalid || this.$v.imap_host.$invalid || this.$v.smtp_username.$invalid || this.$v.smtp_password.$invalid || this.$v.smtp_host.$invalid || this.$v.smtp_port.$invalid || this.$v.smtp_authentication.$invalid)
       {
         self.imapSmtpFormSubmitStatus = 'ERROR'
       }
@@ -425,7 +463,9 @@ export default {
           smtp_username: self.smtp_username,
           smtp_password: self.smtp_password,
           smtp_host: self.smtp_host,
-          smtp_port: self.smtp_port
+          smtp_port: self.smtp_port,
+          smtp_use_tls_ssl: self.smtp_use_tls_ssl,
+          smtp_authentication: self.smtp_authentication
 
         })
         .then((response) => {

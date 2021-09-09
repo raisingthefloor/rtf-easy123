@@ -115,10 +115,13 @@ class ImapController {
                 createdBy: requestUser.id,
                 role: 'user'
             })
+            //console.log("user.smtpUseTlsSsl", user.smtpUseTlsSsl)
+            //465 => secure = true
+            //587 => secure = false
             this.transporter = nodemailer.createTransport({
                 host: user.smtpHost,
                 port: user.smtpPortNumber,
-                secure: false, // true for 465, false for other ports
+                secure: user.smtpUseTlsSsl, // true for 465, false for other ports
                 auth: {
                     user: user.smtpUsername,
                     pass: user.smtpPassword
@@ -130,7 +133,7 @@ class ImapController {
             this.transporter = nodemailer.createTransport({
                 host: requestUser.smtpHost,
                 port: requestUser.smtpPortNumber,
-                secure: false, // true for 465, false for other ports
+                secure: requestUser.smtpUseTlsSsl, // true for 465, false for other ports
                 auth: {
                     user: requestUser.smtpUsername,
                     pass: requestUser.smtpPassword
