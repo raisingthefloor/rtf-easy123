@@ -24,11 +24,14 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 -->
 <template>
   <div class="container-fluid">
+
+    <h6 class="mt-5"><b>{{ getMembersTitle() }}</b></h6>
     <div class="table-responsive">
-      <table class="table mt-5">
+      <table class="table mt-1">
         <thead>
         <tr>
           <th scope="col">Name</th>
+          <th scope="col">Nickname</th>
           <th scope="col">Email</th>
           <th scope="col">Role</th>
           <th scope="col">Actions</th>
@@ -37,10 +40,11 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         <tbody>
         <tr v-for="user in users" :key="user.id">
           <td>{{ user.name }}</td>
+          <td>{{ user.nickname }}</td>
           <td>{{ user.email }}</td>
           <td style="text-transform: capitalize;">{{ user.role }}</td>
           <td>
-            <button type="button" class="btn btn-info btn-sm me-2" @click="impersonateUser(user)" v-show="user.role == 'user'">Impersonate</button>
+            <button type="button" class="btn btn-info btn-sm me-2" @click="viewAsUser(user)" v-show="user.role == 'user'">View as User</button>
             <button type="button" class="btn btn-info btn-sm me-2" v-if="$store.state.AppActiveUser.email != user.email" @click="editUser(user)" v-show="user.role != 'admin'">Edit</button>
             <button type="button" class="btn btn-danger btn-sm"  v-if="$store.state.AppActiveUser.email != user.email" @click="deleteUserAlert(user.id)" v-show="user.role != 'admin'">Delete</button>
           </td>
@@ -88,6 +92,11 @@ export default {
             console.log(error)
           })
     },
+    /** get members title **/
+    getMembersTitle() {
+      let user = this.users.find(obj => obj.role == 'user')
+      return user.nickname+"'s Account"
+    },
     async deleteUserAlert(id) {
       //console.log(id)
       let willDelete = await swal({
@@ -118,9 +127,9 @@ export default {
     editUser(user) {
       this.$router.push('/assistant/member/'+user.id+'/edit/')
     },
-    impersonateUser(user) {
+    viewAsUser(user) {
       this.$store.commit('SET_LAYOUT', 'simple-layout')
-      this.$router.push('/assistant/member/'+user.id+'/impersonate')
+      this.$router.push('/assistant/member/'+user.id+'/view-as-user')
     }
   }
 }

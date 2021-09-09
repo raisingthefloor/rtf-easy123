@@ -37,7 +37,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
         <ul class="nav nav-tabs" id="myTab" role="tablist">
           <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Profile</button>
+            <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Profile <font-awesome-icon :icon="['fas', 'exclamation-circle']" style="color: red" v-if="!email || !password" /></button>
           </li>
           <li class="nav-item" role="presentation">
             <button class="nav-link" id="imapdetails-tab" data-bs-toggle="tab" data-bs-target="#imapdetails" type="button" role="tab" aria-controls="imapdetails" aria-selected="false">IMAP/SMTP details</button>
@@ -73,7 +73,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                 </div>
               </div>
               <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
+                <label for="email" class="form-label">Login Email</label>
                 <input type="email" class="form-control" v-bind:class="{ 'is-invalid': $v.email.$error }" id="email" v-model.trim="$v.email.$model">
                 <div class="invalid-feedback">
                   <span v-if="!$v.email.required">Email is required.</span>
@@ -81,7 +81,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                 </div>
               </div>
               <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
+                <label for="password" class="form-label">Login Password</label>
                 <div style="position:relative;">
                   <input :type="(show_password_protected)?'password':'text'" class="form-control" v-bind:class="{ 'is-invalid': $v.password.$error }" id="password" v-model.trim="$v.password.$model">
                   <font-awesome-icon :icon="['fas', 'eye']" style="position: absolute;right: 9px; top: 12px; cursor: pointer;" @click="show_password_protected=false" v-show="show_password_protected" />

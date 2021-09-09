@@ -31,7 +31,7 @@ export default function assistant({ next }) {
     store.commit('INITIALISE_STORE')
     if (store.state.AppActiveUser.role == "assistant")
     {
-        store.commit('SET_LAYOUT', 'admin-layout')
+        store.commit('SET_LAYOUT', 'assistant-layout')
         return next();
     }
     else if(store.state.AppActiveUser.role == "admin")

@@ -35,7 +35,7 @@ import AdminUser from "@/components/admin/user/List"
 import AssistantUser from "@/components/assistant/user/List"
 import AssistantCreateUser from "@/components/assistant/user/Create"
 import AssistantEditUser from "@/components/assistant/user/Edit"
-import AssistantImpersonateUser from "@/components/HomeWorking"
+import AssistantViewAsUser from "@/components/HomeWorking"
 
 import admin from "../middleware/admin"
 import assistant from "../middleware/assistant"
@@ -113,9 +113,9 @@ const router = new Router({
             }
         },
         {
-            path: '/assistant/member/:id/impersonate',
-            name: 'AssistantImpersonateUser',
-            component: AssistantImpersonateUser,
+            path: '/assistant/member/:id/view-as-user',
+            name: 'AssistantViewAsUser',
+            component: AssistantViewAsUser,
             meta: {
                 //middleware: assistant
             }

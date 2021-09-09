@@ -32,9 +32,9 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-            <li class="nav-item">
+<!--            <li class="nav-item">
               <a class="nav-link active" aria-current="page" href="#">Members</a>
-            </li>
+            </li>-->
             <li class="nav-item">
               <a class="nav-link" href="javascript:void(0)" @click="logoutUser">Logout</a>
             </li>
