@@ -39,6 +39,7 @@ module.exports = function (router) {
 
     //easyweb routes
     router.post('/api/assistant/user/easyweb/add-folder', validateToken, EasyWebController.addFolder.bind(EasyWebController))
+    router.post('/api/temp/upload-image', EasyWebController.uploadImage.bind(EasyWebController))
     router.post('/api/assistant/user/easyweb/add-website', validateToken, EasyWebController.addWebsite.bind(EasyWebController))
     router.post('/api/assistant/user/easyweb/get-all-websites-and-folders', validateToken, EasyWebController.getWebsitesAndFolders.bind(EasyWebController))
     router.post('/api/assistant/user/easyweb/change-order-websites-and-folders', validateToken, EasyWebController.changeOrderOfWebsitesAndFolders.bind(EasyWebController))
@@ -65,6 +66,7 @@ module.exports = function (router) {
 
 
     router.post('/api/upload-image', UserController.uploadImage.bind(UserController))
+    router.post('/api/get-private-image', UserController.getPrivateImage.bind(UserController))
 
     //address book
     router.post('/api/assistant/user/get-all-contacts', validateToken, UserController.getAllContacts.bind(UserController))

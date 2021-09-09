@@ -29,6 +29,7 @@ const {User} = require('../../Googleapi/Models/user.model')
 const {AddressBook} = require('../../Googleapi/Models/addressBook.model')
 const fs = require('fs')
 const HelperManager = require("../../../Managers/HelperManager");
+const aws = require("aws-sdk")
 
 
 class UserController {
@@ -287,19 +288,63 @@ class UserController {
 
         let avatar = request.files.avatar
         let filename = avatar.name
+        let mimetype = avatar.mimetype
+
+        //console.log("buffer data" + request.files.avatar.data)
+
+        aws.config.update({
+            accessKeyId: process.env.AWS_S3_ACCESS_KEY,
+            secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY
+        })
+
+        const s3 = new aws.S3()
+        let uniqid = await HelperManager.uniqid()
+        filename = uniqid + "-" + filename
+        let bucket_path = process.env.AWS_S3_BUCKET + "/" + request.body.id + "/photos"
+        const s3res = await s3.upload({
+            Bucket: bucket_path,
+            Key: filename,
+            Body: request.files.avatar.data,
+            ACL: "private"
+        }).promise()
+
+
+        const s3data =  await s3.getObject(
+            {
+                Bucket: bucket_path,
+                Key: filename
+            }
+        ).promise();
+
+        const b64 = Buffer.from(s3data.Body).toString('base64');
+
+        //console.log("s3res data", s3data)
+        //console.log("s3res data", s3data.Body)
+
 
         //add to database
         let folder = await Folder.findOne({
             _id: request.body.folderId
         })
+
         folder.photos.push({
             name: filename,
-            path: '/uploads/'+filename
+            path: bucket_path,
+            mimetype: mimetype
+        })
+        await folder.save()
+        //end add to database
+
+
+        response.status(200).send({
+            status: true,
+            data: folder,
+            message: 'success'
         })
 
-        await folder.save()
 
-        avatar.mv('./public/uploads/'+filename, function (err) {
+
+        /*avatar.mv('./public/uploads/'+filename, function (err) {
             if(err) {
                 response.status(406).send({
                     status: false,
@@ -320,7 +365,48 @@ class UserController {
                     message: 'success'
                 })
             }
-        })
+        })*/
+    }
+
+    /**
+     * get private image from amazon s3
+     */
+    async getPrivateImage(request, response)
+    {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+        try
+        {
+            aws.config.update({
+                accessKeyId: process.env.AWS_S3_ACCESS_KEY,
+                secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY
+            })
+            const s3 = new aws.S3()
+            const s3data =  await s3.getObject(
+                {
+                    Bucket: request.body.photo.path,
+                    Key: request.body.photo.name
+                }
+            ).promise();
+            const b64 = Buffer.from(s3data.Body).toString('base64')
+
+            data.status = true
+            data.data = b64
+            data.message = "success"
+
+            response.send(data)
+        }
+        catch (err)
+        {
+            console.log(err)
+            logger.error('Error::' + err)
+
+            data.message = "failed"
+            response.send(data)
+        }
     }
 
     /**
