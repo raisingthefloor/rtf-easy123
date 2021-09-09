@@ -43,6 +43,8 @@ const schema = new mongoose.Schema({
     smtpPassword: { type: String, default: null },
     smtpHost: { type: String, default: null },
     smtpPortNumber: { type: Number, default: null },
+    smtpUseTlsSsl: { type: Boolean, default: false },
+    smtpAuthentication: { type: String, default: 'Password' },
 
     emailVerified: {type: Boolean, default: false},
     createdBy: mongoose.Schema.ObjectId,
