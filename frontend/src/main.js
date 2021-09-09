@@ -34,14 +34,15 @@ import Toasted from 'vue-toasted'
 import VueI18n from 'vue-i18n'
 import messages from './lang/index'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faEye, faEyeSlash, faStar, faTrash, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faEye, faEyeSlash, faStar, faTrash, faPlus, faExclamationCircle } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import Vuelidate from 'vuelidate'
 import {VueAvatar} from 'vue-avatar-editor-improved'
 
+
 Vue.use(Vuelidate)
 
-library.add([faEye, faEyeSlash, faStar, faTrash, faPlus])
+library.add([faEye, faEyeSlash, faStar, faTrash, faPlus, faExclamationCircle])
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 Sentry.init({
