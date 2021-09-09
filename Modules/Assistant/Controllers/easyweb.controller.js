@@ -27,6 +27,8 @@ const {User} = require('../../Googleapi/Models/user.model')
 const {EasyWeb} = require('../../Googleapi/Models/easyweb.model')
 //const {captureWebsite} = require('capture-website')
 var getFavicons = require('get-website-favicon')
+const aws = require("aws-sdk")
+const HelperManager = require("../../../Managers/HelperManager");
 
 
 
@@ -81,10 +83,52 @@ class EasyWebController {
 
         try
         {
+
+            let uniqid = await HelperManager.uniqid()
             let avatar = request.files.avatar
             let filename = avatar.name
+            let mimetype = avatar.mimetype
 
-            avatar.mv('./public/uploads/'+filename, function (err) {
+            aws.config.update({
+                accessKeyId: process.env.AWS_S3_ACCESS_KEY,
+                secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY
+            })
+            const s3 = new aws.S3()
+
+            filename = uniqid + "-" + filename
+
+            let bucket_path = process.env.AWS_S3_BUCKET + "/" + request.body.id + "/easyweb"
+            const s3res = await s3.upload({
+                Bucket: bucket_path,
+                Key: filename,
+                Body: request.files.avatar.data,
+                ACL: "private"
+            }).promise()
+
+            const s3data =  await s3.getObject(
+                {
+                    Bucket: bucket_path,
+                    Key: filename
+                }
+            ).promise();
+
+            const b64 = Buffer.from(s3data.Body).toString('base64');
+
+            data.status = true
+            data.data = {
+                imageFileName: filename,
+                imagePath: bucket_path,
+                imageMimeType: mimetype
+            }
+            data.message = "success"
+            response.send(data)
+            /*response.status(200).send({
+                status: true,
+                data: {'/uploads/'+filename},
+                message: 'success'
+            })*/
+
+            /*avatar.mv('./public/uploads/'+filename, function (err) {
                 if(err) {
                     response.status(406).send({
                         status: false,
@@ -99,7 +143,7 @@ class EasyWebController {
                         message: 'success'
                     })
                 }
-            })
+            })*/
         }
         catch (err)
         {
@@ -128,18 +172,21 @@ class EasyWebController {
             let allWebsiteAndFolders = await EasyWeb.find({
                 deleted: false
             })
-
+            //console.log("data", request.body)
             order = allWebsiteAndFolders.length
             let newWebsite = {
                 type: "website",
                 name: request.body.text_to_put_on_button,
                 link: request.body.website_url,
                 image: request.body.website_image,
+                imageFileName: request.body.websiteImageFileName,
+                imageMimeType: request.body.websiteImageMimeType,
+                imagePath: request.body.websiteImagePath,
                 order: order+1,
                 userId: request.body.id,
                 createdBy: request.decoded.id
             }
-            if(request.body.website_sample_image_url)
+            if(!request.body.websiteImageFileName && request.body.website_sample_image_url)
             {
                 newWebsite.imageType = "favcon"
                 newWebsite.image = request.body.website_sample_image_url

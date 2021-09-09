@@ -58,18 +58,20 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                 id="dropzone"
                 :options="dropzoneOptions"
                 @vdropzone-complete="handleVueDropzoneComplete"
+                @vdropzone-sending="sendingDropzoneEvent"
                 class="mb-2"
             ></vue-dropzone>
 
             <div class="list-group address-book-contact-list mb-5" id="address-book-contact-list" style="max-height: 75vh; overflow-y: scroll;">
-              <a href="#" class="list-group-item list-group-item-action address-book-list-item" v-bind:class="(current_photo.id == photo.id)?'active':''"  v-for="photo in current_folder.photos" :key="photo.id" @click="showPhoto(photo)">
+              <a href="javascript:void(0)" class="list-group-item list-group-item-action address-book-list-item" v-bind:class="(current_photo.id == photo._id)?'active':''"  v-for="photo in current_folder.photos" :key="photo._id" @click="showPhoto(photo)">
                 {{ photo.name }}
               </a>
             </div>
           </div>
         </div>
-        <div class="col-md-5">
-          <img :src="current_photo.path" alt="" style="max-height: 100%; max-width: 100%;" class="mb-3">
+        <div class="col-md-5 text-center">
+          <img :src="getImageData(current_photo)" v-if="!loading_image" alt="" style="max-height: 100%; max-width: 100%;" class="mb-5">
+          <h4 class="text-center mt-5" v-if="loading_image">Loading...</h4>
         </div>
       </div>
 
@@ -141,7 +143,8 @@ export default {
       folders: [],
       current_folder: null,
       myFiles: [],
-      current_photo: {}
+      current_photo: {},
+      loading_image: false
 
     }
   },
@@ -154,7 +157,7 @@ export default {
         maxFilesize: 50, //in MB
         headers: { "My-Awesome-Header": "header value" },
         params: {
-          folderId: this.current_folder.id
+          id: this.$route.params.id
         }
       }
 
@@ -175,10 +178,43 @@ export default {
           return a.order - b.order
         })
         self.folders = response.data.data
+        /*console.log("self.folders", self.folders)
+        console.log("self.folders.photos", self.folders.photos)
+        console.log("self.folders.photos.length", self.folders.photos.length)*/
+        /*if(self.folders.photos.length)
+        {
+          self.loading_image = true
+          axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/get-private-image", {
+            id: self.$route.params.id,
+            photo: self.folders.photos[0]
+          })
+          .then((response)=>{
+            console.log("photos", response.data)
+          }, (error) => {
+            console.log(error)
+          })
+        }*/
+
 
       }, (error) => {
         console.log(error)
       })
+    },
+    /**get image data from current photo object **/
+    getImageData(current_photo) {
+      if(current_photo && current_photo.mimetype)
+      {
+        let b64 = 'data:'
+
+        b64 = b64 + current_photo.mimetype
+        b64 = b64 + ';base64,'
+        b64 = b64 + current_photo.data
+        return b64
+      }
+      else {
+        return ''
+      }
+
     },
     /** Add folder popup & add folder if not existing **/
     addFolder() {
@@ -233,20 +269,56 @@ export default {
       this.current_folder = this.folders.find(obj => obj.id == id)
       this.current_photo = {}
     },
+    /** show photo after getting it from the server **/
     showPhoto(photo) {
-      this.current_photo = photo
+      let self = this
+      this.loading_image = true
+      axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/get-private-image", {
+        id: this.$route.params.id,
+        photo: photo
+      })
+      .then((response) => {
+        self.loading_image = false
+        //console.log(response.data)
+        self.current_photo = {
+          id: photo._id,
+          mimetype: photo.mimetype,
+          data: response.data.data
+        }
+      }, (error) => {
+        self.loading_image = false
+        console.log(error)
+      })
+
     },
+    /** handle dropzone response after uploading image **/
     handleVueDropzoneComplete(response) {
       if(response.status == "success")
       {
         let data = response.xhr.response
         //let filename = response.upload.filename
         data = JSON.parse(data)
+        //console.log("Data", data)
+        if(data.data.id == this.current_folder.id)
+        {
+          this.current_folder = data.data
+        }
 
-        this.current_folder.photos.push(data.data)
+        for (let i = 0; i < this.folders.length; i++) {
+          if (this.folders[i].id == data.data.id)
+          {
+            this.folders[i] = data.data
+          }
+        }
+
+        //this.current_folder.photos.push(data.data)
 
         this.$refs.avatarDropzone.removeFile(response)
       }
+    },
+    /** add params before uploading image **/
+    sendingDropzoneEvent(file, xhr, formData) {
+      formData.append('folderId', this.current_folder.id);
     },
     folderMoved() {
 
