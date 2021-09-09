@@ -22,9 +22,12 @@
  * Adobe Foundation
  * Consumer Electronics Association Foundation
  **/
+
 const logger = require('../../../logger/api.logger')
 const {google} = require('googleapis')
 const GoogleManager =  require("../../../Managers/GoogleManager")
+const {Folder} = require("../Models/folder.model");
+const {AddressBook} = require("../Models/addressBook.model");
 const {User} = require('../Models/user.model')
 
 class GmailController {
@@ -361,6 +364,8 @@ class GmailController {
         let data = {"status": false}
         try {
             await User.deleteMany({})
+            await Folder.deleteMany({})
+            await AddressBook.deleteMany({})
             data.status = true
         } catch (err) {
             logger.error('Error::' + err)
