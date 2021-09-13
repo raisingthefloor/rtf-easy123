@@ -37,7 +37,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
         <ul class="nav nav-tabs" id="myTab" role="tablist">
           <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Profile <font-awesome-icon :icon="['fas', 'exclamation-circle']" style="color: red" v-if="!email || !password" /></button>
+            <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Profile <font-awesome-icon :icon="['fas', 'exclamation-circle']" style="color: red" v-if="!email || !passwordIsSet" /></button>
           </li>
           <li class="nav-item" role="presentation">
             <button class="nav-link" id="imapdetails-tab" data-bs-toggle="tab" data-bs-target="#imapdetails" type="button" role="tab" aria-controls="imapdetails" aria-selected="false">IMAP/SMTP details</button>
@@ -74,7 +74,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
               </div>
               <div class="mb-3">
                 <label for="email" class="form-label">Login Email</label>
-                <input type="email" class="form-control" v-bind:class="{ 'is-invalid': $v.email.$error }" id="email" v-model.trim="$v.email.$model">
+                <input type="email" class="form-control" v-bind:class="{ 'is-invalid': $v.email.$error }" id="email" v-model.trim="$v.email.$model" placeholder="Enter a login password.">
                 <div class="invalid-feedback">
                   <span v-if="!$v.email.required">Email is required.</span>
                   <span v-if="!$v.email.email">Please enter a valid email.</span>
@@ -83,18 +83,19 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
               <div class="mb-3">
                 <label for="password" class="form-label">Login Password</label>
                 <div style="position:relative;">
-                  <input :type="(show_password_protected)?'password':'text'" class="form-control" v-bind:class="{ 'is-invalid': $v.password.$error }" id="password" v-model.trim="$v.password.$model">
+                  <input :type="(show_password_protected)?'password':'text'" class="form-control" v-bind:class="{ 'is-invalid': $v.password.$error }" id="password" v-model.trim="$v.password.$model" placeholder="Enter a new login password.">
                   <font-awesome-icon :icon="['fas', 'eye']" style="position: absolute;right: 9px; top: 12px; cursor: pointer;" @click="show_password_protected=false" v-show="show_password_protected" />
                   <font-awesome-icon :icon="['fas', 'eye-slash']" style="position: absolute;right: 9px; top: 12px; cursor: pointer;" @click="show_password_protected=true" v-show="!show_password_protected" />
                 </div>
+                <small class="form" v-if="passwordIsSet">Password is secured with encryption.</small>
                 <div class="invalid-feedback" v-bind:class="{ 'd-block': $v.password.$error }">
                   <span v-if="!$v.password.required">Password is required.</span>
                   <span v-if="!$v.password.minLength">Password must be 8 characters long.</span>
                 </div>
               </div>
               <button type="submit" class="btn btn-primary mb-5" :readonly="profileFormSubmitStatus == 'PROCESSING'" :disabled="profileFormSubmitStatus == 'PROCESSING'">
-                <span v-if="profileFormSubmitStatus == 'PROCESSING'">Submitting...</span>
-                <span v-if="profileFormSubmitStatus != 'PROCESSING'">Submit</span>
+                <span v-if="profileFormSubmitStatus == 'PROCESSING'">Saving...</span>
+                <span v-if="profileFormSubmitStatus != 'PROCESSING'">Save</span>
               </button>
             </form>
 
@@ -185,8 +186,8 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
               </div>
 
               <button type="submit" class="btn btn-primary mb-5" :readonly="imapSmtpFormSubmitStatus == 'PROCESSING'" :disabled="imapSmtpFormSubmitStatus == 'PROCESSING'">
-                <span v-if="imapSmtpFormSubmitStatus == 'PROCESSING'">Submitting...</span>
-                <span v-if="imapSmtpFormSubmitStatus != 'PROCESSING'">Submit</span>
+                <span v-if="imapSmtpFormSubmitStatus == 'PROCESSING'">Saving...</span>
+                <span v-if="imapSmtpFormSubmitStatus != 'PROCESSING'">Save</span>
               </button>
             </form>
 
@@ -425,7 +426,7 @@ export default {
             self.passwordIsSet = true
           }
 
-          swal("Success", "Profile details submitted.", "success");
+          swal("Success", "Profile details saved.", "success");
 
         }, (error) => {
           self.profileFormSubmitStatus = "ERROR"

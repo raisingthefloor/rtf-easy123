@@ -71,5 +71,6 @@ module.exports = function (router) {
     //address book
     router.post('/api/assistant/user/get-all-contacts', validateToken, UserController.getAllContacts.bind(UserController))
     router.post('/api/assistant/user/add-contact', validateToken, UserController.addContact.bind(UserController))
+    router.post('/api/assistant/user/edit-contact', validateToken, UserController.editContact.bind(UserController))
     router.post('/api/upload-contact-avatar-image', UserController.uploadContactAvatarImage.bind(UserController))
 }
