@@ -233,7 +233,7 @@ export default {
   },
   metaInfo: {
     // if no subcomponents specify a metaInfo.title, this title will be used
-    title: 'Easy123 Assistant - Create User',
+    title: 'Easy123 Assistant - Edit User',
   },
   data() {
     return {

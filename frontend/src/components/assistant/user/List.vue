@@ -135,7 +135,7 @@ export default {
     getNickname(nickname)
     {
       if(nickname)
-        return
+        return nickname
       else
         return ""
     }

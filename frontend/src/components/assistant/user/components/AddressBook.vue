@@ -281,6 +281,10 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                 <a href="javascript:void(0)" class="btn btn-sm btn-danger" @click="deleteContatct(current_contact.id)">Delete Contact</a>
               </div>
             </div>
+            <div v-if="!show_add_contact_form && !show_edit_contact_form && !contacts.length">
+              <h4>No contacts found</h4>
+            </div>
+
           </div>
         </div>
       </div>
@@ -456,6 +460,9 @@ export default {
               })
               self.current_contact = self.contacts[0]
             }
+          }
+          else {
+            self.show_add_contact_form = true
           }
 
         }
