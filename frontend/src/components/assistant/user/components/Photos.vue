@@ -44,7 +44,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                 :options="{ animation:200 }"
                 @change="folderMoved"
             >
-              <div class="user-folder me-3 mb-3" v-bind:class="(current_folder && current_folder.id == folder.id)?'folder-selected':''" v-for="folder in folders" :key="folder.id" @dblclick="openFolder(folder.id)" >
+              <div class="user-folder me-3 mb-3" v-bind:class="(current_folder && current_folder.id == folder.id)?'folder-selected':''" v-for="folder in folders" :key="folder.id" @click="openFolder(folder.id)" >
                 <i class="fas fa-folder folder-icon me-2"></i>
                 <div>{{ folder.name }}</div>
               </div>

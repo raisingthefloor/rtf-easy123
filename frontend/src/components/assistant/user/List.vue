@@ -40,7 +40,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         <tbody>
         <tr v-for="user in users" :key="user.id">
           <td>{{ user.name }}</td>
-          <td>{{ user.nickname }}</td>
+          <td>{{ getNickname(user.nickname) }}</td>
           <td>{{ user.email }}</td>
           <td style="text-transform: capitalize;">{{ user.role }}</td>
           <td>
@@ -130,6 +130,14 @@ export default {
     viewAsUser(user) {
       this.$store.commit('SET_LAYOUT', 'simple-layout')
       this.$router.push('/assistant/member/'+user.id+'/view-as-user')
+    },
+    /** get user nickname **/
+    getNickname(nickname)
+    {
+      if(nickname)
+        return
+      else
+        return ""
     }
   }
 }

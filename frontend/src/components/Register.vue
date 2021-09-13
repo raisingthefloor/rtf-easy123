@@ -42,7 +42,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         </div>
         <div class="mb-3" style="text-align: left !important;">
           <label for="account_name">{{ $t('account_name') }}</label>
-          <input type="text" class="form-control" id="account_name" :placeholder="$t('account_name_placeholder')" v-model="account_name" autofocus required>
+          <input type="text" class="form-control" id="account_name" :placeholder="$t('account_name_placeholder')" v-model="account_name" autocomplete="off" name="account_name_1" autofocus required>
         </div>
         <div class="mb-3" style="text-align: left !important;">
           <label for="account_nickname">{{ $t('account_nickname') }}</label>
@@ -57,12 +57,12 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
           <div class="mb-3" style="text-align: left !important;">
             <label for="email">{{ $t('email_address') }}</label>
-            <input type="email" class="form-control" id="email" placeholder="name@example.com" v-model="email" required>
+            <input type="email" class="form-control" id="email" placeholder="name@example.com" v-model="email" v-bind:class="{ 'is-invalid': email_already_exist }" required>
           </div>
 
           <div class="" style="text-align: left !important;">
             <label for="password">{{ $t('password') }}</label>
-            <input type="password" class="form-control" id="password" :placeholder="$t('password_placeholder')" v-model="password" min="8" max="15" required>
+            <input type="password" class="form-control" id="password" :placeholder="$t('password_placeholder')" v-model="password" min="8" max="15" autocomplete="off" name="password_2" required>
           </div>
           <p class="text-muted text-start"><small style="font-size: 1rem;">{{
               $t('password_help')
@@ -150,6 +150,8 @@ export default {
       name: null,
       password: null,
 
+      email_already_exist: false,
+
       user: {},
       showError: false,
       nodeErrorArr: [],
@@ -234,6 +236,7 @@ export default {
             closeOnClickOutside: false,
             closeOnEsc: false
           }).then((swalResponse) => {
+            self.email_already_exist = false
             if (swalResponse) {
 
               self.$store.commit('UPDATE_USER', response.data.data)
@@ -263,7 +266,11 @@ export default {
         if(error && error.response && error.response.status == 422)
         {
           self.nodeErrorArr = error.response.data.data
-          this.showError = true
+          if (error.response.data.data[0].param == "email")
+          {
+            self.email_already_exist = true
+          }
+          self.showError = true
         }
         else
         {

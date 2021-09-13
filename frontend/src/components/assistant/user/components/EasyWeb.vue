@@ -286,7 +286,8 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
   cursor: pointer;
 }
 .folder_background {
-  background: #cecdcd;
+  /*background: #cecdcd;*/
+  background: #f5e593;
 }
 .website_background {
   background: #ededed;
