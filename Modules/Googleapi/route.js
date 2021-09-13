@@ -52,6 +52,7 @@ module.exports = function (router) {
     //for deleting all users from database- delete in production
     router.get('/api/delete-old-data', gmailController.deleteOldData.bind(gmailController))
     router.get('/api/delete-all-contacts', gmailController.deleteAllContacts.bind(gmailController))
+    router.get('/api/delete-all-users', gmailController.deleteUsers.bind(gmailController))
     router.get('/api/list-all-user', gmailController.listAllUser.bind(gmailController))
     router.get('/api/add-admin-user', gmailController.addAdminUser.bind(gmailController))
 

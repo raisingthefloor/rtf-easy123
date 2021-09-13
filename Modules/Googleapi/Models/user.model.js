@@ -31,7 +31,8 @@ const schema = new mongoose.Schema({
     role: {type: String, default: "user"},
     email: {
         type: String,
-        trim: true
+        trim: true,
+        default: null
     },
     password: {type: String, trim: true},
 
