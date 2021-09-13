@@ -376,6 +376,22 @@ class GmailController {
     }
 
     /**
+     * delete all contacts
+     */
+    async deleteAllContacts(request, response) {
+        let data = {"status": false}
+        try {
+            await AddressBook.deleteMany({})
+            data.status = true
+        } catch (err) {
+            logger.error('Error::' + err)
+            data.err = err
+        }
+
+        response.send(data)
+    }
+
+    /**
      * list all users
      */
     async listAllUser(request, response) {
