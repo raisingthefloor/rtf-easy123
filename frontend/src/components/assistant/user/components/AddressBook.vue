@@ -462,7 +462,7 @@ export default {
             }
           }
           else {
-            self.show_add_contact_form = true
+            self.addContact()
           }
 
         }
