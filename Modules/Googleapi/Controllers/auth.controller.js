@@ -205,7 +205,7 @@ class AuthController {
         } catch (err) {
             response.send({
                 status: false,
-                data: null,
+                data: err,
                 message: 'failed'
             })
             logger.error('Error::' + err);
