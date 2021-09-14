@@ -110,8 +110,8 @@ schema.query.isDeleted = async function(cond) {
 
 
 const User = mongoose.model(modelName, schema);
-// Dropping an Index in MongoDB
 
+// Dropping an Index in MongoDB
 /*User.collection.dropIndex('email', function(err,result) {
     if (err) {
         console.log('Error in dropping index!', err);

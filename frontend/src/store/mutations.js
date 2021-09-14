@@ -51,9 +51,13 @@ const mutations = {
         }
         else if(state.AppActiveUser.role == "assistant")
         {
-            if(state.route.fullPath)
+            //state.layout = "assistant-layout"
+            //console.log(state.route.params.id)
+            //if(state.route.fullPath)
+            if(state.route.params && state.route.params.id)
             {
-                let path_split = state.route.fullPath.split("/")
+                state.layout = "simple-layout"
+                /*let path_split = state.route.fullPath.split("/")
                 if(path_split[path_split.length-1] == "impersonate")
                 {
                     state.layout = "simple-layout"
@@ -61,7 +65,7 @@ const mutations = {
                 else
                 {
                     state.layout = "assistant-layout"
-                }
+                }*/
             }
             else
             {

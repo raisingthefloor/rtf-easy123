@@ -23,7 +23,7 @@
  * Consumer Electronics Association Foundation
  **/
 const UserController = require('./Controllers/user.controller')
-const validateToken = require('../Googleapi/utils').validateToken
+const validateToken = require('../Auth/utils').validateToken
 
 module.exports = function (router) {
     router.post('/api/admin/get-users', validateToken, UserController.getUsers.bind(UserController))

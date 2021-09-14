@@ -41,7 +41,7 @@ const createUser = [
         .withMessage('Invalid Email')
         .custom((value, {req}) => {
             return new Promise((resolve, reject) => {
-                User.findOne({email:req.body.email}, function(err, user){
+                User.findOne({email:req.body.email, deleted: false}, function(err, user){
                     if(err) {
                         reject(new Error('Server Error'))
                     }

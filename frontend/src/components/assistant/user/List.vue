@@ -60,8 +60,9 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 </style>
 
 <script>
-import swal from 'sweetalert';
+import swal from 'sweetalert'
 const axios = require('axios')
+
 export default {
   name: 'NewUser',
   metaInfo: {
@@ -80,12 +81,21 @@ export default {
     getUsers() {
       var self = this
 
-      //let appActiveUser = this.$store.state.AppActiveUser
-      //console.log('AppActiveUser', appActiveUser)
+      // let appActiveUser = this.$store.state.AppActiveUser
+      // console.log('AppActiveUser', appActiveUser)
 
       axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/assistant/get-users/',{})
           .then((response) => {
-            self.users = response.data.data
+            if(response.data.status)
+            {
+              self.users = response.data.data
+            }
+            else
+            {
+              swal(self.getTranslation('server_error_occurred_please_contact_admin'), {
+                icon: "warning",
+              })
+            }
 
             //console.log(self.users)
           }, (error) => {
@@ -94,8 +104,15 @@ export default {
     },
     /** get members title **/
     getMembersTitle() {
-      let user = this.users.find(obj => obj.role == 'user')
-      return user.nickname+"'s Account"
+      if(this.users.length)
+      {
+        let user = this.users.find(obj => obj.role == 'user')
+        return user.nickname+"'s Account"
+      }
+      else {
+        return ""
+      }
+
     },
     async deleteUserAlert(id) {
       //console.log(id)
@@ -127,9 +144,11 @@ export default {
     editUser(user) {
       this.$router.push('/assistant/member/'+user.id+'/edit/')
     },
+    /** redirect to user view **/
     viewAsUser(user) {
       this.$store.commit('SET_LAYOUT', 'simple-layout')
-      this.$router.push('/assistant/member/'+user.id+'/view-as-user')
+      //this.$router.push('/assistant/member/'+user.id+'/view-as-user')
+      this.$router.push('/'+user.id+'?type=viewasuser')
     },
     /** get user nickname **/
     getNickname(nickname)

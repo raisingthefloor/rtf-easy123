@@ -26,7 +26,7 @@ let express = require('express');
 let app = require('./server');
 let router = express.Router();
 
-require('./Modules/Googleapi/route')(router);
+require('./Modules/Auth/route')(router);
 require('./Modules/Admin/route')(router);
 require('./Modules/Assistant/route')(router);
 require('./Modules/Imap/route')(router);

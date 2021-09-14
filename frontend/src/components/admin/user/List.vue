@@ -30,7 +30,6 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         <tr>
           <th scope="col">Name</th>
           <th scope="col">Login Email</th>
-          <th scope="col">Google Account</th>
           <th scope="col">Role</th>
           <th scope="col">Actions</th>
         </tr>
@@ -39,7 +38,6 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         <tr v-for="user in users" :key="user.id">
           <td>{{ user.name }}</td>
           <td>{{ user.email }}</td>
-          <td>{{ user.googleEmail }}</td>
           <td style="text-transform: capitalize;">{{ user.role }}</td>
           <td>
 <!--            <button type="button" class="btn btn-danger btn-sm" @click="deleteUser(user.id)" v-show="user.role != 'admin'">Delete</button>-->

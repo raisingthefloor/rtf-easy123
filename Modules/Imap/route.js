@@ -23,7 +23,7 @@
  * Consumer Electronics Association Foundation
  **/
 const imapController = require('./Controllers/imap.controller')
-const validateToken = require('../Googleapi/utils').validateToken
+const validateToken = require('../Auth/utils').validateToken
 
 module.exports = router => {
     //protected routes

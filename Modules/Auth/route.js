@@ -22,7 +22,7 @@
  * Adobe Foundation
  * Consumer Electronics Association Foundation
  **/
-const gmailController = require('./Controllers/gmail.controller')
+const apiController = require('./Controllers/api.controller')
 const authController = require('./Controllers/auth.controller')
 const middelware = require('./Middleware/createUser')
 
@@ -30,12 +30,8 @@ const validateToken = require('./utils').validateToken
 
 module.exports = function (router) {
     //protected routes
-    router.post('/api/connect', validateToken, gmailController.apiConnect.bind(gmailController))
-    router.post('/api/googlecallback', validateToken, gmailController.apiGoogleCallback.bind(gmailController))
-    router.post('/api/get-unread-mails', validateToken, gmailController.getAllMails.bind(gmailController))
-    router.post('/api/reply-mail', validateToken, gmailController.replyMail.bind(gmailController))
-    router.post('/api/get-user', gmailController.getUser.bind(gmailController))
-    router.post('/api/save-new-user', gmailController.saveNewUser.bind(gmailController))
+    router.post('/api/get-user', apiController.getUser.bind(apiController))
+    router.post('/api/save-new-user', apiController.saveNewUser.bind(apiController))
 
 
 
@@ -50,10 +46,10 @@ module.exports = function (router) {
 
     //delete below functions while going to productions
     //for deleting all users from database- delete in production
-    router.get('/api/delete-old-data', gmailController.deleteOldData.bind(gmailController))
-    router.get('/api/delete-all-contacts', gmailController.deleteAllContacts.bind(gmailController))
-    router.get('/api/delete-all-users', gmailController.deleteUsers.bind(gmailController))
-    router.get('/api/list-all-user', gmailController.listAllUser.bind(gmailController))
-    router.get('/api/add-admin-user', gmailController.addAdminUser.bind(gmailController))
+    router.get('/api/delete-old-data', apiController.deleteOldData.bind(apiController))
+    router.get('/api/delete-all-contacts', apiController.deleteAllContacts.bind(apiController))
+    router.get('/api/delete-all-users', apiController.deleteUsers.bind(apiController))
+    router.get('/api/list-all-user', apiController.listAllUser.bind(apiController))
+    router.get('/api/add-admin-user', apiController.addAdminUser.bind(apiController))
 
 }

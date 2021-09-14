@@ -25,7 +25,7 @@
 
 const UserController = require('./Controllers/user.controller')
 const EasyWebController = require('./Controllers/easyweb.controller')
-const validateToken = require('../Googleapi/utils').validateToken
+const validateToken = require('../Auth/utils').validateToken
 
 module.exports = function (router) {
     router.post('/api/assistant/get-users', validateToken, UserController.getUsers.bind(UserController))
