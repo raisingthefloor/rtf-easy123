@@ -87,6 +87,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                     :scale="scale"
                     ref="vueavatar"
                     @vue-avatar-editor:image-ready="onImageReady"
+                    @select-file="onSelectFile($event)"
                     :image="vueSampleAvatar"
                 >
                 </vue-avatar>
@@ -371,6 +372,9 @@ export default {
       notes: null,
       email: [],
 
+      add_contact_form_image_changed: false,
+      edit_contact_form_image_changed: false,
+
       vueSampleAvatar: null,
       vueSampleAvatarEdit: null,
 
@@ -539,6 +543,8 @@ export default {
       //this.myFiles.push(image_url[0])
       this.vueSampleAvatar = null
       this.vueSampleAvatarEdit = process.env.VUE_APP_API_HOST_NAME + "/" + this.current_contact.image
+      this.add_contact_form_image_changed = false
+      this.edit_contact_form_image_changed = false
     },
     addContact() {
       this.show_add_contact_form = true
@@ -551,6 +557,8 @@ export default {
       this.addEmail()
       this.vueSampleAvatar = null
       this.vueSampleAvatarEdit = null
+      this.add_contact_form_image_changed = false
+      this.edit_contact_form_image_changed = false
     },
     saveContactCancel() {
       this.show_add_contact_form = false
@@ -558,17 +566,21 @@ export default {
     },
     saveContact() {
       let self = this
+      let avatar
       this.errors.name = false
       this.errors.email = false
       this.errors.avatar = false
 
+      if(this.edit_id)
+      {
+        avatar = this.$refs.vueavatar_edit.getImageScaled().toDataURL()
 
-      let avatar = this.$refs.vueavatar.getImageScaled().toDataURL()
-      //let avatar = this.$refs.vueavatar.getImageScaled()
-      /*avatar.toBlob(function (blob) {
-        console.log("blob", blob)
-      })
-      console.log("avatar", avatar)*/
+      }
+      else
+      {
+        avatar = this.$refs.vueavatar.getImageScaled().toDataURL()
+      }
+
       //check the contact validation
 
       if(!this.name) {
@@ -584,7 +596,7 @@ export default {
         this.errors.email = false
       }
 
-      if (!avatar && !this.edit_id)
+      if (!avatar)
       {
         this.errors.avatar = true
       }
@@ -720,6 +732,21 @@ export default {
     {
       this.scale = 1
       this.rotation = 0
+    },
+    onSelectFile(obj)
+    {
+      if(obj.length == 1)
+      {
+        if(this.edit_id)
+        {
+          this.edit_contact_form_image_changed = true
+        }
+        else
+        {
+          this.add_contact_form_image_changed = true
+        }
+
+      }
     }
   }
 }
