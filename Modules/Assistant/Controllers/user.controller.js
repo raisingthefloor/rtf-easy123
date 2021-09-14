@@ -24,12 +24,13 @@
  **/
 const logger = require('../../../logger/api.logger')
 const bcrypt = require("bcrypt");
-const {Folder} = require("../../Googleapi/Models/folder.model");
-const {User} = require('../../Googleapi/Models/user.model')
-const {AddressBook} = require('../../Googleapi/Models/addressBook.model')
+const {Folder} = require("../../Auth/Models/folder.model");
+const {User} = require('../../Auth/Models/user.model')
+const {AddressBook} = require('../../Auth/Models/addressBook.model')
 const fs = require('fs')
 const HelperManager = require("../../../Managers/HelperManager");
 const aws = require("aws-sdk")
+const Sentry = require("@sentry/node")
 
 
 class UserController {
@@ -62,7 +63,14 @@ class UserController {
             //console.log("dat", data)
             response.send(data)
         } catch (err) {
+            Sentry.captureException(err)
             logger.error('Error::' + err)
+
+            data.status = false
+            data.data = null
+            data.error = err
+            data.message = 'failed'
+
             response.send(data)
         }
     }
@@ -91,7 +99,14 @@ class UserController {
 
             response.send(data)
         } catch (err) {
+            Sentry.captureException(err)
             logger.error('Error::' + err)
+
+            data.status = false
+            data.data = null
+            data.error = err
+            data.message = 'failed'
+
             response.send(data)
         }
     }
@@ -115,7 +130,14 @@ class UserController {
             })
             response.send(data)
         } catch (err) {
+            Sentry.captureException(err)
             logger.error('Error::' + err)
+
+            data.status = false
+            data.data = null
+            data.error = err
+            data.message = 'failed'
+
             response.send(data)
         }
 
@@ -174,7 +196,14 @@ class UserController {
             }
 
         } catch (err) {
+            Sentry.captureException(err)
             logger.error('Error::' + err)
+
+            data.status = false
+            data.data = null
+            data.error = err
+            data.message = 'failed'
+
             response.send(data)
         }
     }
@@ -215,7 +244,14 @@ class UserController {
             data.message = "success"
             response.send(data)
         } catch (err) {
+            Sentry.captureException(err)
             logger.error('Error::' + err)
+
+            data.status = false
+            data.data = null
+            data.error = err
+            data.message = 'failed'
+
             response.send(data)
         }
     }
@@ -249,7 +285,14 @@ class UserController {
         }
         catch (err)
         {
+            Sentry.captureException(err)
             logger.error('Error::' + err)
+
+            data.status = false
+            data.data = null
+            data.error = err
+            data.message = 'failed'
+
             response.send(data)
         }
 
@@ -277,7 +320,14 @@ class UserController {
         }
         catch (err)
         {
+            Sentry.captureException(err)
             logger.error('Error::' + err)
+
+            data.status = false
+            data.data = null
+            data.error = err
+            data.message = 'failed'
+
             response.send(data)
         }
     }
@@ -403,10 +453,14 @@ class UserController {
         }
         catch (err)
         {
-            console.log(err)
+            Sentry.captureException(err)
             logger.error('Error::' + err)
 
-            data.message = "failed"
+            data.status = false
+            data.data = null
+            data.error = err
+            data.message = 'failed'
+
             response.send(data)
         }
     }
@@ -440,12 +494,16 @@ class UserController {
             response.send(data)
         }
         catch (err) {
+            Sentry.captureException(err)
             logger.error('Error::' + err)
-            console.log(err)
+
+            data.status = false
+            data.data = null
+            data.error = err
+            data.message = 'failed'
+
+            response.send(data)
         }
-
-
-
     }
 
     /**
@@ -458,7 +516,8 @@ class UserController {
             message: ''
         }
 
-        try {
+        try
+        {
             //create image from base64 data
             /*let base64String = request.body.avatar // Not a real image
             let buff = new Buffer(base64String, 'base64');
@@ -503,9 +562,17 @@ class UserController {
 
             response.send(data)
         }
-        catch (err) {
+        catch (err)
+        {
+            Sentry.captureException(err)
             logger.error('Error::' + err)
-            console.log("error", err)
+
+            data.status = false
+            data.data = null
+            data.error = err
+            data.message = 'failed'
+
+            response.send(data)
         }
     }
 
@@ -566,7 +633,14 @@ class UserController {
         }
         catch (err) {
             logger.error('Error::' + err)
-            console.log("error", err)
+            Sentry.captureException(err)
+
+            data.status = false
+            data.data = null
+            data.error = err
+            data.message = 'failed'
+
+            response.send(data)
         }
     }
 
@@ -606,9 +680,17 @@ class UserController {
             })
 
         }
-        catch (err) {
+        catch (err)
+        {
             logger.error('Error::' + err)
-            console.log("error", err)
+            Sentry.captureException(err)
+
+            data.status = false
+            data.data = null
+            data.error = err
+            data.message = 'failed'
+
+            response.send(data)
         }
     }
 
@@ -634,11 +716,16 @@ class UserController {
 
             response.send(data)
         }
-        catch (err) {
-            console.log(err)
+        catch (err)
+        {
             logger.error('Error::' + err)
+            Sentry.captureException(err)
 
-            data.message = "failed"
+            data.status = false
+            data.data = null
+            data.error = err
+            data.message = 'failed'
+
             response.send(data)
         }
     }

@@ -23,7 +23,8 @@
  * Consumer Electronics Association Foundation
  **/
 const logger = require('../../../logger/api.logger')
-const {User} = require('../../Googleapi/Models/user.model')
+const {User} = require('../../Auth/Models/user.model')
+const Sentry = require("@sentry/node")
 
 class UserController {
     /**
@@ -44,7 +45,14 @@ class UserController {
             data.data = await User.find({deleted: false})
             response.send(data)
         } catch (err) {
+            Sentry.captureException(err)
             logger.error('Error::' + err)
+
+            data.status = false
+            data.data = null
+            //data.error = err
+            data.message = 'failed'
+
             response.send(data)
         }
     }
@@ -73,7 +81,14 @@ class UserController {
 
             response.send(data)
         } catch (err) {
+            Sentry.captureException(err)
             logger.error('Error::' + err)
+
+            data.status = false
+            data.data = null
+            //data.error = err
+            data.message = 'failed'
+
             response.send(data)
         }
     }

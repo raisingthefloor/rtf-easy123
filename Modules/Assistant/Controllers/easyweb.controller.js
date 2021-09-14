@@ -23,13 +23,13 @@
  * Consumer Electronics Association Foundation
  **/
 const logger = require('../../../logger/api.logger')
-const {User} = require('../../Googleapi/Models/user.model')
-const {EasyWeb} = require('../../Googleapi/Models/easyweb.model')
+const {User} = require('../../Auth/Models/user.model')
+const {EasyWeb} = require('../../Auth/Models/easyweb.model')
 //const {captureWebsite} = require('capture-website')
 var getFavicons = require('get-website-favicon')
 const aws = require("aws-sdk")
-const HelperManager = require("../../../Managers/HelperManager");
-
+const HelperManager = require("../../../Managers/HelperManager")
+const Sentry = require("@sentry/node")
 
 
 class EasyWebController {
@@ -63,7 +63,7 @@ class EasyWebController {
         }
         catch (err) {
             logger.error('Error::' + err)
-            console.log(err)
+            Sentry.captureException(err)
 
             data.message = "failed"
 
@@ -147,7 +147,7 @@ class EasyWebController {
         }
         catch (err)
         {
-            console.log(err)
+            Sentry.captureException(err)
             logger.error('Error::' + err)
 
             data.message = "failed"
@@ -225,6 +225,7 @@ class EasyWebController {
         catch (err)
         {
             logger.error('Error::' + err)
+            Sentry.captureException(err)
 
             data.message = "failed"
             response.send(data)
@@ -256,7 +257,7 @@ class EasyWebController {
         catch (err)
         {
             logger.error('Error::' + err)
-            console.log(err)
+            Sentry.captureException(err)
 
             data.message = "failed"
             response.send(data)
@@ -446,7 +447,7 @@ class EasyWebController {
         }
         catch (err)
         {
-            console.log(err)
+            Sentry.captureException(err)
             logger.error('Error::' + err)
 
             data.message = "failed"

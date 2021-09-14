@@ -28,7 +28,7 @@ const {Token} = require('../Models/token.model')
 const bcrypt = require('bcrypt')
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
-const Sentry = require("@sentry/node");
+const Sentry = require("@sentry/node")
 
 /**
  * manage authentication
@@ -44,7 +44,8 @@ class AuthController {
 
         try {
             const user = await User.findOne({
-                email: request.body.email
+                email: request.body.email,
+                deleted: false
             })
 
             if(!user)
@@ -381,7 +382,8 @@ class AuthController {
 
             const user = await User.findOne({
                 _id: { $ne: request.query.id },
-                email: request.query.email
+                email: request.query.email,
+                deleted: false
             })
 
             if(!user)

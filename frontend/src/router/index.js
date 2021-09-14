@@ -26,7 +26,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/Login'
 import Register from '@/components/Register'
-import GoogleCallback from '@/components/GoogleCallback'
 import VerifyEmail from '@/components/VerifyEmail'
 import HomeWorking from "@/components/HomeWorking"
 
@@ -63,11 +62,6 @@ const router = new Router({
             component: VerifyEmail
         },
 
-        {
-            path: '/googlecallback',
-            name: 'GoogleCallback',
-            component: GoogleCallback
-        },
         {
             path: '/home-working',
             name: 'HomeWorking',
@@ -115,6 +109,14 @@ const router = new Router({
         {
             path: '/assistant/member/:id/view-as-user',
             name: 'AssistantViewAsUser',
+            component: AssistantViewAsUser,
+            meta: {
+                //middleware: assistant
+            }
+        },
+        {
+            path: '/:id',
+            name: 'AssistantViewAsUserWithId',
             component: AssistantViewAsUser,
             meta: {
                 //middleware: assistant
