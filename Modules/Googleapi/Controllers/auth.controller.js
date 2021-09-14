@@ -28,6 +28,7 @@ const {Token} = require('../Models/token.model')
 const bcrypt = require('bcrypt')
 const crypto = require('crypto')
 const jwt = require('jsonwebtoken')
+const Sentry = require("@sentry/node");
 
 /**
  * manage authentication
@@ -106,7 +107,15 @@ class AuthController {
             //console.log('users:::', users);
             //response.send(user);
         } catch (err) {
-            logger.error('Error::' + err);
+            logger.error('Error::' + err)
+            Sentry.captureException(err)
+
+            response.send({
+                status: false,
+                data: 'Server error occurred, please contact administrator.',
+                error: err,
+                message: 'failed'
+            })
         }
     }
 
@@ -118,6 +127,7 @@ class AuthController {
      */
     async register( request, response) {
         try {
+            //there()
             const saltRounds = 10
             let data = {}
             const { account_name, account_nickname, email, password, name } = request.body
@@ -131,7 +141,7 @@ class AuthController {
                 password: hash,
                 role: 'assistant'
             })
-            console.log("data", data)
+            //console.log("data", data)
             //create a user
             let account_user = await User.create({
                 name: account_name,
@@ -203,12 +213,17 @@ class AuthController {
                 message: 'success'
             })
         } catch (err) {
+            logger.error('Error::' + err);
+
+            Sentry.captureException(err)
+
             response.send({
                 status: false,
-                data: err,
+                data: 'Server error occurred, please contact administrator.',
+                error: err,
                 message: 'failed'
             })
-            logger.error('Error::' + err);
+
         }
     }
 
@@ -273,6 +288,13 @@ class AuthController {
         catch (err)
         {
             logger.error('Error::' + err)
+            Sentry.captureException(err)
+            response.send({
+                status: false,
+                data: 'Server error occurred, please contact administrator.',
+                error: err,
+                message: 'failed'
+            })
         }
     }
 
@@ -382,6 +404,7 @@ class AuthController {
             //response.send(user);
         } catch (err) {
             logger.error('Error::' + err)
+            Sentry.captureException(err)
             response.send({
                 status: false,
                 data: null,
