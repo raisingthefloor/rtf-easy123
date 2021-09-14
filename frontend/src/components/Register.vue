@@ -261,6 +261,12 @@ export default {
             }
           })
         }
+        else
+        {
+          swal(self.getTranslation('server_error_occurred_please_contact_admin'), {
+            icon: "warning",
+          })
+        }
       }, (error) => {
         self.registerSubmitClicked = false
         if(error && error.response && error.response.status == 422)
