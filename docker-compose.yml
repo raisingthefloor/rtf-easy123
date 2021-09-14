@@ -41,7 +41,7 @@ services:
     volumes:
       - mongodb:/data/db
     ports:
-      - "27018:27017"
+      - "27019:27017"
     restart: always
 volumes:
   mongodb:
