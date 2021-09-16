@@ -279,7 +279,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
               </form>
 
             </div>
-            <div class="col-md-4" v-show="!show_add_contact_form && !show_edit_contact_form" v-if="current_contact.image">
+            <div class="col-md-4" v-show="!show_add_contact_form && !show_edit_contact_form" v-if="current_contact.avatarName">
               <address-book-contact-image :image="current_contact"></address-book-contact-image>
             </div>
             <div class="col-md-8" v-show="!show_add_contact_form && !show_edit_contact_form" v-if="current_contact.id">
@@ -586,7 +586,7 @@ export default {
       })
       .then(
           (response) => {
-            if(response.status)
+            if(response.data.status)
             {
               self.contacts = self.contacts.filter(obj => obj.id != id)
               if (self.contacts.length)

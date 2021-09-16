@@ -33,7 +33,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
     <div class="row">
       <div class="col-md-12">
-        <h4 class="mb-3">Edit Member </h4>
+        <h4 class="mb-3">Edit <span style="font-size: 0.9rem;">{{ nickname }}'s Account</span></h4>
 
         <ul class="nav nav-tabs" id="myTab" role="tablist">
           <li class="nav-item" role="presentation">
