@@ -647,17 +647,21 @@ class UserController {
                 _id: request.body.contact_id
             })
 
-            //delete amazon s3 image
-            aws.config.update({
-                accessKeyId: process.env.AWS_S3_ACCESS_KEY,
-                secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY
-            })
-            const s3 = new aws.S3()
+            if(contact.avatarName)
+            {
+                //delete amazon s3 image
+                aws.config.update({
+                    accessKeyId: process.env.AWS_S3_ACCESS_KEY,
+                    secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY
+                })
+                const s3 = new aws.S3()
 
-             let deleted_data = await s3.deleteObject({
-                Bucket: contact.avatarPath,
-                Key: contact.avatarName
-            }).promise()
+                let deleted_data = await s3.deleteObject({
+                    Bucket: contact.avatarPath,
+                    Key: contact.avatarName
+                }).promise()
+            }
+
 
             await AddressBook.deleteOne({
                 _id: request.body.contact_id
