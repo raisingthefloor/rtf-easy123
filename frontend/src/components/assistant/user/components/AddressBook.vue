@@ -91,13 +91,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                     :image="vueSampleAvatar"
                 >
                 </vue-avatar>
-<!--                <vue-dropzone
-                    ref="avatarDropzone"
-                    id="dropzone"
-                    :options="dropzoneOptions"
-                    @vdropzone-complete="handleVueDropzoneComplete"
-                    class="mb-2"
-                ></vue-dropzone>-->
+
                 <span class="form-text text-danger" v-show="errors.avatar">Please select image</span>
 
                 <div class="mb-3 mt-3">
@@ -120,7 +114,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                   <span class="form-text text-danger" v-show="errors.name">Please enter Notes</span>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 p-2" style="border: 1px solid black;">
                   <div class="row">
                     <div class="col-md-12">
                       <label for="email" class="form-label"><b>Email</b></label>
@@ -142,28 +136,44 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                   <span class="form-text text-danger" v-show="errors.email">Please enter email</span>
                 </div>
 
-<!--                <div class="mb-3">
+                <div class="mb-3 p-2" style="border: 1px solid black;">
                   <div class="row">
-                    <div class="col-md-12">
-                      <label for="phone_number" class="form-label"><b>Phone Number</b></label>
+                    <div class="col-md-12" v-for="(pn, index) in phoneNumber" :key="index">
+                      <hr v-if="index != 0" style="height: 5px;">
                       <div class="row">
                         <div class="col-md-6">
                           <label for="phone_number">Phone Number</label>
-                          <input type="text" id="phone_number" class="form-control">
+                          <input type="text" id="phone_number" class="form-control" v-model="pn.number">
                         </div>
                         <div class="col-md-6">
                           <label for="phone_number_type">Type</label>
-                          <select class="form-select" aria-label="Default select example" id="phone_number_type">
+                          <select class="form-select" id="phone_number_type" v-model="pn.type">
                             <option selected>Open this select menu</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                            <option value="Mobile">Mobile</option>
+                            <option value="Home">Home</option>
+                            <option value="Work">Work</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+                        <div class="col-md-6" v-if="pn.type == 'Mobile'">
+                          <label for="phone_number_carrier" class="mt-2">Carrier</label>
+                          <select class="form-select" id="phone_number_carrier" v-model="pn.carrier">
+                            <option value="Verizon">Verizon</option>
+                            <option value="AT&T">AT&T</option>
+                            <option value="T-Mobile">T-Mobile</option>
+                            <option value="Other">Other</option>
                           </select>
                         </div>
                       </div>
                     </div>
+
+                    <div class="col-md-12">
+                      <div class="d-grid gap-2 mt-2">
+                        <button class="btn btn-sm btn-info btn-block" type="button" @click="addPhoneNumber()">Add Phone Number</button>
+                      </div>
+                    </div>
                   </div>
-                </div>-->
+                </div>
 
                 <div>
                   <button class="btn btn-primary me-2" type="submit" :disabled="processingForm" :readonly="processingForm">
@@ -193,15 +203,6 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                   <h5 class="text-center">Loading...</h5>
                 </div>
 
-
-
-<!--                <vue-dropzone
-                    ref="avatarDropzone"
-                    id="dropzone"
-                    :options="dropzoneOptions"
-                    @vdropzone-complete="handleVueDropzoneComplete"
-                    class="mb-2"
-                ></vue-dropzone>-->
                 <span class="form-text text-danger" v-show="errors.avatar">Please select image</span>
 
                 <div class="mb-3 mt-3">
@@ -390,6 +391,7 @@ export default {
       zoom_meeting_url: null,
       notes: null,
       email: [],
+      phoneNumber: [],
 
       add_contact_form_image_changed: false,
       edit_contact_form_image_changed: false,
@@ -696,6 +698,7 @@ export default {
       this.notes = null
       this.email = []
       this.addEmail()
+      this.addPhoneNumber()
       this.vueSampleAvatar = null
       this.vueSampleAvatarEdit = null
       this.add_contact_form_image_changed = false
@@ -881,6 +884,13 @@ export default {
     },
     addEmail() {
       this.email.push("")
+    },
+    addPhoneNumber() {
+      this.phoneNumber.push({
+        number: null,
+        type: null,
+        carrier: null
+      })
     },
     removeEmail(index) {
       if (index > -1) {
