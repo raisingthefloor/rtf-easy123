@@ -140,7 +140,12 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                   <div class="row">
                     <div class="col-md-12" v-for="(pn, index) in phoneNumber" :key="index">
                       <hr v-if="index != 0" style="height: 5px;">
-                      <div class="row">
+                      <div class="row" style="position:relative;">
+                        <div class="col-md-12" v-if="index != 0">
+                          <div @click="deletePhoneNumber(pn)" style="    position: absolute; right: 20px;"><a
+                              href="javascript:void(0)" style="text-decoration: none;">X</a></div>
+                        </div>
+
                         <div class="col-md-6">
                           <label for="phone_number">Phone Number</label>
                           <input type="text" id="phone_number" class="form-control" v-model="pn.number">
@@ -168,7 +173,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                     </div>
 
                     <div class="col-md-12">
-                      <div class="d-grid gap-2 mt-2">
+                      <div class="d-grid gap-2 mt-3">
                         <button class="btn btn-sm btn-info btn-block" type="button" @click="addPhoneNumber()">Add Phone Number</button>
                       </div>
                     </div>
@@ -715,6 +720,7 @@ export default {
       let avatar, image_changed
       this.errors.name = false
       this.errors.email = false
+      this.errors.phoneNumber = false
       this.errors.avatar = false
 
       image_changed = false
@@ -835,6 +841,7 @@ export default {
           zoom_meeting_url: this.zoom_meeting_url,
           notes: this.notes,
           email: this.email,
+          phoneNumber: this.phoneNumber,
           avatar: avatar,
           image_changed: image_changed
         })
@@ -847,6 +854,7 @@ export default {
             zoom_meeting_url: response.data.data.zoomMeetingURL,
             notes: response.data.data.notes,
             email: response.data.data.email,
+            phoneNumber: response.data.data.phoneNumber,
             image: response.data.data.avatar,
             avatarPath: response.data.data.avatarPath,
             avatarMIME: response.data.data.avatarMIME,
@@ -891,6 +899,9 @@ export default {
         type: null,
         carrier: null
       })
+    },
+    deletePhoneNumber(pn) {
+      console.log(pn)
     },
     removeEmail(index) {
       if (index > -1) {
