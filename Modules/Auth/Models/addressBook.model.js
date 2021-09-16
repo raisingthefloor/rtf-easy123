@@ -35,6 +35,9 @@ const schema = new mongoose.Schema({
     notes: { type: String, default: null },
     email: [String],
     avatar: { type: String, default: null },
+    avatarPath: { type: String, default: null },
+    avatarMIME: { type: String, default: null },
+    avatarName: { type: String, default: null },
 
     createdBy: mongoose.Schema.ObjectId,
     deleted: {type: Boolean},

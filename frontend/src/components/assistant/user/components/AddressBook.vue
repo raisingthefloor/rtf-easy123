@@ -166,7 +166,10 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                 </div>-->
 
                 <div>
-                  <button class="btn btn-primary me-2" type="submit">Save</button>
+                  <button class="btn btn-primary me-2" type="submit" :disabled="processingForm" :readonly="processingForm">
+                    <span v-if="processingForm">Saving...</span>
+                    <span v-if="!processingForm">Save</span>
+                  </button>
                   <button class="btn btn-secondary" @click="saveContactCancel" type="button">Cancel</button>
                 </div>
               </form>
@@ -174,16 +177,24 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
             </div>
             <div v-if="show_edit_contact_form">
               <form @submit.prevent="saveContact()">
-                <vue-avatar
-                    :width=200
-                    :height=200
-                    :rotation="rotation"
-                    :scale="scale"
-                    ref="vueavatar_edit"
-                    @vue-avatar-editor:image-ready="onImageReady"
-                    :image="vueSampleAvatarEdit"
-                >
-                </vue-avatar>
+                <div v-if="showEditAvatar">
+                  <vue-avatar
+                      :width=200
+                      :height=200
+                      :rotation="rotation"
+                      :scale="scale"
+                      ref="vueavatar_edit"
+                      @vue-avatar-editor:image-ready="onImageReady"
+                      @select-file="onSelectFile($event)"
+                      :image="vueSampleAvatarEdit"
+                  ></vue-avatar>
+                </div>
+                <div style="height: 250px; width: 250px; background-color: #7F7F7F; color: #FFFFFF; padding-top: 109px;" v-if="!showEditAvatar">
+                  <h5 class="text-center">Loading...</h5>
+                </div>
+
+
+
 <!--                <vue-dropzone
                     ref="avatarDropzone"
                     id="dropzone"
@@ -259,15 +270,17 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                 </div>-->
 
                 <div>
-                  <button class="btn btn-primary me-2" type="submit">Save</button>
+                  <button class="btn btn-primary me-2" type="submit" :disabled="form_submit_status == 'PROCESSING'" :readonly="form_submit_status == 'PROCESSING'">
+                    <span v-if="form_submit_status == 'PROCESSING'">Saving...</span>
+                    <span v-if="form_submit_status != 'PROCESSING'">Save</span>
+                  </button>
                   <button class="btn btn-secondary" @click="saveContactCancel" type="button">Cancel</button>
                 </div>
               </form>
 
             </div>
             <div class="col-md-4" v-show="!show_add_contact_form && !show_edit_contact_form" v-if="current_contact.image">
-              <!--              <img src="https://picsum.photos/200/250" class="img-fluid rounded-start" alt="...">-->
-              <img :src="getImageURL(current_contact.image)" class="img-fluid rounded-start" alt="..." width="200" height="250">
+              <address-book-contact-image :image="current_contact"></address-book-contact-image>
             </div>
             <div class="col-md-8" v-show="!show_add_contact_form && !show_edit_contact_form" v-if="current_contact.id">
 
@@ -278,12 +291,12 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                 <p class="card-text">Zoom Meeting URL: {{ current_contact.zoom_meeting_url }}</p>
                 <p>Notes: {{ current_contact.notes }}</p>
 <!--                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>-->
-                <a href="javascript:void(0)" class="btn btn-sm btn-info me-2" @click="editContatct(current_contact.id)">Edit Contact</a>
-                <a href="javascript:void(0)" class="btn btn-sm btn-danger" @click="deleteContatct(current_contact.id)">Delete Contact</a>
+                <a href="javascript:void(0)" class="btn btn-sm btn-info me-2" @click="editContact(current_contact.id)">Edit Contact</a>
+                <a href="javascript:void(0)" class="btn btn-sm btn-danger" @click="showDeleteContactDialog(current_contact)">Delete Contact</a>
               </div>
             </div>
             <div v-if="!show_add_contact_form && !show_edit_contact_form && !contacts.length">
-              <h4>No contacts found</h4>
+              <h4 class="mt-2">No contacts found</h4>
             </div>
 
           </div>
@@ -341,12 +354,15 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 //import 'vue2-dropzone/dist/vue2Dropzone.min.css'
 import axios from "axios";
 import {VueAvatar} from 'vue-avatar-editor-improved'
+import swal from "sweetalert";
+import AddressBookContactImage from "./AddressBookContactImage";
 
 export default {
   name: 'AddressBook',
   components: {
     //vueDropzone: vue2Dropzone,
-    VueAvatar
+    VueAvatar,
+    AddressBookContactImage
   },
   data() {
     return {
@@ -360,7 +376,10 @@ export default {
         skypeid: null,
         zoom_meeting_url: null,
         notes: null,
-        image: null
+        image: null,
+        avatarPath: null,
+        avatarMIME: null,
+        avatarName: null
       },
       search_contact: null,
       show_add_contact_form: false,
@@ -374,12 +393,17 @@ export default {
 
       add_contact_form_image_changed: false,
       edit_contact_form_image_changed: false,
+      avatarMIME: null,
+
+      showEditAvatar: false,
 
       vueSampleAvatar: null,
       vueSampleAvatarEdit: null,
 
       scale: 1,
       rotation: 0,
+
+      form_submit_status: 'NOT_SUBMITTED',
 
       id: 2000,
       edit_id: null,
@@ -402,6 +426,16 @@ export default {
         params: {
           userId: this.$route.params.id
         }
+      }
+    },
+    processingForm() {
+      if (this.form_submit_status == 'PROCESSING')
+      {
+        return true
+      }
+      else
+      {
+        return false
       }
     }
   },
@@ -455,7 +489,10 @@ export default {
                 skypeid: response.data.data[i].skypeId,
                 zoom_meeting_url: response.data.data[i].zoomMeetingURL,
                 notes: response.data.data[i].notes,
-                image: response.data.data[i].avatar
+                image: response.data.data[i].avatarName,
+                avatarPath: response.data.data[i].avatarPath,
+                avatarMIME: response.data.data[i].avatarMIME,
+                avatarName: response.data.data[i].avatarName
               }
 
               self.contacts.push(contact)
@@ -527,11 +564,69 @@ export default {
       // If you wish to scroll until the end of the container
       //El.scrollTo({top: El.scrollHeight, behavior: 'smooth'});
     },
-    deleteContatct(id) {
-      this.contacts = this.contacts.filter(obj => obj.id != id)
-      this.current_contact = this.contacts[0]
+    async showDeleteContactDialog(contact) {
+      let willDelete = await swal({
+        title: "Are you sure, you want to delete?",
+        text: "Once deleted, you will not be able to recover!",
+        icon: "warning",
+        buttons: ["Cancel", "Delete"],
+        dangerMode: true,
+      })
+
+      if (willDelete) {
+        this.deleteContact(contact.id)
+      } else {
+        //pressed cancel button
+      }
     },
-    editContatct(id) {
+    deleteContact(id) {
+      let self = this
+      axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/delete-address-book-contact", {
+        contact_id: id
+      })
+      .then(
+          (response) => {
+            if(response.status)
+            {
+              self.contacts = self.contacts.filter(obj => obj.id != id)
+              if (self.contacts.length)
+              {
+                self.current_contact = self.contacts[0]
+              }
+              else
+              {
+                self.current_contact = {
+                  id: null,
+                  name: null,
+                  email: [],
+                  gender: null,
+                  skypeid: null,
+                  zoom_meeting_url: null,
+                  notes: null,
+                  image: null,
+                  avatarMIME: null
+                }
+                self.addContact()
+              }
+            }
+            else
+            {
+              swal(self.getTranslation('server_error_occurred_please_contact_admin'), {
+                icon: "warning",
+              })
+            }
+          },
+          (error) => {
+            swal(self.getTranslation('server_error_occurred_please_contact_admin'), {
+              icon: "warning",
+            })
+            console.log(error)
+          }
+      )
+
+
+    },
+    editContact(id) {
       this.edit_id = id
       this.show_edit_contact_form = true
       this.name = this.current_contact.name
@@ -542,9 +637,55 @@ export default {
       //let image_url = this.current_contact.image.split('?')
       //this.myFiles.push(image_url[0])
       this.vueSampleAvatar = null
-      this.vueSampleAvatarEdit = process.env.VUE_APP_API_HOST_NAME + "/" + this.current_contact.image
+      this.vueSampleAvatarEdit = null
+      //this.vueSampleAvatarEdit = process.env.VUE_APP_API_HOST_NAME + "/" + this.current_contact.image
       this.add_contact_form_image_changed = false
       this.edit_contact_form_image_changed = false
+      this.avatarMIME = null
+      this.showEditAvatar = false
+
+      let self = this
+      axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/get-private-image", {
+        photo: {
+          path: this.current_contact.avatarPath,
+          name: this.current_contact.avatarName
+        },
+        signed: true
+      })
+      .then((response) => {
+
+        let imageData = response.data.data
+
+        /*let b64 = 'data:'
+
+        b64 = b64 + self.current_contact.avatarMIME
+        b64 = b64 + ';base64,'
+        b64 = b64 + imageData*/
+        //self.localImage = b64
+
+        //self.vueSampleAvatarEdit = b64
+        self.vueSampleAvatarEdit = imageData
+
+        setTimeout(function () {
+          self.showEditAvatar = true
+        }, 1000)
+        console.log(self.vueSampleAvatarEdit)
+        //self.vueSampleAvatarEdit = self.getBase64Image(document.getElementById("imageid"))
+
+      }, (error) => {
+        console.log(error)
+      })
+
+
+    },
+    getBase64Image(img) {
+      var canvas = document.createElement("canvas");
+      canvas.width = img.width;
+      canvas.height = img.height;
+      var ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0);
+      var dataURL = canvas.toDataURL("image/png");
+      return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
     },
     addContact() {
       this.show_add_contact_form = true
@@ -559,6 +700,8 @@ export default {
       this.vueSampleAvatarEdit = null
       this.add_contact_form_image_changed = false
       this.edit_contact_form_image_changed = false
+      this.edit_id = null
+      this.avatarMIME = null
     },
     saveContactCancel() {
       this.show_add_contact_form = false
@@ -566,20 +709,12 @@ export default {
     },
     saveContact() {
       let self = this
-      let avatar
+      let avatar, image_changed
       this.errors.name = false
       this.errors.email = false
       this.errors.avatar = false
 
-      if(this.edit_id)
-      {
-        avatar = this.$refs.vueavatar_edit.getImageScaled().toDataURL()
-
-      }
-      else
-      {
-        avatar = this.$refs.vueavatar.getImageScaled().toDataURL()
-      }
+      image_changed = false
 
       //check the contact validation
 
@@ -596,13 +731,35 @@ export default {
         this.errors.email = false
       }
 
-      if (!avatar)
+      if(this.edit_id)
+      {
+        avatar = this.$refs.vueavatar_edit.getImageScaled().toDataURL()
+        if(this.edit_contact_form_image_changed)
+        {
+          image_changed = true
+        }
+      }
+      else
+      {
+        avatar = this.$refs.vueavatar.getImageScaled().toDataURL()
+        if(this.add_contact_form_image_changed)
+        {
+          image_changed = true
+          this.errors.avatar = false
+        }
+        else
+        {
+          this.errors.avatar = true
+        }
+      }
+
+      /*if (!avatar)
       {
         this.errors.avatar = true
       }
       else {
         this.errors.avatar = false
-      }
+      }*/
 
       if(this.errors.name || this.errors.email || this.errors.avatar)
       {
@@ -612,6 +769,7 @@ export default {
       //check if edit form
       if(this.edit_id)
       {
+        this.form_submit_status = 'PROCESSING'
         axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/assistant/user/edit-contact", {
           id: self.$route.params.id,
           edit_id: self.edit_id,
@@ -620,9 +778,12 @@ export default {
           zoom_meeting_url: this.zoom_meeting_url,
           notes: this.notes,
           email: this.email,
-          avatar: avatar
+          avatar: avatar,
+          image_changed: image_changed
         })
         .then((response) => {
+          self.form_submit_status = 'PROCESSED'
+          //console.log(response.data)
 
           for (let i = 0; i < self.contacts.length ; i++)
           {
@@ -634,6 +795,9 @@ export default {
               self.contacts[i].notes = self.notes
               self.contacts[i].email = self.email
               self.contacts[i].image = response.data.data.avatar
+              self.contacts[i].avatarPath = response.data.data.avatarPath
+              self.contacts[i].avatarMIME = response.data.data.avatarMIME
+              self.contacts[i].avatarName = response.data.data.avatarName
               //image: response.data.data.avatar
               self.contacts.sort(function (a, b) {
                 return a.name.localeCompare(b.name)
@@ -651,23 +815,8 @@ export default {
             }
           }
 
-          /*self.contacts.push({
-            id: response.data.data.id,
-            name: response.data.data.contactName,
-            skypeid: response.data.data.skypeId,
-            zoom_meeting_url: response.data.data.zoomMeetingURL,
-            notes: response.data.data.notes,
-            email: response.data.data.email,
-            image: response.data.data.avatar
-          })*/
-
-
-          //self.current_contact = self.contacts[0]
-
-          /*self.contacts.sort(function (a, b) {
-            return a.name.localeCompare(b.name)
-          })*/
         }, (error) => {
+          self.form_submit_status = 'PROCESSED'
           console.log(error)
         })
 
@@ -675,7 +824,7 @@ export default {
 
       }
       else {
-
+        this.form_submit_status = 'PROCESSING'
         axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/assistant/user/add-contact", {
           id: self.$route.params.id,
           name: this.name,
@@ -683,9 +832,11 @@ export default {
           zoom_meeting_url: this.zoom_meeting_url,
           notes: this.notes,
           email: this.email,
-          avatar: avatar
+          avatar: avatar,
+          image_changed: image_changed
         })
         .then((response) => {
+
           self.contacts.push({
             id: response.data.data.id,
             name: response.data.data.contactName,
@@ -693,7 +844,10 @@ export default {
             zoom_meeting_url: response.data.data.zoomMeetingURL,
             notes: response.data.data.notes,
             email: response.data.data.email,
-            image: response.data.data.avatar
+            image: response.data.data.avatar,
+            avatarPath: response.data.data.avatarPath,
+            avatarMIME: response.data.data.avatarMIME,
+            avatarName: response.data.data.avatarName
           })
 
           self.contacts.sort(function (a, b) {
@@ -701,17 +855,22 @@ export default {
           })
           //self.current_contact = self.contacts[0]
           self.showContact(response.data.data.id)
+          self.form_submit_status = 'PROCESSED'
           /*self.contacts.sort(function (a, b) {
             return a.name.localeCompare(b.name)
           })*/
+          this.show_add_contact_form = false
+          this.show_edit_contact_form = false
         }, (error) => {
+          self.form_submit_status = 'PROCESSED'
+          this.show_add_contact_form = false
+          this.show_edit_contact_form = false
           console.log(error)
         })
 
 
 
-        this.show_add_contact_form = false
-        this.show_edit_contact_form = false
+
       }
     },
     saveContact1() {
@@ -735,15 +894,18 @@ export default {
     },
     onSelectFile(obj)
     {
+      //console.log(obj[0], obj[0].type)
       if(obj.length == 1)
       {
         if(this.edit_id)
         {
           this.edit_contact_form_image_changed = true
+          this.avatarMIME = obj[0].type
         }
         else
         {
           this.add_contact_form_image_changed = true
+          this.avatarMIME = obj[0].type
         }
 
       }

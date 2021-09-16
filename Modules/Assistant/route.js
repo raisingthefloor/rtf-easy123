@@ -73,4 +73,5 @@ module.exports = function (router) {
     router.post('/api/assistant/user/add-contact', validateToken, UserController.addContact.bind(UserController))
     router.post('/api/assistant/user/edit-contact', validateToken, UserController.editContact.bind(UserController))
     router.post('/api/upload-contact-avatar-image', UserController.uploadContactAvatarImage.bind(UserController))
+    router.post('/api/delete-address-book-contact', UserController.deleteAddressBookContact.bind(UserController))
 }

@@ -378,6 +378,7 @@ class AuthController {
                     data: null,
                     message: 'user_exists'
                 })
+                return
             }
 
             const user = await User.findOne({
@@ -393,6 +394,7 @@ class AuthController {
                     data: null,
                     message: 'user_not_exists'
                 })
+                return
             }
             else {
                 response.send({
@@ -400,6 +402,7 @@ class AuthController {
                     data: null,
                     message: 'user_exists'
                 })
+                return
             }
 
             //console.log('users:::', users);
