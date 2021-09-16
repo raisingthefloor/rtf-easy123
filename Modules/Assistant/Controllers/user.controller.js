@@ -434,22 +434,44 @@ class UserController {
         {
             aws.config.update({
                 accessKeyId: process.env.AWS_S3_ACCESS_KEY,
-                secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY
+                secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
+                signatureVersion: 'v4',
+                region: 'us-east-2'
             })
             const s3 = new aws.S3()
-            const s3data =  await s3.getObject(
-                {
-                    Bucket: request.body.photo.path,
-                    Key: request.body.photo.name
-                }
-            ).promise();
-            const b64 = Buffer.from(s3data.Body).toString('base64')
+            if(request.body.signed)
+            {
+                const s3data =  await s3.getSignedUrl('getObject',
+                    {
+                        Bucket: request.body.photo.path,
+                        Key: request.body.photo.name,
+                        Expires: 60*5
+                    }
+                )
 
-            data.status = true
-            data.data = b64
-            data.message = "success"
+                data.status = true
+                data.data = s3data
+                data.message = "success"
 
-            response.send(data)
+                response.send(data)
+            }
+            else
+            {
+                const s3data =  await s3.getObject(
+                    {
+                        Bucket: request.body.photo.path,
+                        Key: request.body.photo.name
+                    }
+                ).promise();
+                const b64 = Buffer.from(s3data.Body).toString('base64')
+
+                data.status = true
+                data.data = b64
+                data.message = "success"
+
+                response.send(data)
+            }
+
         }
         catch (err)
         {
@@ -529,22 +551,52 @@ class UserController {
                 console.log('File created');
             });*/
 
+            let uniqid = await HelperManager.uniqid()
             let string = request.body.avatar
+            let mimetype = string.substring(string.indexOf(":")+1, string.indexOf(";"))
+
+
+
+
             let regex = /^data:.+\/(.+);base64,(.*)$/;
 
             let matches = string.match(regex);
+
+            //console.log("mimetype", mimetype)
             let ext = matches[1];
             let data1 = matches[2];
             let buffer = Buffer.from(data1, 'base64');
-            let filename = await HelperManager.uniqid()
+            //let filename = await HelperManager.uniqid()
             let filepath = "public/uploads/avatar/"
-            let complete_filepath = "uploads/avatar/"+filename+'.' + ext
-            fs.writeFileSync(filepath+filename+'.' + ext, buffer);
+            //let complete_filepath = "uploads/avatar/"+filename+'.' + ext
+            //fs.writeFileSync(filepath+filename+'.' + ext, buffer);
+
+
+
+
+            aws.config.update({
+                accessKeyId: process.env.AWS_S3_ACCESS_KEY,
+                secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY
+            })
+            const s3 = new aws.S3()
+            let filename = uniqid+"."+ext
+            let bucket_path = process.env.AWS_S3_BUCKET + "/" + request.body.id + "/addressBook"
+
+            const s3res = await s3.upload({
+                Bucket: bucket_path,
+                Key: filename,
+                Body: buffer,
+                ACL: "private"
+            }).promise()
+
+
+
+
 
             // Remove header
             //let base64Image = base64String.split(';base64,').pop()
 
-
+            //console.log("body", request.body)
             let address_book = await AddressBook.create({
                 userId: request.body.id,
                 contactName: request.body.name,
@@ -552,7 +604,9 @@ class UserController {
                 zoomMeetingURL: request.body.zoom_meeting_url,
                 notes: request.body.notes,
                 email: request.body.email,
-                avatar: complete_filepath,
+                avatarPath: bucket_path,
+                avatarMIME: mimetype,
+                avatarName: filename,
                 createdBy: request.decoded.id
             })
 
@@ -570,6 +624,58 @@ class UserController {
             data.status = false
             data.data = null
             data.error = err
+            data.message = 'failed'
+
+            response.send(data)
+        }
+    }
+
+    /**
+     * delete address book contact
+     */
+    async deleteAddressBookContact(request, response)
+    {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+
+        try
+        {
+            let contact = await AddressBook.findOne({
+                _id: request.body.contact_id
+            })
+
+            //delete amazon s3 image
+            aws.config.update({
+                accessKeyId: process.env.AWS_S3_ACCESS_KEY,
+                secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY
+            })
+            const s3 = new aws.S3()
+
+             let deleted_data = await s3.deleteObject({
+                Bucket: contact.avatarPath,
+                Key: contact.avatarName
+            }).promise()
+
+            await AddressBook.deleteOne({
+                _id: request.body.contact_id
+            })
+
+            data.status = true
+            data.data = contact
+            data.message = 'success'
+
+            response.send(data)
+        }
+        catch (err) {
+            Sentry.captureException(err)
+            logger.error('Error::' + err)
+
+            data.status = false
+            data.data = null
+            //data.error = err
             data.message = 'failed'
 
             response.send(data)
@@ -598,23 +704,45 @@ class UserController {
                 console.log('File created');
             });*/
 
-            let string = request.body.avatar
-            let regex = /^data:.+\/(.+);base64,(.*)$/;
 
-            let matches = string.match(regex);
-            let ext = matches[1];
-            let data1 = matches[2];
-            let buffer = Buffer.from(data1, 'base64');
-            let filename = await HelperManager.uniqid()
-            let filepath = "public/uploads/avatar/"
-            let complete_filepath = "uploads/avatar/"+filename+'.' + ext
-            fs.writeFileSync(filepath+filename+'-edit.' + ext, buffer);
 
             // Remove header
             //let base64Image = base64String.split(';base64,').pop()
 
+            let update_data = {
+                contactName: request.body.name,
+                skypeId: request.body.skypeid,
+                zoomMeetingURL: request.body.zoom_meeting_url,
+                notes: request.body.notes,
+                email: request.body.email
+            }
+            //console.log("body", request.body)
+            if(request.body.image_changed)
+            {
+                let string = request.body.avatar
+                let regex = /^data:.+\/(.+);base64,(.*)$/;
 
-            let address_book = await AddressBook.create({
+                let matches = string.match(regex);
+                let ext = matches[1];
+                let data1 = matches[2];
+                let buffer = Buffer.from(data1, 'base64');
+                let filename = await HelperManager.uniqid()
+                let filepath = "public/uploads/avatar/"
+                let complete_filepath = "uploads/avatar/"+filename+'-edit.' + ext
+                fs.writeFileSync(filepath+filename+'-edit.' + ext, buffer);
+                update_data.avatar = complete_filepath
+                update_data.avatarMIME = request.body.avatarMIME
+            }
+
+            await AddressBook.findOneAndUpdate({
+                _id: request.body.edit_id
+            }, update_data)
+
+            let address_book = await AddressBook.findOne({
+                _id: request.body.edit_id
+            })
+
+            /*await AddressBook.create({
                 userId: request.body.id,
                 contactName: request.body.name,
                 skypeId: request.body.skypeid,
@@ -623,7 +751,7 @@ class UserController {
                 email: request.body.email,
                 avatar: complete_filepath,
                 createdBy: request.decoded.id
-            })
+            })*/
 
             data.status = true
             data.data = address_book
