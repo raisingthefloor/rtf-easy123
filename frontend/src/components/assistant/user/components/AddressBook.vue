@@ -91,13 +91,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                     :image="vueSampleAvatar"
                 >
                 </vue-avatar>
-<!--                <vue-dropzone
-                    ref="avatarDropzone"
-                    id="dropzone"
-                    :options="dropzoneOptions"
-                    @vdropzone-complete="handleVueDropzoneComplete"
-                    class="mb-2"
-                ></vue-dropzone>-->
+
                 <span class="form-text text-danger" v-show="errors.avatar">Please select image</span>
 
                 <div class="mb-3 mt-3">
@@ -120,7 +114,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                   <span class="form-text text-danger" v-show="errors.name">Please enter Notes</span>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 p-2" style="border: 1px solid black;">
                   <div class="row">
                     <div class="col-md-12">
                       <label for="email" class="form-label"><b>Email</b></label>
@@ -142,28 +136,48 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                   <span class="form-text text-danger" v-show="errors.email">Please enter email</span>
                 </div>
 
-<!--                <div class="mb-3">
+                <div class="mb-3 p-2" style="border: 1px solid black;">
                   <div class="row">
-                    <div class="col-md-12">
-                      <label for="phone_number" class="form-label"><b>Phone Number</b></label>
-                      <div class="row">
+                    <div class="col-md-12" v-for="(pn, index) in phoneNumber" :key="index">
+                      <hr v-if="index != 0" style="height: 5px;">
+                      <div class="row" style="position:relative;">
+                        <div class="col-md-12" v-if="index != 0">
+                          <div @click="deletePhoneNumber(index)" style="    position: absolute; right: 20px;"><a
+                              href="javascript:void(0)" style="text-decoration: none;">X</a></div>
+                        </div>
+
                         <div class="col-md-6">
                           <label for="phone_number">Phone Number</label>
-                          <input type="text" id="phone_number" class="form-control">
+                          <input type="text" id="phone_number" class="form-control" v-model.number="pn.number" @keypress="isNumber($event)" required>
                         </div>
                         <div class="col-md-6">
                           <label for="phone_number_type">Type</label>
-                          <select class="form-select" aria-label="Default select example" id="phone_number_type">
-                            <option selected>Open this select menu</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                          <select class="form-select" id="phone_number_type" v-model="pn.type" required>
+                            <option value="Mobile">Mobile</option>
+                            <option value="Home">Home</option>
+                            <option value="Work">Work</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+                        <div class="col-md-6" v-if="pn.type == 'Mobile'">
+                          <label for="phone_number_carrier" class="mt-2">Carrier</label>
+                          <select class="form-select" id="phone_number_carrier" v-model="pn.carrier" required>
+                            <option value="Verizon">Verizon</option>
+                            <option value="AT&T">AT&T</option>
+                            <option value="T-Mobile">T-Mobile</option>
+                            <option value="Other">Other</option>
                           </select>
                         </div>
                       </div>
                     </div>
+
+                    <div class="col-md-12">
+                      <div class="d-grid gap-2 mt-3">
+                        <button class="btn btn-sm btn-info btn-block" type="button" @click="addPhoneNumber()">Add Phone Number</button>
+                      </div>
+                    </div>
                   </div>
-                </div>-->
+                </div>
 
                 <div>
                   <button class="btn btn-primary me-2" type="submit" :disabled="processingForm" :readonly="processingForm">
@@ -193,15 +207,6 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                   <h5 class="text-center">Loading...</h5>
                 </div>
 
-
-
-<!--                <vue-dropzone
-                    ref="avatarDropzone"
-                    id="dropzone"
-                    :options="dropzoneOptions"
-                    @vdropzone-complete="handleVueDropzoneComplete"
-                    class="mb-2"
-                ></vue-dropzone>-->
                 <span class="form-text text-danger" v-show="errors.avatar">Please select image</span>
 
                 <div class="mb-3 mt-3">
@@ -246,28 +251,48 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                   <span class="form-text text-danger" v-show="errors.email">Please enter email</span>
                 </div>
 
-<!--                <div class="mb-3">
+                <div class="mb-3 p-2" style="border: 1px solid black;">
                   <div class="row">
-                    <div class="col-md-12">
-                      <label for="phone_number" class="form-label"><b>Phone Number</b></label>
-                      <div class="row">
+                    <div class="col-md-12" v-for="(pn, index) in phoneNumber" :key="index">
+                      <hr v-if="index != 0" style="height: 5px;">
+                      <div class="row" style="position:relative;">
+                        <div class="col-md-12" v-if="index != 0">
+                          <div @click="deletePhoneNumber(index)" style="    position: absolute; right: 20px;"><a
+                              href="javascript:void(0)" style="text-decoration: none;">X</a></div>
+                        </div>
+
                         <div class="col-md-6">
                           <label for="phone_number">Phone Number</label>
-                          <input type="text" id="phone_number" class="form-control">
+                          <input type="text" id="phone_number" class="form-control" v-model.number="pn.number" @keypress="isNumber($event)" required>
                         </div>
                         <div class="col-md-6">
                           <label for="phone_number_type">Type</label>
-                          <select class="form-select" aria-label="Default select example" id="phone_number_type">
-                            <option selected>Open this select menu</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                          <select class="form-select" id="phone_number_type" v-model="pn.type" required>
+                            <option value="Mobile">Mobile</option>
+                            <option value="Home">Home</option>
+                            <option value="Work">Work</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+                        <div class="col-md-6" v-if="pn.type == 'Mobile'">
+                          <label for="phone_number_carrier" class="mt-2">Carrier</label>
+                          <select class="form-select" id="phone_number_carrier" v-model="pn.carrier" required>
+                            <option value="Verizon">Verizon</option>
+                            <option value="AT&T">AT&T</option>
+                            <option value="T-Mobile">T-Mobile</option>
+                            <option value="Other">Other</option>
                           </select>
                         </div>
                       </div>
                     </div>
+
+                    <div class="col-md-12">
+                      <div class="d-grid gap-2 mt-3">
+                        <button class="btn btn-sm btn-info btn-block" type="button" @click="addPhoneNumber()">Add Phone Number</button>
+                      </div>
+                    </div>
                   </div>
-                </div>-->
+                </div>
 
                 <div>
                   <button class="btn btn-primary me-2" type="submit" :disabled="form_submit_status == 'PROCESSING'" :readonly="form_submit_status == 'PROCESSING'">
@@ -287,6 +312,14 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
               <div class="card-body">
                 <h5 class="card-title">{{ current_contact.name }} </h5>
                 <p class="card-text">Email: {{ current_contact.email.join(", ") }}</p>
+                <p class="card-text">
+                  Phone Number(s):
+                  <ul>
+                    <li v-for="(pn, index) in current_contact.phoneNumber" :key="'show_pn_'+index">
+                      {{ pn.number }} ({{ pn.type }}) <span v-if="pn.carrier">- {{ pn.carrier }}</span>
+                    </li>
+                  </ul>
+                </p>
                 <p class="card-text">Skype ID: {{ current_contact.skypeid }}</p>
                 <p class="card-text">Zoom Meeting URL: {{ current_contact.zoom_meeting_url }}</p>
                 <p>Notes: {{ current_contact.notes }}</p>
@@ -390,6 +423,7 @@ export default {
       zoom_meeting_url: null,
       notes: null,
       email: [],
+      phoneNumber: [],
 
       add_contact_form_image_changed: false,
       edit_contact_form_image_changed: false,
@@ -485,6 +519,7 @@ export default {
                 id: response.data.data[i].id,
                 name: response.data.data[i].contactName,
                 email: response.data.data[i].email,
+                phoneNumber: response.data.data[i].phoneNumber,
                 gender: null,
                 skypeid: response.data.data[i].skypeId,
                 zoom_meeting_url: response.data.data[i].zoomMeetingURL,
@@ -510,6 +545,14 @@ export default {
       }, (error) => {
         console.log(error)
       })
+    },
+    isNumber(evt) {
+      let charCode = (evt.which) ? evt.which : evt.keyCode;
+      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
+        evt.preventDefault()
+      } else {
+        return true
+      }
     },
     getImageURL(image) {
       return process.env.VUE_APP_API_HOST_NAME+"/"+image
@@ -634,6 +677,7 @@ export default {
       this.zoom_meeting_url = this.current_contact.zoom_meeting_url
       this.notes = this.current_contact.notes
       this.email = this.current_contact.email
+      this.phoneNumber = this.current_contact.phoneNumber
       //let image_url = this.current_contact.image.split('?')
       //this.myFiles.push(image_url[0])
       this.vueSampleAvatar = null
@@ -669,7 +713,7 @@ export default {
         setTimeout(function () {
           self.showEditAvatar = true
         }, 1000)
-        console.log(self.vueSampleAvatarEdit)
+        //console.log(self.vueSampleAvatarEdit)
         //self.vueSampleAvatarEdit = self.getBase64Image(document.getElementById("imageid"))
 
       }, (error) => {
@@ -696,6 +740,7 @@ export default {
       this.notes = null
       this.email = []
       this.addEmail()
+      this.addPhoneNumber()
       this.vueSampleAvatar = null
       this.vueSampleAvatarEdit = null
       this.add_contact_form_image_changed = false
@@ -712,6 +757,7 @@ export default {
       let avatar, image_changed
       this.errors.name = false
       this.errors.email = false
+      this.errors.phoneNumber = false
       this.errors.avatar = false
 
       image_changed = false
@@ -778,6 +824,7 @@ export default {
           zoom_meeting_url: this.zoom_meeting_url,
           notes: this.notes,
           email: this.email,
+          phoneNumber: this.phoneNumber,
           avatar: avatar,
           image_changed: image_changed
         })
@@ -794,6 +841,7 @@ export default {
               self.contacts[i].zoom_meeting_url = self.zoom_meeting_url
               self.contacts[i].notes = self.notes
               self.contacts[i].email = self.email
+              self.contacts[i].phoneNumber = response.data.data.phoneNumber
               self.contacts[i].image = response.data.data.avatar
               self.contacts[i].avatarPath = response.data.data.avatarPath
               self.contacts[i].avatarMIME = response.data.data.avatarMIME
@@ -832,6 +880,7 @@ export default {
           zoom_meeting_url: this.zoom_meeting_url,
           notes: this.notes,
           email: this.email,
+          phoneNumber: this.phoneNumber,
           avatar: avatar,
           image_changed: image_changed
         })
@@ -844,6 +893,7 @@ export default {
             zoom_meeting_url: response.data.data.zoomMeetingURL,
             notes: response.data.data.notes,
             email: response.data.data.email,
+            phoneNumber: response.data.data.phoneNumber,
             image: response.data.data.avatar,
             avatarPath: response.data.data.avatarPath,
             avatarMIME: response.data.data.avatarMIME,
@@ -881,6 +931,18 @@ export default {
     },
     addEmail() {
       this.email.push("")
+    },
+    addPhoneNumber() {
+      this.phoneNumber.push({
+        number: null,
+        type: 'Mobile',
+        carrier: null
+      })
+    },
+    deletePhoneNumber(index) {
+      if (index > -1) {
+        this.phoneNumber.splice(index, 1);
+      }
     },
     removeEmail(index) {
       if (index > -1) {

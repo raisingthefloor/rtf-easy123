@@ -610,6 +610,17 @@ class UserController {
                 createdBy: request.decoded.id
             })
 
+            for (let i = 0; i < request.body.phoneNumber.length; i++)
+            {
+                address_book.phoneNumber.push({
+                    number: request.body.phoneNumber[i].number,
+                    type: request.body.phoneNumber[i].type,
+                    carrier: request.body.phoneNumber[i].carrier
+                })
+            }
+            
+            address_book.save()
+
             data.status = true
             data.data = address_book
             data.message = "success"
@@ -742,9 +753,26 @@ class UserController {
                 _id: request.body.edit_id
             }, update_data)
 
+            await AddressBook.updateOne({
+                _id: request.body.edit_id
+            }, {
+                $set: {phoneNumber: []}
+            })
+
             let address_book = await AddressBook.findOne({
                 _id: request.body.edit_id
             })
+
+            for (let i = 0; i < request.body.phoneNumber.length; i++)
+            {
+                address_book.phoneNumber.push({
+                    number: request.body.phoneNumber[i].number,
+                    type: request.body.phoneNumber[i].type,
+                    carrier: request.body.phoneNumber[i].carrier
+                })
+            }
+
+            address_book.save()
 
             /*await AddressBook.create({
                 userId: request.body.id,

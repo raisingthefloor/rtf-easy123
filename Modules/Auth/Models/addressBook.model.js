@@ -26,6 +26,16 @@ const mongoose = require('mongoose');
 
 const modelName = "addressBook"
 
+const phoneNumber = {
+    type: new mongoose.Schema(
+        {
+            number: {type: String, trim: true},
+            type: {type: String, trim: true},
+            carrier: {type: String, trim: true, default: null}
+        }
+    )
+}
+
 const schema = new mongoose.Schema({
     userId: mongoose.Schema.ObjectId,
 
@@ -34,6 +44,7 @@ const schema = new mongoose.Schema({
     zoomMeetingURL: { type: String, default: null },
     notes: { type: String, default: null },
     email: [String],
+    phoneNumber: [phoneNumber],
     avatar: { type: String, default: null },
     avatarPath: { type: String, default: null },
     avatarMIME: { type: String, default: null },
