@@ -147,12 +147,12 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                         </div>
 
                         <div class="col-md-6">
-                          <label for="phone_number">Phone Number</label>
-                          <input type="text" id="phone_number" class="form-control" v-model.number="pn.number" @keypress="isNumber($event)" required>
+                          <label :for="'phone_number_'+index"><b>Phone Number</b></label>
+                          <input type="text" :id="'phone_number_'+index" :name="'phone_number_'+index" autocomplete="off" class="form-control" v-model.number="pn.number" @keypress="isNumber($event)" required>
                         </div>
                         <div class="col-md-6">
-                          <label for="phone_number_type">Type</label>
-                          <select class="form-select" id="phone_number_type" v-model="pn.type" required>
+                          <label :for="'phone_number_type_'+index"><b>Type</b></label>
+                          <select class="form-select" :id="'phone_number_type_'+index" :name="'phone_number_type_'+index" v-model="pn.type" required>
                             <option value="Mobile">Mobile</option>
                             <option value="Home">Home</option>
                             <option value="Work">Work</option>
@@ -160,8 +160,8 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                           </select>
                         </div>
                         <div class="col-md-6" v-if="pn.type == 'Mobile'">
-                          <label for="phone_number_carrier" class="mt-2">Carrier</label>
-                          <select class="form-select" id="phone_number_carrier" v-model="pn.carrier" required>
+                          <label :for="'phone_number_carrier'+index" class="mt-2">Carrier</label>
+                          <select class="form-select" :id="'phone_number_carrier'+index" :name="'phone_number_carrier'+index" v-model="pn.carrier" required>
                             <option value="Verizon">Verizon</option>
                             <option value="AT&T">AT&T</option>
                             <option value="T-Mobile">T-Mobile</option>
@@ -262,12 +262,12 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                         </div>
 
                         <div class="col-md-6">
-                          <label for="phone_number">Phone Number</label>
-                          <input type="text" id="phone_number" class="form-control" v-model.number="pn.number" @keypress="isNumber($event)" required>
+                          <label :for="'phone_number_edit_'+index">Phone Number</label>
+                          <input type="text" :id="'phone_number_edit_'+index" :name="'phone_number_edit_'+index" autocomplete="off" class="form-control" v-model.number="pn.number" @keypress="isNumber($event)" required>
                         </div>
                         <div class="col-md-6">
-                          <label for="phone_number_type">Type</label>
-                          <select class="form-select" id="phone_number_type" v-model="pn.type" required>
+                          <label :for="'phone_number_type_edit_'+index">Type</label>
+                          <select class="form-select" :id="'phone_number_type_edit_'+index" :name="'phone_number_type_edit_'+index" autocomplete="off" v-model="pn.type" required>
                             <option value="Mobile">Mobile</option>
                             <option value="Home">Home</option>
                             <option value="Work">Work</option>
@@ -275,8 +275,8 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                           </select>
                         </div>
                         <div class="col-md-6" v-if="pn.type == 'Mobile'">
-                          <label for="phone_number_carrier" class="mt-2">Carrier</label>
-                          <select class="form-select" id="phone_number_carrier" v-model="pn.carrier" required>
+                          <label :for="'phone_number_carrier_edit_'+index" class="mt-2">Carrier</label>
+                          <select class="form-select" :id="'phone_number_carrier_edit_'+index" :name="'phone_number_carrier_edit_'+index" v-model="pn.carrier" required>
                             <option value="Verizon">Verizon</option>
                             <option value="AT&T">AT&T</option>
                             <option value="T-Mobile">T-Mobile</option>
@@ -922,12 +922,6 @@ export default {
 
 
       }
-    },
-    saveContact1() {
-      var img = this.$refs.vueavatar.getImageScaled()
-      //this.$refs.image.src = img.toDataURL()
-
-      console.log(img.toDataURL())
     },
     addEmail() {
       this.email.push("")
