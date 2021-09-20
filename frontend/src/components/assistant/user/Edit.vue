@@ -615,7 +615,7 @@ export default {
           smtp_use_tls_ssl: self.smtp_use_tls_ssl,
           smtp_authentication: self.smtp_authentication
         }
-        console.log(input_data)
+        //console.log(input_data)
         axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/assistant/member/test-outgoing-mail", input_data)
             .then((response) => {
               if (response.data.status)
