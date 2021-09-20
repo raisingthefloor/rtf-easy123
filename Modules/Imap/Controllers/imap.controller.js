@@ -683,7 +683,7 @@ class ImapController {
 
             connectionTimeout: 500
         }
-        console.log("options", options)
+        //console.log("options", options)
         let connection = new SMTPConnection(options)
 
         connection.on('connect', function () {
@@ -696,11 +696,15 @@ class ImapController {
         })
         connection.on('error', function (err) {
             //console.log("errr", err)
-            res.send({
-                status: false,
-                data: null,
-                message: 'failed'
-            })
+            if(!res.headersSent)
+            {
+                res.send({
+                    status: false,
+                    data: null,
+                    message: 'failed'
+                })
+            }
+
             Sentry.captureException(err)
         })
         connection.on('end', function () {
