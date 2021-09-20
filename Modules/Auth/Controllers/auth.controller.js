@@ -251,7 +251,8 @@ class AuthController {
 
             let user = await User.findOne({
                 _id: token._userId,
-                email: email
+                email: email,
+                deleted: false
             })
 
             if(!user)
