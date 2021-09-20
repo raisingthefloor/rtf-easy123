@@ -30,6 +30,8 @@ const simpleParser = require('mailparser').simpleParser;
 const nodemailer = require("nodemailer");
 const mimemessage = require('mimemessage'); //using this module to construct mime message
 const {User} = require('../../Auth/Models/user.model');
+const Sentry = require("@sentry/node")
+const SMTPConnection = require("nodemailer/lib/smtp-connection")
 
 //const { StringDecoder } = require('string_decoder');
 //const decoder = new StringDecoder('utf8');
@@ -49,42 +51,65 @@ class ImapController {
      * @param res
      */
     async constructIMAP(req, res) {
-        const requestUser = await User.findOne({
-            _id: req.decoded.id
-        })
-        if(requestUser.role == "assistant")
+
+        if(req.query && req.query.test)
         {
-            //find user
-            const user = await User.findOne({
-                createdBy: requestUser.id,
-                role: 'user'
-            })
-            this.imapClient = new Imap({
-                user: user.imapUsername,
-                password: user.imapPassword,
-                host: user.imapHost,
+            let imapOptions = {
+                user: req.query.imap_username,
+                password: req.query.imap_password,
+                host: req.query.imap_host,
                 port: 993,
                 tls: true,
                 tlsOptions: {
                     rejectUnauthorized: false
                 },
                 authTimeout: 30000
-            })
+            }
+            this.imapClient = new Imap(imapOptions)
         }
-        else if (requestUser.role == "user")
+        else
         {
-            this.imapClient = new Imap({
-                user: requestUser.imapUsername,
-                password: requestUser.imapPassword,
-                host: requestUser.imapHost,
-                port: 993,
-                tls: true,
-                tlsOptions: {
-                    rejectUnauthorized: false
-                },
-                authTimeout: 30000
+            const requestUser = await User.findOne({
+                _id: req.decoded.id
             })
+
+            if(requestUser.role == "assistant")
+            {
+
+                //find user
+                const user = await User.findOne({
+                    createdBy: requestUser.id,
+                    role: 'user'
+                })
+                this.imapClient = new Imap({
+                    user: user.imapUsername,
+                    password: user.imapPassword,
+                    host: user.imapHost,
+                    port: 993,
+                    tls: true,
+                    tlsOptions: {
+                        rejectUnauthorized: false
+                    },
+                    authTimeout: 30000
+                })
+            }
+            else if (requestUser.role == "user")
+            {
+                this.imapClient = new Imap({
+                    user: requestUser.imapUsername,
+                    password: requestUser.imapPassword,
+                    host: requestUser.imapHost,
+                    port: 993,
+                    tls: true,
+                    tlsOptions: {
+                        rejectUnauthorized: false
+                    },
+                    authTimeout: 30000
+                })
+            }
         }
+
+
 
         /*this.imapClient = new Imap({
             user: "mayur@raisingthefloor.org",
@@ -174,68 +199,78 @@ class ImapController {
                 if(user){
                     //Imap Connection is Established
                     this.imapClient.once('ready', () => {
-                        //Opening the Inbox via IMAP
-                        this.openMailBox('INBOX', true, (err, box) => {
-                            if(!err){
-                                let fetchedMessagesEvent = this.imapClient.seq.fetch((box.messages.total)+":1", {
-                                    bodies: '',
-                                    struct: true
-                                });
-                    
-                                //a message is received
-                                fetchedMessagesEvent.on('message', (msg, seqno) => {
-                                    
-                                    //message body is loaded
-                                    msg.on('body', (stream, info) => {
-                                        
-                                        //all the data is received from stream
-                                        stream.once('end', () => {                                
-                                        })
-                                        //handling message attributes
-                                        msg.once('attributes', attrs => {
-                                            //using mailparser to parse message body
-                                            simpleParser(stream, (err, mail) => {
-                                                let isRead = "unread" , isTrashed = "none";
-                                                if(attrs.flags.includes("\\Seen")){
-                                                    isRead = "read";
-                                                    isTrashed = "tray";
-                                                }
-                                                const {to, from, subject, text, html, date, attachments, messageId } = mail;
-                                                payload = {date, to: to ? to.text : user.name, from: from.text, subject, text, html, 
-                                                    r: isRead, t: isTrashed, in:'c', attachments, messageId, attrs};
-                                                data.push(payload);
+                        if(req.query && req.query.test)
+                        {
+                            this.imapClient.end()
+                        }
+                        else
+                        {
+                            //Opening the Inbox via IMAP
+                            this.openMailBox('INBOX', true, (err, box) => {
+                                if(!err){
+                                    let fetchedMessagesEvent = this.imapClient.seq.fetch((box.messages.total)+":1", {
+                                        bodies: '',
+                                        struct: true
+                                    });
+
+                                    //a message is received
+                                    fetchedMessagesEvent.on('message', (msg, seqno) => {
+
+                                        //message body is loaded
+                                        msg.on('body', (stream, info) => {
+
+                                            //all the data is received from stream
+                                            stream.once('end', () => {
                                             })
+                                            //handling message attributes
+                                            msg.once('attributes', attrs => {
+                                                //using mailparser to parse message body
+                                                simpleParser(stream, (err, mail) => {
+                                                    let isRead = "unread" , isTrashed = "none";
+                                                    if(attrs.flags.includes("\\Seen")){
+                                                        isRead = "read";
+                                                        isTrashed = "tray";
+                                                    }
+                                                    const {to, from, subject, text, html, date, attachments, messageId } = mail;
+                                                    payload = {date, to: to ? to.text : user.name, from: from.text, subject, text, html,
+                                                        r: isRead, t: isTrashed, in:'c', attachments, messageId, attrs};
+                                                    data.push(payload);
+                                                })
+                                            });
+                                        });
+
+
+                                        msg.once('end', async () => {
                                         });
                                     });
 
-                                    
-                                    msg.once('end', async () => {
+                                    //an error occurs on fetching messages
+                                    fetchedMessagesEvent.once('error', (err) => {
+                                        error = true;
+                                        responseCode = 500;
+                                        logger.error('Imap Fetch Error :: '+err);
+                                        Sentry.captureException(err)
                                     });
-                                });
-                    
-                                //an error occurs on fetching messages
-                                fetchedMessagesEvent.once('error', (err) => {
+
+                                    //all messages from inbox  are fetched
+                                    fetchedMessagesEvent.once('end', () => {
+                                        //close inbox and open trashbox
+                                        this.imapClient.closeBox((err) => {
+                                            if(!err){
+                                                //method to get messages from trash box
+                                                this.getTrashedMessages(this.imapClient, data, payload);
+                                            }
+                                        });
+                                        //imapClient.end();
+                                    })
+                                }
+                                else{
                                     error = true;
-                                    responseCode = 500;
-                                    logger.error('Imap Fetch Error :: '+err);
-                                });
-                    
-                                //all messages from inbox  are fetched
-                                fetchedMessagesEvent.once('end', () => {
-                                    //close inbox and open trashbox
-                                    this.imapClient.closeBox((err) => {
-                                        if(!err){
-                                            //method to get messages from trash box
-                                            this.getTrashedMessages(this.imapClient, data, payload);
-                                        }
-                                    });
-                                    //imapClient.end();
-                                })
-                            }
-                            else{
-                                error = true;
-                            }
-                        });
+                                }
+                            });
+                        }
+
+
                     });
                 
                     this.imapClient.once('error', (err) => {
@@ -243,14 +278,25 @@ class ImapController {
                         error = true;
                         responseCode = 500;
                         logger.error('imap connection error :: '+err);
+                        res.status(responseCode).send({
+                            error: true,
+                            data: null,
+                            message: err
+                        });
+                        Sentry.captureException(err)
+
                     });
                     
                     this.imapClient.once('end', () => {
-                        res.status(responseCode).send({error, 
-                            total: !error ? data.length : 0,
-                            data,
-                            message: !error ? status : 'Some error has occured.'
-                        });
+                        if(!res.headersSent)
+                        {
+                            res.status(responseCode).send({error,
+                                total: !error ? data.length : 0,
+                                data,
+                                message: !error ? status : 'Some error has occured.'
+                            });
+                        }
+
                     });
 
                     //Establish Connection using imap client to an imap server
@@ -273,6 +319,7 @@ class ImapController {
                     data,
                     message: !error ? status : 'Some error has occured.'
                 });
+                Sentry.captureException(err)
             });
         
     }
@@ -612,6 +659,104 @@ class ImapController {
         return str.replace(/<[^>]*>/g, '').trim();
       }
         
+    }
+
+    /**
+     * test SMTP connection
+     */
+    async testSMTPConnection(req, res)
+    {
+        //console.log("outgoing mail", req.body)
+        let secure = false
+        if(req.body.smtp_port == 465)
+        {
+            secure = true
+        }
+        let options = {
+            host: req.body.smtp_host,
+            port: req.body.smtp_port,
+            secure: req.body.smtp_use_tls_ssl,
+            auth: {
+                user: req.body.smtp_username,
+                pass: req.body.smtp_password
+            },
+
+            connectionTimeout: 500
+        }
+        console.log("options", options)
+        let connection = new SMTPConnection(options)
+
+        connection.on('connect', function () {
+            //console.log("connect")
+            /*res.send({
+                status: true,
+                data: null,
+                message: 'success'
+            })*/
+        })
+        connection.on('error', function (err) {
+            //console.log("errr", err)
+            res.send({
+                status: false,
+                data: null,
+                message: 'failed'
+            })
+            Sentry.captureException(err)
+        })
+        connection.on('end', function () {
+            //console.log("connection ended")
+        })
+
+        try {
+            connection.connect(function (err) {
+                //console.log("connection callback", err)
+
+                connection.login({
+                    user: req.body.smtp_username,
+                    pass: req.body.smtp_password
+                }, function(err) {
+                    console.log(err)
+                    if (err)
+                    {
+                        res.send({
+                            status: false,
+                            data: null,
+                            message: 'failed'
+                        })
+                        Sentry.captureException(err)
+                    }
+                    else
+                    {
+                        res.send({
+                            status: true,
+                            data: null,
+                            message: 'success'
+                        })
+                    }
+
+                })
+            })
+
+            /*res.send({
+                status: true,
+                data: null,
+                message: 'success'
+            })*/
+
+        }
+        catch (err) {
+            res.send({
+                status: false,
+                data: null,
+                message: 'failed'
+            })
+            console.log(err)
+            logger.error('Error::' + err)
+            Sentry.captureException(err)
+        }
+
+
+
     }
 }
 
