@@ -130,6 +130,12 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                     <span v-if="!$v.imap_host.required">Host is required.</span>
                   </div>
                 </div>
+                <div class="mb-3">
+                  <a href="javascript:void(0)" class="btn btn-sm btn-info" :disabled="testIncomingMailStatus == 'PROCESSING'" :readonly="testIncomingMailStatus == 'PROCESSING'" @click="testIncomingMail()" v-bind:class="{ 'disabled': testIncomingMailStatus == 'PROCESSING' }">
+                    <span v-if="testIncomingMailStatus != 'PROCESSING'">Test Incoming Mail</span>
+                    <span v-if="testIncomingMailStatus == 'PROCESSING'">Test Incoming Mail...</span>
+                  </a>
+                </div>
               </div>
               <div>
                 <h6 class="mt-4"><b>Outgoing Mail Server (SMTP)</b></h6>
@@ -182,6 +188,13 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                   <div class="invalid-feedback">
                     <span v-if="!$v.smtp_authentication.required">Authentication Method is required.</span>
                   </div>
+                </div>
+
+                <div class="mb-3">
+                  <a href="javascript:void(0)" class="btn btn-sm btn-info" :disabled="testOutgoingMailStatus == 'PROCESSING'" :readonly="testOutgoingMailStatus == 'PROCESSING'" @click="testOutgoingMail()" v-bind:class="{ 'disabled': testOutgoingMailStatus == 'PROCESSING' }">
+                    <span v-if="testOutgoingMailStatus != 'PROCESSING'">Test Outgoing Mail</span>
+                    <span v-if="testOutgoingMailStatus == 'PROCESSING'">Test Outgoing Mail...</span>
+                  </a>
                 </div>
               </div>
 
@@ -272,7 +285,9 @@ export default {
       smtp_port: null,
       smtp_use_tls_ssl: false,
       smtp_authentication: 'Password',
-      imapSmtpFormSubmitStatus: 'NOT_SUBMITTED'
+      imapSmtpFormSubmitStatus: 'NOT_SUBMITTED',
+      testIncomingMailStatus: "NONE",
+      testOutgoingMailStatus: "NONE"
     }
   },
   validations: {
@@ -349,7 +364,7 @@ export default {
     }
   },
   watch: {
-    smtp_use_tls_ssl: function (newVal) {
+    /*smtp_use_tls_ssl: function (newVal) {
       if(newVal == true)
       {
         this.smtp_port = 465
@@ -358,7 +373,7 @@ export default {
       {
         this.smtp_port = 587
       }
-    }
+    }*/
   },
   mounted() {
     this.getUserDetails()
@@ -509,6 +524,133 @@ export default {
           }, (error) => {
             console.log(error)
           })
+    },
+    /** test incoming mail **/
+    testIncomingMail() {
+      let self = this
+
+
+      this.$v.imap_username.$touch()
+      this.$v.imap_password.$touch()
+      this.$v.imap_host.$touch()
+
+      if (!this.$v.imap_username.$invalid || !this.$v.imap_password.$invalid || !this.$v.imap_host.$invalid)
+      {
+        this.testIncomingMailStatus = "PROCESSING"
+        // let imap_username_value = self.imap_username.value
+        // let imap_password_value = self.imap_password.value
+        // let imap_host_value = self.imap_host.value
+        axios.get(process.env.VUE_APP_API_HOST_NAME+"/api/assistant/member/test-incoming-mail", {
+          params: {
+            test: true,
+            imap_username: self.imap_username,
+            imap_password: self.imap_password,
+            imap_host: self.imap_host
+          }
+
+        })
+        .then((response) => {
+          if (response.data.error == false)
+          {
+            self.testIncomingMailStatus = "SUCCESS"
+            swal({
+              title: "Success",
+              text: "Incoming mail credentials are working",
+              icon: "success",
+            });
+
+            //console.log(response.data)
+          }
+          else
+          {
+            self.testIncomingMailStatus = "FAILED"
+            swal({
+              title: "Failed",
+              text: "Incoming mail credentials are not working",
+              icon: "warning",
+            })
+
+            //console.log(response.data)
+          }
+        }, (error) => {
+          self.testIncomingMailStatus = "FAILED"
+          swal({
+            title: "Failed",
+            text: "Incoming mail credentials are not working",
+            icon: "error",
+          })
+
+          console.log(error)
+        })
+      }
+
+
+    },
+    /** test outgoing mail **/
+    testOutgoingMail() {
+      let self = this
+
+
+      this.$v.smtp_username.$touch()
+      this.$v.smtp_password.$touch()
+      this.$v.smtp_host.$touch()
+      this.$v.smtp_port.$touch()
+      //this.$v.smtp_use_tls_ssl.$touch()
+      this.$v.smtp_authentication.$touch()
+
+      if (!this.$v.imap_username.$invalid || !this.$v.imap_password.$invalid || !this.$v.imap_host.$invalid)
+      {
+        this.testOutgoingMailStatus = "PROCESSING"
+        //let smtp_username_value = self.smtp_username.value
+        //let smtp_password_value = self.smtp_password.value
+        //let smtp_host_value = self.smtp_host.value
+        //let smtp_port_value = self.smtp_port.value
+        //let smtp_authentication_value = self.smtp_authentication.value
+        let input_data = {
+          test: true,
+          smtp_username: self.smtp_username,
+          smtp_password: self.smtp_password,
+          smtp_host: self.smtp_host,
+          smtp_port: self.smtp_port,
+          smtp_use_tls_ssl: self.smtp_use_tls_ssl,
+          smtp_authentication: self.smtp_authentication
+        }
+        console.log(input_data)
+        axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/assistant/member/test-outgoing-mail", input_data)
+            .then((response) => {
+              if (response.data.status)
+              {
+                self.testOutgoingMailStatus = "SUCCESS"
+                swal({
+                  title: "Success",
+                  text: "Outgoing mail credentials are working",
+                  icon: "success",
+                })
+
+                //console.log(response.data)
+              }
+              else
+              {
+                self.testOutgoingMailStatus = "FAILED"
+                swal({
+                  title: "Failed",
+                  text: "Outgoing mail credentials are not working",
+                  icon: "warning",
+                })
+
+                //console.log(response.data)
+              }
+            }, (error) => {
+              self.testOutgoingMailStatus = "FAILED"
+              swal({
+                title: "Failed",
+                text: "Outgoing mail credentials are not working",
+                icon: "error",
+              })
+
+              console.log(error)
+            })
+      }
     }
   }
 }

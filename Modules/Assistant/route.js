@@ -32,7 +32,12 @@ module.exports = function (router) {
     router.post('/api/assistant/delete-user', validateToken, UserController.deleteUser.bind(UserController))
     router.post('/api/assistant/user/detail', validateToken, UserController.userDetails.bind(UserController))
     router.post('/api/assistant/member/save-profile', validateToken, UserController.userProfileSave.bind(UserController))
+
+
     router.post('/api/assistant/member/save-imapsmtp-details', validateToken, UserController.userImapSmtpSave.bind(UserController))
+
+
+
     router.post('/api/assistant/user/add-folder', validateToken, UserController.addFolder.bind(UserController))
     router.post('/api/assistant/user/get-all-folders', validateToken, UserController.getAllFolders.bind(UserController))
     router.post('/api/assistant/user/update-folders-order', validateToken, UserController.updateFoldersOrder.bind(UserController))
