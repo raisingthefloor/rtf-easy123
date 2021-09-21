@@ -50,11 +50,11 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           <p style="color: red" v-show="showError">{{ $t('please_enter_correct_username_or_password') }}</p>
         </div>
         <div class="form-floating">
-          <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" v-model="email" autofocus>
+          <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" v-model="email" autofocus autocomplete="new-username" name="new_username_easy123_1">
           <label for="floatingInput">{{ $t('email_address') }}</label>
         </div>
         <div class="form-floating">
-          <input type="password" class="form-control" id="floatingPassword" :placeholder="$t('password')" v-model="password">
+          <input type="password" class="form-control" id="floatingPassword" :placeholder="$t('password')" v-model="password" autocomplete="new-password" name="new_password_easy123_2">
           <label for="floatingPassword">{{ $t('password') }}</label>
         </div>
 
