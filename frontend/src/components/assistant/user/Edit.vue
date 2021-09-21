@@ -73,7 +73,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                 </div>
               </div>
               <div class="mb-3">
-                <label for="email" class="form-label">Login Email</label>
+                <label for="email" class="form-label">Easy123 Email (use User Account's email address)</label>
                 <input type="email" class="form-control" v-bind:class="{ 'is-invalid': $v.email.$error }" id="email" v-model.trim="$v.email.$model" placeholder="Enter a login password.">
                 <div class="invalid-feedback">
                   <span v-if="!$v.email.required">Email is required.</span>
@@ -81,7 +81,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                 </div>
               </div>
               <div class="mb-3">
-                <label for="password" class="form-label">Login Password</label>
+                <label for="password" class="form-label">Easy123 Password</label>
                 <div style="position:relative;">
                   <input :type="(show_password_protected)?'password':'text'" class="form-control" v-bind:class="{ 'is-invalid': $v.password.$error }" id="password" v-model.trim="$v.password.$model" placeholder="Enter a new login password.">
                   <font-awesome-icon :icon="['fas', 'eye']" style="position: absolute;right: 9px; top: 12px; cursor: pointer;" @click="show_password_protected=false" v-show="show_password_protected" />
