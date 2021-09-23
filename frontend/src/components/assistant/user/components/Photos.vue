@@ -44,10 +44,11 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                 :options="{ animation:200 }"
                 @change="folderMoved"
             >
-              <div class="user-folder me-3 mb-3" v-bind:class="(current_folder && current_folder.id == folder.id)?'folder-selected':''" v-for="folder in folders" :key="folder.id" @click="openFolder(folder.id)" >
-                <i class="fas fa-folder folder-icon me-2"></i>
-                <div>{{ folder.name }}</div>
-              </div>
+              <a href="javascript:void(0)" class="user-folder me-3 mb-3" :ref="'folder_'+index" v-bind:class="(current_folder && current_folder.id == folder.id)?'folder-selected':''" v-for="(folder, index) in folders" :key="folder.id" @click="openFolder(folder.id)" style="text-decoration: none;" @keydown="folderKeyDown($event, index)">
+                  <i class="fas fa-folder folder-icon me-2"></i>
+                  <div>{{ folder.name }}</div>
+              </a>
+
             </draggable>
           </div>
         </div>
@@ -63,7 +64,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
             ></vue-dropzone>
 
             <div class="list-group address-book-contact-list mb-5" id="address-book-contact-list" style="max-height: 75vh; overflow-y: scroll;">
-              <a href="javascript:void(0)" class="list-group-item list-group-item-action address-book-list-item" v-bind:class="(current_photo.id == photo._id)?'active':''"  v-for="photo in current_folder.photos" :key="photo._id" @click="showPhoto(photo)">
+              <a href="javascript:void(0)" class="list-group-item list-group-item-action address-book-list-item" :ref="'photo_'+index" v-bind:class="(current_photo.id == photo._id)?'active':''"  v-for="(photo, index) in current_folder.photos" :key="photo._id" @click="showPhoto(photo)" @keydown="photoKeyDown($event, index)">
                 {{ photo.name }}
               </a>
             </div>
@@ -119,6 +120,10 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 .address-book-contact-list::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+a.list-group-item.list-group-item-action.address-book-list-item:focus {
+  border: 1px solid black;
+}
 </style>
 
 <script>
@@ -144,7 +149,10 @@ export default {
       current_folder: null,
       myFiles: [],
       current_photo: {},
-      loading_image: false
+      loading_image: false,
+      current_photo_index: 0,
+      current_folder_index: 0,
+      current_index_scroll: 'folder'
 
     }
   },
@@ -165,6 +173,139 @@ export default {
   },
   mounted() {
     this.loadFolders()
+
+    window.addEventListener('keydown', (e) => {
+      switch (e.keyCode) {
+        case 37:
+          //alert('left');
+            //this.current_index_scroll = "photo"
+          break;
+        case 38:
+          //alert('up');
+          /*if(this.current_photo.id && this.current_index_scroll == "photo")
+          {
+            let new_photo_index
+            if(this.current_photo_index == 0)
+            {
+              new_photo_index = this.current_folder.photos.length - 1
+              let el = this.$refs['photo_'+new_photo_index][0]
+              if(el)
+              {
+                el.focus({
+                  behavior: "smooth"
+                })
+              }
+              this.current_photo_index = new_photo_index
+            }
+            else {
+              new_photo_index = this.current_photo_index - 1
+              let el = this.$refs['photo_'+new_photo_index][0]
+              if(el)
+              {
+                el.focus({
+                  behavior: "smooth"
+                })
+              }
+
+              this.current_photo_index = new_photo_index
+            }
+
+          }
+          else if(this.folders.length && this.current_index_scroll == "folder")
+          {
+            let new_folder_index
+            if(this.current_folder_index == 0)
+            {
+              new_folder_index = this.folders.length - 1
+              let el = this.$refs['folder_'+new_folder_index][0]
+              if(el)
+              {
+                el.focus({
+                  behavior: "smooth"
+                })
+              }
+              this.current_folder_index = new_folder_index
+            }
+            else
+            {
+              new_folder_index = this.current_folder_index - 1
+              let el = this.$refs['folder_'+new_folder_index][0]
+              if(el)
+              {
+                el.focus({
+                  behavior: "smooth"
+                })
+              }
+
+              this.current_folder_index = new_folder_index
+            }
+          }*/
+          break;
+        case 39:
+          //alert('right');
+            /*if(this.folders && this.folders.length && this.folders[this.current_folder_index])
+            {
+              this.openFolder(this.folders[this.current_folder_index].id)
+            }*/
+
+          break;
+        case 40:
+          //alert('down');
+            /*if(this.current_photo.id && this.current_index_scroll == "photo")
+            {
+              let new_photo_index = this.current_photo_index + 1
+              if(this.current_folder.photos && this.current_folder.photos[new_photo_index])
+              {
+                let el = this.$refs['photo_'+new_photo_index][0]
+                if(el)
+                {
+                  el.focus({
+                    behavior: "smooth"
+                  })
+                }
+                this.current_photo_index = new_photo_index
+              }
+              else {
+                let el = this.$refs['photo_0'][0]
+                if(el)
+                {
+                  el.focus({
+                    behavior: "smooth"
+                  })
+                }
+                this.current_photo_index = 0
+              }
+            }
+            else if(this.folders.length && this.current_index_scroll == "folder")
+            {
+              let new_folder_index = this.current_folder_index + 1
+              if(this.folders && this.folders[new_folder_index])
+              {
+                let el = this.$refs['folder_'+new_folder_index][0]
+                if(el)
+                {
+                  el.focus({
+                    behavior: "smooth"
+                  })
+                }
+                this.current_folder_index = new_folder_index
+              }
+              else {
+                let el = this.$refs['folder_0'][0]
+                if(el)
+                {
+                  el.focus({
+                    behavior: "smooth"
+                  })
+                }
+                this.current_folder_index = 0
+              }
+            }*/
+
+
+          break;
+      }
+    });
   },
   methods: {
     /** Load existing folders **/
@@ -267,7 +408,15 @@ export default {
     },
     openFolder(id) {
       this.current_folder = this.folders.find(obj => obj.id == id)
-      this.current_photo = {}
+      if(this.current_folder.photos && this.current_folder.photos.length)
+      {
+        this.showPhoto(this.current_photo = this.current_folder.photos[0])
+      }
+      else
+      {
+        this.current_photo = {}
+      }
+
     },
     /** show photo after getting it from the server **/
     showPhoto(photo) {
@@ -335,6 +484,149 @@ export default {
         console.log(error)
       })
 
+    },
+    /** keydown event for folder **/
+    folderKeyDown(event, folder_index) {
+      /*if (event.keyCode == 37) // key left event
+      {
+        console.log("left")
+      }*/
+      if (event.keyCode == 38) // key up event
+      {
+        if(this.folders.length)
+        {
+          let new_index
+          if(folder_index == 0)
+          {
+            new_index = this.folders.length - 1
+          }
+          else
+          {
+            new_index = folder_index - 1
+          }
+
+          let el = this.$refs['folder_'+new_index][0]
+          if(el)
+          {
+            el.focus({
+              behavior: "smooth"
+            })
+          }
+        }
+      }
+      else if (event.keyCode == 39) // key right event
+      {
+        this.openFolder(this.folders[folder_index].id)
+        this.$nextTick(function () {
+          let el = this.$refs['photo_0'][0]
+          if(el)
+          {
+            el.focus({
+              behavior: "smooth"
+            })
+          }
+        })
+
+        //console.log("right")
+      }
+      else if (event.keyCode == 40) // key down event
+      {
+        if(this.folders.length)
+        {
+          let new_index = folder_index + 1
+          if(!(this.folders && this.folders.length && this.folders[new_index]))
+          {
+            new_index = 0
+          }
+
+          let el = this.$refs['folder_'+new_index][0]
+          if(el)
+          {
+            el.focus({
+              behavior: "smooth"
+            })
+          }
+        }
+      }
+
+      //else if (event.keyCode == )
+      //console.log("event", event)
+      //console.log("folder", folder_index)
+    },
+
+    /** keydown event for photo **/
+    photoKeyDown(event, photo_index) {
+      if (event.keyCode == 37) // key left event
+      {
+        //this.$refs['folder_'+this.current_folder]
+        let i = this.folders.findIndex(item => item.id === this.current_folder.id)
+        console.log("index", i)
+        let el = this.$refs['folder_'+i][0]
+        if(el)
+        {
+          el.focus({
+            behavior: "smooth"
+          })
+        }
+      }
+      else if (event.keyCode == 38) // key up event
+      {
+        if(this.current_folder.photos.length)
+        {
+          let new_index
+          if(photo_index == 0)
+          {
+            new_index = this.current_folder.photos.length - 1
+          }
+          else
+          {
+            new_index = photo_index - 1
+          }
+
+          let el = this.$refs['photo_'+new_index][0]
+          if(el)
+          {
+            el.focus({
+              behavior: "smooth"
+            })
+          }
+        }
+      }
+      else if (event.keyCode == 39) // key right event
+      {
+
+        /*this.openFolder(this.folders[folder_index].id)
+        let el = this.$refs['photo_0'][0]
+        if(el)
+        {
+          el.focus({
+            behavior: "smooth"
+          })
+        }*/
+        //console.log("right")
+      }
+      else if (event.keyCode == 40) // key down event
+      {
+        if(this.current_folder.photos.length)
+        {
+          let new_index = photo_index + 1
+          if(!(this.current_folder && this.current_folder.photos && this.current_folder.photos.length && this.current_folder.photos[new_index]))
+          {
+            new_index = 0
+          }
+
+          let el = this.$refs['photo_'+new_index][0]
+          if(el)
+          {
+            el.focus({
+              behavior: "smooth"
+            })
+          }
+        }
+      }
+
+      console.log("event", event)
+      console.log("photo_index", photo_index)
     }
   }
 }
