@@ -35,7 +35,7 @@ export default {
   },
   methods: {
     formateImage(val) {
-      console.log("val", val)
+      //console.log("val", val)
       let self = this
       //check if object
       if(val.avatarName)

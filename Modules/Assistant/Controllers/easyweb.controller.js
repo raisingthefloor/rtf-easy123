@@ -454,6 +454,77 @@ class EasyWebController {
             response.send(data)
         }
     }
+
+    /**
+     * update website
+     */
+    async updateWebsite(request, response) {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+
+        try
+        {
+            let website
+            //console.log("data", request.body)
+            let newWebsite = {
+                type: "website",
+                name: request.body.text_to_put_on_button,
+                link: request.body.website_url,
+                image: request.body.website_image,
+                imageFileName: request.body.websiteImageFileName,
+                imageMimeType: request.body.websiteImageMimeType,
+                imagePath: request.body.websiteImagePath,
+                userId: request.body.id,
+                createdBy: request.decoded.id
+            }
+            if(!request.body.websiteImageFileName && request.body.website_sample_image_url)
+            {
+                newWebsite.imageType = "favcon"
+                newWebsite.image = request.body.website_sample_image_url
+            }
+            else {
+                newWebsite.imageType = "uploaded"
+            }
+            if(request.body.selected_folder.id)
+            {
+                let folder = await EasyWeb.findById(request.body.selected_folder.id)
+                //console.log("folder", folder)
+                let folder_websites_order = 1
+                folder_websites_order = folder.websites.length
+                newWebsite.order = folder_websites_order
+                folder.websites.push(newWebsite)
+                let folder_list = await folder.save()
+                //console.log("now", folder)
+                data.status = true
+                data.data = folder_list
+                data.message = "success"
+                response.send(data)
+            }
+            else {
+                website = await EasyWeb.create(newWebsite)
+
+                data.status = true
+                data.data = website
+                data.message = "success"
+                response.send(data)
+            }
+
+
+
+
+        }
+        catch (err)
+        {
+            logger.error('Error::' + err)
+            Sentry.captureException(err)
+
+            data.message = "failed"
+            response.send(data)
+        }
+    }
 }
 
 module.exports = new EasyWebController()
