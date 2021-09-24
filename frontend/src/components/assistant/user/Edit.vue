@@ -584,6 +584,14 @@ export default {
               icon: "error",
             })
           }
+          else if (rerr.message && rerr.message.textCode == "ALERT" && rerr.message.customMessage)
+          {
+            swal({
+              title: "Failed",
+              text: rerr.message.customMessage,
+              icon: "error",
+            })
+          }
           else if(rerr.message && rerr.message.textCode && rerr.message.textCode == "AUTHENTICATIONFAILED")
           {
             swal({
@@ -592,6 +600,15 @@ export default {
               icon: "error",
             })
           }
+          else if(rerr.message && rerr.message.source == "timeout")
+          {
+            swal({
+              title: "Failed",
+              text: "Timeout.",
+              icon: "error",
+            })
+          }
+
           else
           {
             swal({

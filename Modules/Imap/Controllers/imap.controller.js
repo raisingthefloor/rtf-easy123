@@ -275,14 +275,19 @@ class ImapController {
                 
                     this.imapClient.once('error', (err) => {
                         this.imapClient.end();
+                        let textError = String(err)
                         error = true;
-                        responseCode = 500;
-                        logger.error('imap connection error :: '+err);
-                        res.status(responseCode).send({
+                        responseCode = 500
+                        err.customMessage = textError
+
+                        let dataRes = {
                             error: true,
                             data: null,
                             message: err
-                        });
+                        }
+                        res.status(500).send(dataRes)
+                        logger.error('imap connection error :: '+err);
+
                         Sentry.captureException(err)
 
                     });
@@ -693,7 +698,7 @@ class ImapController {
             var connection = new SMTPConnection(options)
 
             connection.on('connect', function () {
-                console.log("connect")
+                //console.log("connect")
                 /*res.send({
                     status: true,
                     data: null,
@@ -715,7 +720,7 @@ class ImapController {
                 Sentry.captureException(err)
             })
             connection.on('end', function (err) {
-                console.log("connection ended")
+                //console.log("connection ended")
                 if(!res.headersSent)
                 {
                     res.send({
@@ -730,7 +735,7 @@ class ImapController {
             })
 
             connection.connect(function (err) {
-                console.log("connection callback", err)
+                //console.log("connection callback", err)
                 if(err)
                 {
                     res.send({
