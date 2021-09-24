@@ -666,7 +666,7 @@ class ImapController {
      */
     async testSMTPConnection(req, res)
     {
-        //console.log("outgoing mail", req.body)
+        //console.log("outgoing mail", req.body.smtp_use_tls_ssl)
         let secure = false
         if(req.body.smtp_port == 465)
         {
@@ -681,64 +681,96 @@ class ImapController {
                 pass: req.body.smtp_password
             },
 
-            connectionTimeout: 500
+            connectionTimeout: 2000,
+            /*logger: true,
+            transactionLog: true,
+            debug: true*/
         }
         //console.log("options", options)
-        let connection = new SMTPConnection(options)
 
-        connection.on('connect', function () {
-            //console.log("connect")
-            /*res.send({
-                status: true,
-                data: null,
-                message: 'success'
-            })*/
-        })
-        connection.on('error', function (err) {
-            //console.log("errr", err)
-            if(!res.headersSent)
-            {
-                res.send({
-                    status: false,
-                    data: null,
-                    message: 'failed'
-                })
-            }
-
-            Sentry.captureException(err)
-        })
-        connection.on('end', function () {
-            //console.log("connection ended")
-        })
 
         try {
+            var connection = new SMTPConnection(options)
+
+            connection.on('connect', function () {
+                console.log("connect")
+                /*res.send({
+                    status: true,
+                    data: null,
+                    message: 'success'
+                })*/
+            })
+            connection.on('error', function (err) {
+                console.log("errr", err)
+                if(!res.headersSent)
+                {
+                    res.send({
+                        status: false,
+                        data: null,
+                        error: err,
+                        message: 'failed'
+                    })
+                }
+
+                Sentry.captureException(err)
+            })
+            connection.on('end', function (err) {
+                console.log("connection ended")
+                if(!res.headersSent)
+                {
+                    res.send({
+                        status: false,
+                        data: null,
+                        error: {
+                            code: 'CUSTOM_CONNECTION_CLOSED'
+                        },
+                        message: 'failed'
+                    })
+                }
+            })
+
             connection.connect(function (err) {
-                //console.log("connection callback", err)
+                console.log("connection callback", err)
+                if(err)
+                {
+                    res.send({
+                        status: false,
+                        data: null,
+                        error: err,
+                        message: 'failed'
+                    })
+                    Sentry.captureException(err)
+                }
+                else
+                {
+                    connection.login({
+                        user: req.body.smtp_username,
+                        pass: req.body.smtp_password
+                    }, function(err1) {
+                        console.log(err1)
+                        if (err1)
+                        {
+                            res.send({
+                                status: false,
+                                data: null,
+                                error: err1,
+                                message: 'failed'
+                            })
+                            Sentry.captureException(err1)
+                        }
+                        else
+                        {
+                            res.send({
+                                status: true,
+                                data: null,
+                                message: 'success'
+                            })
+                        }
 
-                connection.login({
-                    user: req.body.smtp_username,
-                    pass: req.body.smtp_password
-                }, function(err) {
-                    console.log(err)
-                    if (err)
-                    {
-                        res.send({
-                            status: false,
-                            data: null,
-                            message: 'failed'
-                        })
-                        Sentry.captureException(err)
-                    }
-                    else
-                    {
-                        res.send({
-                            status: true,
-                            data: null,
-                            message: 'success'
-                        })
-                    }
+                    })
+                }
 
-                })
+
             })
 
             /*res.send({
@@ -752,6 +784,7 @@ class ImapController {
             res.send({
                 status: false,
                 data: null,
+                error: err,
                 message: 'failed'
             })
             console.log(err)
