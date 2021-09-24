@@ -574,11 +574,33 @@ export default {
           }
         }, (error) => {
           self.testIncomingMailStatus = "FAILED"
-          swal({
-            title: "Failed",
-            text: "Incoming mail credentials are not working",
-            icon: "error",
-          })
+          let rerr = error.response.data
+          //console.log("err_message", error.response.data)
+          if(rerr.message && rerr.message.code && rerr.message.code == "ENOTFOUND")
+          {
+            swal({
+              title: "Failed",
+              text: "Not found.",
+              icon: "error",
+            })
+          }
+          else if(rerr.message && rerr.message.textCode && rerr.message.textCode == "AUTHENTICATIONFAILED")
+          {
+            swal({
+              title: "Failed",
+              text: "Authentication failed.",
+              icon: "error",
+            })
+          }
+          else
+          {
+            swal({
+              title: "Failed",
+              text: "Incoming mail credentials are not working.",
+              icon: "error",
+            })
+          }
+
 
           console.log(error)
         })
@@ -632,11 +654,59 @@ export default {
               else
               {
                 self.testOutgoingMailStatus = "FAILED"
-                swal({
-                  title: "Failed",
-                  text: "Outgoing mail credentials are not working",
-                  icon: "warning",
-                })
+                if(response.data.error)
+                {
+                  let serr = response.data.error
+                  if(serr.code == "ETIMEDOUT")
+                  {
+                    swal({
+                      title: "Failed",
+                      text: "Connection timeout",
+                      icon: "warning",
+                    })
+                  }
+                  else if(serr.code == "EDNS")
+                  {
+                    swal({
+                      title: "Failed",
+                      text: "Extended DNS error.",
+                      icon: "warning",
+                    })
+                  }
+                  else if (serr.code == "EAUTH")
+                  {
+                    swal({
+                      title: "Failed",
+                      text: serr.response,
+                      icon: "warning",
+                    })
+                  }
+                  else if (serr.code == "CUSTOM_CONNECTION_CLOSED")
+                  {
+                    swal({
+                      title: "Failed",
+                      text: "Connection closed automatically.",
+                      icon: "warning",
+                    })
+                  }
+                  else
+                  {
+                    swal({
+                      title: "Failed",
+                      text: "Outgoing mail credentials are not working",
+                      icon: "warning",
+                    })
+                  }
+                }
+                else
+                {
+                  swal({
+                    title: "Failed",
+                    text: "Outgoing mail credentials are not working",
+                    icon: "warning",
+                  })
+                }
+
 
                 //console.log(response.data)
               }
