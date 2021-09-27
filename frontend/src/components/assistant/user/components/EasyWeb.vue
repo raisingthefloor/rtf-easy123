@@ -456,6 +456,7 @@ export default {
       change_edit_image: false,
       edit_website_object: null,
       edit_website_signed_image_url: null,
+      imageType: 'favcon',
 
 
       //loading
