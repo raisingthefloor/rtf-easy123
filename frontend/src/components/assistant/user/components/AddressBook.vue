@@ -88,6 +88,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                     ref="vueavatar"
                     @vue-avatar-editor:image-ready="onImageReady"
                     @select-file="onSelectFile($event)"
+                    @imageLoaded="onImageLoaded($event)"
                     :image="vueSampleAvatar"
                 >
                 </vue-avatar>
@@ -120,8 +121,8 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                       <label for="email" class="form-label"><b>Email</b></label>
                       <div class="row">
                         <div class="col-md-6 mb-3" style="position:relative;" v-for="(email_field, index) in email" :key="index">
-                          <input type="email" class="form-control" :name="'email'+index" v-model="email[index]" id="email" required>
-                          <span style="position: absolute; right: 20px; top: 9px;" v-show="index > 0"><a href="javascript:void(0)" @click="removeEmail(index)" style="text-decoration: none;">X</a></span>
+                          <input type="email" class="form-control" :name="'email'+index" v-model="email[index]" id="email">
+                          <span style="position: absolute; right: 20px; top: 9px;"><a href="javascript:void(0)" @click="removeEmail(index)" style="text-decoration: none;"><font-awesome-icon :icon="['fas', 'window-close']" /></a></span>
                         </div>
                       </div>
                     </div>
@@ -138,19 +139,17 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
                 <div class="mb-3 p-2" style="border: 1px solid black;">
                   <div class="row">
+                    <label for="phone_number" v-if="!phoneNumber.length"><b>Phone Number</b></label>
                     <div class="col-md-12" v-for="(pn, index) in phoneNumber" :key="index">
                       <hr v-if="index != 0" style="height: 5px;">
                       <div class="row" style="position:relative;">
-                        <div class="col-md-12" v-if="index != 0">
-                          <div @click="deletePhoneNumber(index)" style="    position: absolute; right: 20px;"><a
-                              href="javascript:void(0)" style="text-decoration: none;">X</a></div>
+                        <div class="col-md-12">
+                          <div @click="deletePhoneNumber(index)" style="position: absolute; right: 20px;">
+                            <a href="javascript:void(0)" style="text-decoration: none;"><font-awesome-icon :icon="['fas', 'window-close']" /></a>
+                          </div>
                         </div>
 
-                        <div class="col-md-6">
-                          <label :for="'phone_number_'+index"><b>Phone Number</b></label>
-                          <input type="text" :id="'phone_number_'+index" :name="'phone_number_'+index" autocomplete="off" class="form-control" v-model.number="pn.number" @keypress="isNumber($event)" required>
-                        </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                           <label :for="'phone_number_type_'+index"><b>Type</b></label>
                           <select class="form-select" :id="'phone_number_type_'+index" :name="'phone_number_type_'+index" v-model="pn.type" required>
                             <option value="Mobile">Mobile</option>
@@ -159,14 +158,18 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                             <option value="Other">Other</option>
                           </select>
                         </div>
-                        <div class="col-md-6" v-if="pn.type == 'Mobile'">
-                          <label :for="'phone_number_carrier'+index" class="mt-2">Carrier</label>
-                          <select class="form-select" :id="'phone_number_carrier'+index" :name="'phone_number_carrier'+index" v-model="pn.carrier" required>
+                        <div class="col-md-4" v-if="pn.type == 'Mobile'">
+                          <label :for="'phone_number_carrier'+index"><b>Carrier</b></label>
+                          <select class="form-select" :id="'phone_number_carrier'+index" :name="'phone_number_carrier'+index" v-model="pn.carrier">
                             <option value="Verizon">Verizon</option>
                             <option value="AT&T">AT&T</option>
                             <option value="T-Mobile">T-Mobile</option>
                             <option value="Other">Other</option>
                           </select>
+                        </div>
+                        <div class="col-md-4">
+                          <label :for="'phone_number_'+index" class=""><b>Phone Number</b></label>
+                          <input type="text" :id="'phone_number_'+index" :name="'phone_number_'+index" autocomplete="off" class="form-control" v-model.number="pn.number" @keypress="isNumber($event)">
                         </div>
                       </div>
                     </div>
@@ -200,6 +203,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                       ref="vueavatar_edit"
                       @vue-avatar-editor:image-ready="onImageReady"
                       @select-file="onSelectFile($event)"
+                      @imageLoaded="onImageLoaded($event)"
                       :image="vueSampleAvatarEdit"
                   ></vue-avatar>
                 </div>
@@ -229,14 +233,14 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                   <span class="form-text text-danger" v-show="errors.name">Please enter Notes</span>
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-3 p-2" style="border: 1px solid black;">
                   <div class="row">
                     <div class="col-md-12">
                       <label for="email" class="form-label"><b>Email</b></label>
                       <div class="row">
                         <div class="col-md-6 mb-3" style="position:relative;" v-for="(email_field, index) in email" :key="index">
-                          <input type="email" class="form-control" :name="'email'+index" v-model="email[index]" id="email" required>
-                          <span style="position: absolute; right: 20px; top: 9px;" v-show="index > 0"><a href="javascript:void(0)" @click="removeEmail(index)" style="text-decoration: none;">X</a></span>
+                          <input type="email" class="form-control" :name="'email'+index" v-model="email[index]" id="email">
+                          <span style="position: absolute; right: 20px; top: 9px;"><a href="javascript:void(0)" @click="removeEmail(index)" style="text-decoration: none;"><font-awesome-icon :icon="['fas', 'window-close']" /></a></span>
                         </div>
                       </div>
                     </div>
@@ -254,20 +258,20 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                 <div class="mb-3 p-2" style="border: 1px solid black;">
                   <div class="row">
                     <div class="col-md-12" v-for="(pn, index) in phoneNumber" :key="index">
-                      <hr v-if="index != 0" style="height: 5px;">
+                      <hr style="height: 5px;" v-if="index != 0">
                       <div class="row" style="position:relative;">
-                        <div class="col-md-12" v-if="index != 0">
+                        <div class="col-md-12">
                           <div @click="deletePhoneNumber(index)" style="    position: absolute; right: 20px;"><a
-                              href="javascript:void(0)" style="text-decoration: none;">X</a></div>
+                              href="javascript:void(0)" style="text-decoration: none;"><font-awesome-icon :icon="['fas', 'window-close']" /></a></div>
                         </div>
 
                         <div class="col-md-6">
                           <label :for="'phone_number_edit_'+index">Phone Number</label>
-                          <input type="text" :id="'phone_number_edit_'+index" :name="'phone_number_edit_'+index" autocomplete="off" class="form-control" v-model.number="pn.number" @keypress="isNumber($event)" required>
+                          <input type="text" :id="'phone_number_edit_'+index" :name="'phone_number_edit_'+index" autocomplete="off" class="form-control" v-model.number="pn.number" @keypress="isNumber($event)">
                         </div>
                         <div class="col-md-6">
                           <label :for="'phone_number_type_edit_'+index">Type</label>
-                          <select class="form-select" :id="'phone_number_type_edit_'+index" :name="'phone_number_type_edit_'+index" autocomplete="off" v-model="pn.type" required>
+                          <select class="form-select" :id="'phone_number_type_edit_'+index" :name="'phone_number_type_edit_'+index" autocomplete="off" v-model="pn.type">
                             <option value="Mobile">Mobile</option>
                             <option value="Home">Home</option>
                             <option value="Work">Work</option>
@@ -276,7 +280,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                         </div>
                         <div class="col-md-6" v-if="pn.type == 'Mobile'">
                           <label :for="'phone_number_carrier_edit_'+index" class="mt-2">Carrier</label>
-                          <select class="form-select" :id="'phone_number_carrier_edit_'+index" :name="'phone_number_carrier_edit_'+index" v-model="pn.carrier" required>
+                          <select class="form-select" :id="'phone_number_carrier_edit_'+index" :name="'phone_number_carrier_edit_'+index" v-model="pn.carrier">
                             <option value="Verizon">Verizon</option>
                             <option value="AT&T">AT&T</option>
                             <option value="T-Mobile">T-Mobile</option>
@@ -304,8 +308,9 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
               </form>
 
             </div>
-            <div class="col-md-4" v-show="!show_add_contact_form && !show_edit_contact_form" v-if="current_contact.avatarName">
-              <address-book-contact-image :image="current_contact"></address-book-contact-image>
+            <div class="col-md-4" v-show="!show_add_contact_form && !show_edit_contact_form" >
+              <address-book-contact-image v-if="current_contact.avatarName" :image="current_contact"></address-book-contact-image>
+              <img v-else src="@/assets/images/contact-profile-pic.png" alt="">
             </div>
             <div class="col-md-8" v-show="!show_add_contact_form && !show_edit_contact_form" v-if="current_contact.id">
 
@@ -389,6 +394,7 @@ import axios from "axios";
 import {VueAvatar} from 'vue-avatar-editor-improved'
 import swal from "sweetalert";
 import AddressBookContactImage from "./AddressBookContactImage";
+//import contactProfilePic from '@/assets/images/contact-profile-pic.png'
 
 export default {
   name: 'AddressBook',
@@ -740,6 +746,7 @@ export default {
       this.notes = null
       this.email = []
       this.addEmail()
+      this.phoneNumber = []
       this.addPhoneNumber()
       this.vueSampleAvatar = null
       this.vueSampleAvatarEdit = null
@@ -770,12 +777,7 @@ export default {
       else {
         this.errors.name = false
       }
-      if (!this.email) {
-        this.errors.email = true
-      }
-      else {
-        this.errors.email = false
-      }
+
 
       if(this.edit_id)
       {
@@ -791,23 +793,11 @@ export default {
         if(this.add_contact_form_image_changed)
         {
           image_changed = true
-          this.errors.avatar = false
-        }
-        else
-        {
-          this.errors.avatar = true
+          //this.errors.avatar = false
         }
       }
 
-      /*if (!avatar)
-      {
-        this.errors.avatar = true
-      }
-      else {
-        this.errors.avatar = false
-      }*/
-
-      if(this.errors.name || this.errors.email || this.errors.avatar)
+      if(this.errors.name)
       {
         return
       }
@@ -856,8 +846,12 @@ export default {
               self.contacts.sort(function (a, b) {
                 return a.name.localeCompare(b.name)
               })
+              self.current_contact = {}
 
-              self.showContact(response.data.data.id)
+              self.$nextTick(function () {
+                self.showContact(response.data.data.id)
+              })
+
 
               return
             }
@@ -965,6 +959,45 @@ export default {
         }
 
       }
+    },
+    /** check if image is loaded **/
+    onImageLoaded(obj)
+    {
+      if(this.edit_id && obj)
+      {
+        this.edit_contact_form_image_changed = true
+        this.avatarMIME = this.getMimeTypeFromDataURL(this.$refs.vueavatar_edit.getImageScaled().toDataURL())
+      }
+      else
+      {
+        this.add_contact_form_image_changed = true
+        //console.log("mime", this.getMimeTypeFromDataURL(this.$refs.vueavatar.getImageScaled().toDataURL()))
+        this.avatarMIME = this.getMimeTypeFromDataURL(this.$refs.vueavatar.getImageScaled().toDataURL())
+      }
+      /*if(obj)
+      {
+        this.edit_contact_form_image_changed = true
+      }*/
+      //console.log("onImageLoaded obj", obj, event)
+    },
+    /** get mimetype from dataurl **/
+    getMimeTypeFromDataURL(data)
+    {
+      const base64Content = data
+
+      // base64 encoded data doesn't contain commas
+      let base64ContentArray = base64Content.split(",")
+
+      // base64 content cannot contain whitespaces but nevertheless skip if there are!
+      let mimeType = base64ContentArray[0].match(/[^:\s*]\w+\/[\w-+\d.]+(?=[;| ])/)[0]
+
+      // base64 encoded data - pure
+      //let base64Data = base64ContentArray[1]
+
+      return mimeType
+      /*console.log("base64Content: ", base64Content)
+      console.log("mimeType: ", mimeType)
+      console.log("base64Data: ", base64Data)*/
     }
   }
 }
