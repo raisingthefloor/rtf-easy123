@@ -30,5 +30,22 @@ exports.uniqid = async function (prefix = "", random = false) {
         let unique =`${prefix}${id}${random ? `.${Math.trunc(Math.random() * 100000000)}`:""}`;
         resolve(unique)
     })
-
 };
+
+exports.deleteS3Object = async function (path, name) {
+    return new Promise(async(resolve, reject) => {
+        const aws = require("aws-sdk")
+        aws.config.update({
+            accessKeyId: process.env.AWS_S3_ACCESS_KEY,
+            secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY
+        })
+        const s3 = new aws.S3()
+
+        let deleted_data = await s3.deleteObject({
+            Bucket: path,
+            Key: name
+        }).promise()
+
+        resolve(deleted_data)
+    })
+}
