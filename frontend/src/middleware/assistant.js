@@ -37,17 +37,17 @@ export default function assistant({ next }) {
     else if(store.state.AppActiveUser.role == "admin")
     {
         store.commit('SET_LAYOUT', 'admin-layout')
-        router.push('/admin')
+        router.push('/admin').catch(()=>{})
         //return next();
     }
     else if (store.state.AppActiveUser.role == "subscribed")
     {
         store.commit('SET_LAYOUT', 'simple-layout')
-        router.push('/home-working')
+        router.push('/home-working').catch(()=>{})
     }
     else {
         store.commit('SET_LAYOUT', 'simple-layout')
-        router.push('/')
+        router.push('/').catch(()=>{})
     }
 
     //return next();

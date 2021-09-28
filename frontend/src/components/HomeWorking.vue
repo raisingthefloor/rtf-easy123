@@ -188,6 +188,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
     <img src="/mail/trash1_1.png" class="trash1 trash" @mousedown="trashMousedown" @mouseup="trashMouseup" />
     <img src="/mail/trash1_2.png" class="trash2 trash" @mousedown="trashMousedown" @mouseup="trashMouseup" />
     <img src="/mail/desk.png" class="tray" @mousedown="trayMousedown" width="133" height="133" style="position:absolute; top:100px;"/>
+    <a href="javascript:void(0)" @click="$store.commit('LOGOUT_USER', $router)" v-if="$store.state.AppActiveUser.role=='user'" style="position: absolute; right: 10px; top: 10px;">Logout</a>
   </div>
 </template>
 <style>

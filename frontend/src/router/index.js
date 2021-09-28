@@ -38,7 +38,7 @@ import AssistantViewAsUser from "@/components/HomeWorking"
 
 import admin from "../middleware/admin"
 import assistant from "../middleware/assistant"
-import subscribed from "../middleware/subscribed"
+import user from "../middleware/user"
 import store from "../store/store";
 
 Vue.use(Router)
@@ -67,7 +67,7 @@ const router = new Router({
             name: 'HomeWorking',
             component: HomeWorking,
             meta: {
-                middleware: subscribed
+                middleware: user
             }
         },
 
