@@ -36,16 +36,16 @@ export default function admin({ next }) {
     else if (store.state.AppActiveUser.role == "subscribed")
     {
         store.commit('SET_LAYOUT', 'simple-layout')
-        router.push('/home-working')
+        router.push('/home-working').catch(()=>{})
     }
     else if (store.state.AppActiveUser.role == "assistant")
     {
         store.commit('SET_LAYOUT', 'admin-layout')
-        router.push('/assistant')
+        router.push('/assistant').catch(()=>{})
     }
     else {
         store.commit('SET_LAYOUT', 'simple-layout')
-        router.push('/')
+        router.push('/').catch(()=>{})
     }
 
     //return next();

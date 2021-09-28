@@ -26,29 +26,29 @@ import store from "../store/store";
 import router from "../router/index";
 
 //process only subscribed user request
-export default function subscribed({ next, to }) {
+export default function user({ next }) {
 //export default function subscribed({ next }) {
     store.commit('INITIALISE_STORE')
     console.log("assistant middleware")
-    if(store.state.AppActiveUser.role == "subscribed")
+    if(store.state.AppActiveUser.role == "user")
     {
         return next();
     }
     else if (store.state.AppActiveUser.role == "admin")
     {
         store.commit('SET_LAYOUT', 'admin-layout')
-        router.push('/admin')
+        router.push('/admin').catch(()=>{})
     }
     else if (store.state.AppActiveUser.role == "assistant")
     {
         console.log("assistant user")
         store.commit('SET_LAYOUT', 'admin-layout')
-        router.push('/assistant')
+        router.push('/assistant').catch(()=>{})
     }
     else
     {
-        console.log("here", to, store.state.AppActiveUser)
-        router.push('/')
+        //console.log("here", to, store.state.AppActiveUser)
+        router.push('/').catch(()=>{})
     }
 
 }

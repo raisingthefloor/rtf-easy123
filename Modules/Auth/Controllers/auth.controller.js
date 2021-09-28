@@ -62,7 +62,7 @@ class AuthController {
                     if(match)
                     {
                         //check if email is verified
-                        if(!user.emailVerified)
+                        if(user.role != "user" && !user.emailVerified)
                         {
                             response.send({
                                 status: false,
