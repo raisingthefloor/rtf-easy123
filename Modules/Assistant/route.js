@@ -44,6 +44,7 @@ module.exports = function (router) {
 
     //easyweb routes
     router.post('/api/assistant/user/easyweb/add-folder', validateToken, EasyWebController.addFolder.bind(EasyWebController))
+    router.post('/api/assistant/user/easyweb/update-folder', validateToken, EasyWebController.updateFolder.bind(EasyWebController))
     router.post('/api/temp/upload-image', EasyWebController.uploadImage.bind(EasyWebController))
     router.post('/api/assistant/user/easyweb/add-website', validateToken, EasyWebController.addWebsite.bind(EasyWebController))
     router.post('/api/assistant/user/easyweb/update-website', validateToken, EasyWebController.updateWebsite.bind(EasyWebController))
