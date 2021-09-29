@@ -72,6 +72,43 @@ class EasyWebController {
     }
 
     /**
+     * update folder
+     */
+    async updateFolder(request, response) {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+
+        try {
+            await EasyWeb.updateOne({
+                    _id: request.body.edit_id
+                },
+                {
+                name: request.body.folder_name
+            })
+
+            let allWebsiteAndFolder = await EasyWeb.find({
+                deleted: false
+            })
+
+            data.status = true
+            data.data = allWebsiteAndFolder
+            data.message = "success"
+            response.send(data)
+        }
+        catch (err) {
+            logger.error('Error::' + err)
+            Sentry.captureException(err)
+
+            data.message = "failed"
+
+            response.send(data)
+        }
+    }
+
+    /**
      * upload temp image for website
      */
     async uploadImage(request, response) {
@@ -449,6 +486,111 @@ class EasyWebController {
         {
             Sentry.captureException(err)
             logger.error('Error::' + err)
+
+            data.message = "failed"
+            response.send(data)
+        }
+    }
+
+    /**
+     * update website
+     */
+    async updateWebsite(request, response) {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+
+        try
+        {
+            let website
+            console.log("data", request.body)
+            let updateWebsite = {
+                name: request.body.text_to_put_on_button,
+                link: request.body.website_url,
+                image: request.body.website_image,
+                imageFileName: request.body.websiteImageFileName,
+                imageMimeType: request.body.websiteImageMimeType,
+                imagePath: request.body.websiteImagePath
+            }
+            if(!request.body.websiteImageFileName && request.body.website_sample_image_url)
+            {
+                updateWebsite.imageType = "favcon"
+                updateWebsite.image = request.body.website_sample_image_url
+            }
+            else {
+                updateWebsite.imageType = "uploaded"
+            }
+            if(request.body.selected_folder && request.body.selected_folder.id)
+            {
+                let Folder = await EasyWeb.findById(request.body.selected_folder.id)
+                //console.log("folder", Folder)
+
+                //folder.websites.push(updateWebsite)
+
+                /*let s = await Folder.find({
+                    "websites._id": request.body.edit_id
+                })*/
+                let s = await EasyWeb.updateOne({
+                    "websites": {
+                        "$elemMatch": {
+                            "_id": request.body.edit_id
+                        }
+                    }
+                }, {
+                    "$set": {
+                        "websites.$.name": updateWebsite.name,
+                        "websites.$.link": updateWebsite.link,
+                        "websites.$.image": updateWebsite.image,
+                        "websites.$.imageFileName": updateWebsite.imageFileName,
+                        "websites.$.imageMimeType": updateWebsite.imageMimeType,
+                        "websites.$.imagePath": updateWebsite.imagePath
+                    }
+                })
+
+                /*await Folder.websites.update({
+                    "websites._id": request.body.edit_id
+                }, {
+                    "$set": {
+                        "websites.$.name": updateWebsite.name
+                    }
+                })*/
+                //await Folder.save()
+
+                let allEasyWebs = await EasyWeb.find({
+                    deleted: false
+                })
+                //console.log("now", folder)
+                data.status = true
+                data.data = allEasyWebs
+                data.message = "success"
+                response.send(data)
+            }
+            else {
+                website = await EasyWeb.updateOne({
+                    _id: request.body.edit_id
+                }, updateWebsite)
+
+                let allEasyWebs = await EasyWeb.find({
+                    deleted: false
+                })
+
+                data.status = true
+                data.data = allEasyWebs
+                data.message = "success"
+                response.send(data)
+            }
+
+
+
+
+        }
+        catch (err)
+        {
+            console.log(err)
+            logger.error('Error::' + err)
+            Sentry.captureException(err)
 
             data.message = "failed"
             response.send(data)

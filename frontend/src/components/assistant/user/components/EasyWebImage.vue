@@ -79,7 +79,6 @@ export default {
       }
       else
       {
-        console.log("1 here", val)
         this.localImage = val.image
       }
     }
