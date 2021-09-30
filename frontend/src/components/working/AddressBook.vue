@@ -24,7 +24,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 -->
 <template>
     <div>
-        <div v-show="!contactDetails">
+        <div id="contact-list" v-show="!contactDetails">
             <div v-show="searchAlphabets.length">
                 <div class="close" title="Reset Filter" @click="resetSearch">X</div><br/>
             </div>
@@ -57,7 +57,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
             </table>
         </div>
 
-        <div style="position:relative" v-if="contactDetails">
+        <div id="contact-details" style="position:relative" v-if="contactDetails">
             <div class="close" title="Close Contact" @click="hideContactDetails">X</div>
             <div style= "position:relative;left:60px;width:120px; height:143px;border : 1px solid #f0e9eb; z-index: 3; background-color: #fefefe;">
                 <div>
@@ -70,7 +70,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                         <img v-if="!contactDetails.avatarName" src="@/assets/images/contact-profile-pic.png" alt="User Avatar" height="128" width="128">
                     </div>
                     <div id="person_name" align="left" style="padding-left:0px;position:absolute; left:188px; top:80px; font-size: 30px">{{contactDetails.contactName ? contactDetails.contactName : ''}}</div>
-                    <div id ="options" style="position:absolute; left: -1px; top: 203px;" align="center">
+                    <div id="options">
                         <!--User Email Info-->
                         <div v-if="contactDetails.email && contactDetails.email.length">
                             <a v-for="email in contactDetails.email" :key="email" class="large awesome reply" :href="`mailto:${email}`">
@@ -197,7 +197,11 @@ export default {
         },
 
         hideContactDetails(){
-            this.contactDetails = null;
+            //this.contactDetails = null;
+            //window.$("#contact-details").css('z-index', 1);
+            window.$("#contact-details").animate({left: '500px'}, 500, () => {
+              this.contactDetails = null;  
+            });
         },
 
         resetSearch(){
