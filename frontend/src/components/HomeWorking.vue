@@ -61,14 +61,14 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
       <img src="/mail/tray_envelope2.png" id="tray_envelope2" style="display:none"/>
 
       <Polaroid2
-          :mail="mail"
-          :key="mail.messageId"
-          v-for="mail in mails"
-          @mousedown="polaroidMousedown($event)"
-          @mouseup="polaroidMouseup($event)"
-          @replyClick="replyClick($event)"
-          @closeClick="closeClick($event)"
-          @throwawayClick="throwawayClick($event)"
+        :mail="mail"
+        :key="mail.messageId"
+        v-for="mail in mails"
+        @mousedown="polaroidMousedown($event)"
+        @mouseup="polaroidMouseup($event)"
+        @replyClick="replyClick($event)"
+        @closeClick="closeClick($event)"
+        @throwawayClick="throwawayClick($event)"
       ></Polaroid2>
 
 
@@ -87,25 +87,25 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
     <div class="flap"  style="position:absolute;z-index: 5; left: 852px; top: 203px;" @click="flapClick($event)"> <img src="/images/contact1.png"  /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">G H</div></div>
 
-    <div  class="flap" style="position:absolute;z-index: 5; left: 852px; top: 250px;" @click="flapClick($event)"> <img src="/images/contact1.png" /> <div style="position:absolute; left: 7px; top: 7px; font-size: 22px">I J</div></div>
+    <div  class="flap" style="position:absolute;z-index: 5; left: 852px; top: 250px;" @click="flapClick($event)"> <img src="/images/contact1.png" /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">I J</div></div>
 
-    <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 297px;" @click="flapClick($event)"> <img src="/images/contact1.png" /> <div style="position:absolute; left: 7px; top: 7px; font-size: 22px">K L</div> </div>
+    <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 297px;" @click="flapClick($event)"> <img src="/images/contact1.png" /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">K L</div> </div>
 
     <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 344px;" @click="flapClick($event)"> <img src="/images/contact1.png" /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">M N</div></div>
 
-    <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 391px;" @click="flapClick($event)"> <img src="/images/contact1.png" /> <div style="position:absolute; left: 7px; top: 7px; font-size: 22px">O P</div></div>
+    <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 391px;" @click="flapClick($event)"> <img src="/images/contact1.png" /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">O P</div></div>
 
     <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 438px;" @click="flapClick($event)"> <img src="/images/contact1.png" /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">Q R</div></div>
 
-    <div class="flap" style="position:absolute; z-index: 5;left: 852px; top: 485px;" @click="flapClick($event)"> <img src="/images/contact1.png" /> <div style="position:absolute; left: 7px; top: 7px; font-size: 22px">S T</div></div>
+    <div class="flap" style="position:absolute; z-index: 5;left: 852px; top: 485px;" @click="flapClick($event)"> <img src="/images/contact1.png" /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">S T</div></div>
 
-    <div class="flap" style="position:absolute; z-index: 5;left: 852px; top: 532px;" @click="flapClick($event)"> <img src="/images/contact1.png" /> <div style="position:absolute; left: 7px; top: 7px; font-size: 22px">U V</div></div>
+    <div class="flap" style="position:absolute; z-index: 5;left: 852px; top: 532px;" @click="flapClick($event)"> <img src="/images/contact1.png" /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">U V</div></div>
 
     <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 579px;" @click="flapClick($event)"> <img src="/images/contact1.png" /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">W X</div></div>
 
     <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 626px;" @click="flapClick($event)"> <img src="/images/contact1.png" /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">Y Z</div></div>
 
-    <div id="person" ref="person" style= "position:absolute;left:60px; top:306px;    width:120px; height:143px;border : 1px solid #f0e9eb; display:none; z-index: 3; background-color: #fefefe;     ">
+    <!-- <div id="person" ref="person" style= "position:absolute;left:60px; top:306px;    width:120px; height:143px;border : 1px solid #f0e9eb; display:none; z-index: 3; background-color: #fefefe;     ">
       <div id="person_contact" ref="person_contact" style="display:none;">
         <img id="person_pic" src="/contacts/gregg.gif" width="128" height="128" style="margin:30px;"/>
         <div id="person_name" align="left" style="padding-left:0px;position:absolute; left:188px; top:80px; font-size: 30px"></div>
@@ -120,7 +120,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           <a class="large awesome" href="#"><img align="left" style="padding:0px" src="/images/Chat.png"  ><div  id="chat" align="left" style="padding-left:80px; padding-top: 17px; font-size: 26px">Chat with Gregg</div></a>
         </div>
       </div>
-    </div>
+    </div> -->
 
     <img class="spiral" src="/mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
     <img class="spiral" src="/mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
@@ -130,47 +130,13 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
     <img class="spiral" src="/mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
     <img class="spiral" src="/mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
 
-    <div id="contact" style="position:absolute;left:60px; top:306px; z-index:2;   width:120px; height:143px; display:none">
+    <div id="contact" class="contact_overflow" style="position:absolute;left:60px; top:306px; z-index:2;   width:120px; height:143px; display:none">
       <MailToPrompt v-if="showMailToPrompt" 
         @writeMailClicked="writeMailClicked"
       />
-      <table id="newspaper-b" style="display:none">
-
-        <tbody>
-        <tr id="0" ref="people_ref_0" class="contact" @click="contactClick($event)" style="height:95px;">
-          <td style="padding-right:0px; margin:0px; width: 100px"><img id="contact_pic" src="/contacts/Adam.jpg" width="70" height="70" /></td>
-          <td id="contact_name" align="left" style="padding:0px; margin: 0px;" >Adam Smith</td>
-        </tr>
-
-        <tr id="1" ref="people_ref_1" class="contact" @click="contactClick($event)" style="height:95px;">
-          <td style="padding-right:0px;width: 100px; margin:0px"><img id="contact_pic" src="/contacts/Anna.jpg" width="70" height="70" style="" /></td>
-          <td id="contact_name" align="left" style="padding-left:0px; margin:0px">Anna Johnson</td>
-        </tr>
-
-        <tr id="2" ref="people_ref_2" class="contact" @click="contactClick($event)" style="height:95px;">
-          <td style="padding-right:0px;width: 100px; margin:0px"><img id="contact_pic" src="/contacts/Becky.jpg" width="70" height="70" style="" /></td>
-          <td id="contact_name" align="left" style="padding-left:0px; margin:0px">Becky Jones</td>
-        </tr>
-
-        <tr id="3" ref="people_ref_3" class="contact" @click="contactClick($event)" style="height:95px;">
-          <td style="padding-right:0px;width: 100px; margin:0px"><img id="contact_pic" src="/contacts/gregg.gif" width="70" height="70" style="display:none;" /></td>
-          <td id="contact_name" align="left" style="padding-left:0px; margin:0px">&nbsp;</td>
-        </tr>
-
-        <tr id="4" ref="people_ref_4" class="contact" @click="contactClick($event)" style="height:95px;">
-          <td style="padding-right:0px;width: 100px; margin:0px"><img id="contact_pic" src="/contacts/gregg.gif" width="70" height="70" style="display:none;" /></td>
-          <td id="contact_name" align="left" style="padding-left:0px; margin:0px">&nbsp;</td>
-        </tr>
-
-        <tr class="contact" id="5" ref="people_ref_5" @click="contactClick($event)" style="height:95px;">
-          <td style="padding-right:0px; margin:0px"><img id="contact_pic" src="/contacts/gregg.gif" width="70" height="70" style="display:none;" /></td>
-          <td id="contact_name" align="left" style="padding-left:0px; margin:0px">&nbsp;</td>
-        </tr>
-
-        </tbody>
-      </table>
-
-      
+      <AddressBook v-show="!showMailToPrompt"
+        :search-alphabets="searchAlphabets" @resetSearch="resetSearchAlphabet" 
+      />
     </div>
     <!--Write Mail button-->
     <div id="mail-btn">
@@ -299,6 +265,7 @@ import Polaroid from "./working/Polaroid"
 import Polaroid2 from "./working/Polaroid2"
 import MailToPrompt from "./working/MailToPrompt";
 import MailLetterPrompt from "./working/MailLetterPrompt"
+import AddressBook from "./working/AddressBook";
 const toBlobURL = require('stream-to-blob-url')
 
 function mySideChange(front) {
@@ -660,7 +627,8 @@ export default {
     "Polaroid": Polaroid,
     "Polaroid2": Polaroid2,
     "MailToPrompt" : MailToPrompt,
-    "MailLetterPrompt": MailLetterPrompt
+    "MailLetterPrompt": MailLetterPrompt,
+    AddressBook
   },
   data() {
     return {
@@ -706,7 +674,8 @@ export default {
       previousStyle: {
         left: 500,
         'z-index': 0
-      }
+      },
+      searchAlphabets: []
     }
   },
   computed: {
@@ -1071,7 +1040,8 @@ export default {
       return mail.payload.headers.find(x => x.name === header_name).value;
     },
     flapClick(e) {
-      var self = this
+      this.searchAlphabets = e.currentTarget.textContent.split(' ');
+      /*var self = this
       if(self.isPerson==1)
       {
         self.isPerson=0;
@@ -1097,7 +1067,7 @@ export default {
           $('#'+p).find('#contact_name').html('&nbsp;');
 
         }
-      }
+      }*/
     },
     contactClick(e) {
       var self = this
@@ -1463,7 +1433,7 @@ export default {
               $('#person').hide();
             }
           });
-          $('#contact').animate({'position':'absolute','left':'300px', 'top':'20px',    'width':'550px','height':'650px'},1000,function(){
+          $('#contact').animate({'position':'absolute','left':'300px', 'top':'20px', 'width':'550px','height':'650px'},1000,function(){
             $('#newspaper-b').show();
             $(".flap").show();
             $('.spiral').show();
@@ -2861,7 +2831,23 @@ export default {
           this.trashedMails.push(mail);
         })
         .catch(err => console.log(err));
+    },
+
+    resetSearchAlphabet(){
+      this.searchAlphabets = [];
     }
   }
 }
 </script>
+
+<style scoped>
+  .contact_overflow{
+    max-height: 650px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .flap{
+    cursor: pointer;
+  }
+</style>
