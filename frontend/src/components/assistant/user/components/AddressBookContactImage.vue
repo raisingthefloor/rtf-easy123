@@ -1,7 +1,9 @@
 <template>
   <div>
-    <img v-if="!loading" :src="localImage" alt="" style="max-width: 200px; max-height: 200px;">
-    <span class="mt-3" v-if="loading">Loading...</span>
+    <img v-if="!loading" :src="localImage" :alt="image.avatarName" 
+      :height="height" :width="width"
+      style="max-width: 200px; max-height: 200px;">
+    <span class="mt-3" v-if="loading">{{loadingText}}</span>
   </div>
 </template>
 
@@ -14,11 +16,21 @@ import axios from "axios";
 
 export default {
   name: 'AddressBookContactImage',
-  props: ['image'],
+  props: ['image', 'height', 'width'],
   data() {
     return {
       localImage: null,
       loading: false
+    }
+  },
+  computed:{
+    loadingText(){
+      let text = "Loading ...";
+
+      if(this.height == 70 && this.width == 70){
+        text = "...";
+      }
+      return text; 
     }
   },
   watch: {
@@ -69,6 +81,8 @@ export default {
             b64 = b64 + ';base64,'
             b64 = b64 + imageData
             self.localImage = b64
+            //emitting an event that updates the original object with imageData
+            self.$emit('privateImageLoaded', {id:self.image.id, imageData});
 
           }, (error) => {
             console.log(error)
