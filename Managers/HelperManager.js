@@ -42,8 +42,8 @@ exports.deleteS3Object = async function (path, name) {
         const s3 = new aws.S3()
 
         let deleted_data = await s3.deleteObject({
-            Bucket: path,
-            Key: name
+            Bucket: process.env.AWS_S3_BUCKET,
+            Key: path
         }).promise()
 
         resolve(deleted_data)

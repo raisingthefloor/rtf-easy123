@@ -12,6 +12,7 @@
 <script>
 
 import axios from "axios";
+import swal from "sweetalert";
 
 export default {
   name: 'EasyWebImage',
@@ -59,17 +60,30 @@ export default {
             }
           }).then((response) => {
             self.loading = false
-            let imageData = response.data.data
+            if(response.data.status)
+            {
+              let imageData = response.data.data
 
-            let b64 = 'data:'
+              let b64 = 'data:'
 
-            b64 = b64 + val.imageMimeType
-            b64 = b64 + ';base64,'
-            b64 = b64 + imageData
-            self.localImage = b64
+              b64 = b64 + val.imageMimeType
+              b64 = b64 + ';base64,'
+              b64 = b64 + imageData
+              self.localImage = b64
+            }
+            else {
+              swal(self.$t('server_error_occurred_please_contact_admin'), {
+                icon: "warning",
+              })
+            }
+
+
 
           }, (error) => {
             console.log(error)
+            swal(self.$t('server_error_occurred_please_contact_admin'), {
+              icon: "warning",
+            })
             self.loading = false
           })
         }

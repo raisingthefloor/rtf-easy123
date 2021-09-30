@@ -44,9 +44,10 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                 :options="{ animation:200 }"
                 @change="folderMoved"
             >
-              <a href="javascript:void(0)" class="user-folder me-3 mb-3" :ref="'folder_'+index" v-bind:class="(current_folder && current_folder.id == folder.id)?'folder-selected':''" v-for="(folder, index) in folders" :key="folder.id" @click="openFolder(folder.id)" style="text-decoration: none;" @keydown="folderKeyDown($event, index)">
-                  <i class="fas fa-folder folder-icon me-2"></i>
+              <a href="javascript:void(0)" class="user-folder me-3 mb-3" :ref="'folder_'+index" v-bind:class="(current_folder && current_folder.id == folder.id)?'folder-selected':''" v-for="(folder, index) in folders" :key="folder.id" @click="openFolder(folder.id)" style="text-decoration: none; position: relative;" @keydown="folderKeyDown($event, index)">
                   <div>{{ folder.name }}</div>
+                <font-awesome-icon :icon="['fas', 'edit']" style="position: absolute; right: 27px; top: 19px; font-size: 15px; color: #4DCBF0;" @click="editFolder(folder, index)"></font-awesome-icon>
+                <font-awesome-icon :icon="['fas', 'trash']" style="position: absolute; right: 10px; top: 19px; font-size: 15px; color: #DC4543;" @click="deleteFolder(folder, index)"></font-awesome-icon>
               </a>
 
             </draggable>
@@ -70,9 +71,13 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
             </div>
           </div>
         </div>
-        <div class="col-md-5 text-center">
-          <img :src="getImageData(current_photo)" v-if="!loading_image" alt="" style="max-height: 100%; max-width: 100%;" class="mb-5">
+        <div class="col-md-5 text-center" v-if="folders.length">
+          <img :src="getImageData(current_photo)" v-if="!loading_image" alt="" style="max-height: 100%; max-width: 100%;" class="mb-2">
           <h4 class="text-center mt-5" v-if="loading_image">Loading...</h4>
+          <button type="button" class="btn btn-sm btn-danger mb-5 d-block float-end" @click="deletePhoto(current_photo)" v-if="current_photo && current_photo.id" :readonly="deleting_photo" :disabled="deleting_photo">
+            <span v-if="!deleting_photo">Delete</span>
+            <span v-if="deleting_photo">Deleting...</span>
+          </button>
         </div>
       </div>
 
@@ -148,11 +153,9 @@ export default {
       folders: [],
       current_folder: null,
       myFiles: [],
-      current_photo: {},
+      current_photo: null,
       loading_image: false,
-      current_photo_index: 0,
-      current_folder_index: 0,
-      current_index_scroll: 'folder'
+      deleting_photo: false
 
     }
   },
@@ -178,131 +181,16 @@ export default {
       switch (e.keyCode) {
         case 37:
           //alert('left');
-            //this.current_index_scroll = "photo"
           break;
         case 38:
           //alert('up');
-          /*if(this.current_photo.id && this.current_index_scroll == "photo")
-          {
-            let new_photo_index
-            if(this.current_photo_index == 0)
-            {
-              new_photo_index = this.current_folder.photos.length - 1
-              let el = this.$refs['photo_'+new_photo_index][0]
-              if(el)
-              {
-                el.focus({
-                  behavior: "smooth"
-                })
-              }
-              this.current_photo_index = new_photo_index
-            }
-            else {
-              new_photo_index = this.current_photo_index - 1
-              let el = this.$refs['photo_'+new_photo_index][0]
-              if(el)
-              {
-                el.focus({
-                  behavior: "smooth"
-                })
-              }
-
-              this.current_photo_index = new_photo_index
-            }
-
-          }
-          else if(this.folders.length && this.current_index_scroll == "folder")
-          {
-            let new_folder_index
-            if(this.current_folder_index == 0)
-            {
-              new_folder_index = this.folders.length - 1
-              let el = this.$refs['folder_'+new_folder_index][0]
-              if(el)
-              {
-                el.focus({
-                  behavior: "smooth"
-                })
-              }
-              this.current_folder_index = new_folder_index
-            }
-            else
-            {
-              new_folder_index = this.current_folder_index - 1
-              let el = this.$refs['folder_'+new_folder_index][0]
-              if(el)
-              {
-                el.focus({
-                  behavior: "smooth"
-                })
-              }
-
-              this.current_folder_index = new_folder_index
-            }
-          }*/
           break;
         case 39:
           //alert('right');
-            /*if(this.folders && this.folders.length && this.folders[this.current_folder_index])
-            {
-              this.openFolder(this.folders[this.current_folder_index].id)
-            }*/
 
           break;
         case 40:
           //alert('down');
-            /*if(this.current_photo.id && this.current_index_scroll == "photo")
-            {
-              let new_photo_index = this.current_photo_index + 1
-              if(this.current_folder.photos && this.current_folder.photos[new_photo_index])
-              {
-                let el = this.$refs['photo_'+new_photo_index][0]
-                if(el)
-                {
-                  el.focus({
-                    behavior: "smooth"
-                  })
-                }
-                this.current_photo_index = new_photo_index
-              }
-              else {
-                let el = this.$refs['photo_0'][0]
-                if(el)
-                {
-                  el.focus({
-                    behavior: "smooth"
-                  })
-                }
-                this.current_photo_index = 0
-              }
-            }
-            else if(this.folders.length && this.current_index_scroll == "folder")
-            {
-              let new_folder_index = this.current_folder_index + 1
-              if(this.folders && this.folders[new_folder_index])
-              {
-                let el = this.$refs['folder_'+new_folder_index][0]
-                if(el)
-                {
-                  el.focus({
-                    behavior: "smooth"
-                  })
-                }
-                this.current_folder_index = new_folder_index
-              }
-              else {
-                let el = this.$refs['folder_0'][0]
-                if(el)
-                {
-                  el.focus({
-                    behavior: "smooth"
-                  })
-                }
-                this.current_folder_index = 0
-              }
-            }*/
-
-
           break;
       }
     });
@@ -374,7 +262,6 @@ export default {
             if(value && value != "") {
               //check if folder name already exists
               let existing = null
-              console.log("folders le", self)
               if(self.folders.length)
                 existing = self.folders.find(obj => obj.name == value)
 
@@ -388,7 +275,7 @@ export default {
                   name: value
                 })
                 .then((response) => {
-                  console.log(response)
+                  //console.log(response)
 
                   self.folders.push({
                     "id": response.data.data.id,
@@ -406,6 +293,182 @@ export default {
             swal.close();
           })
     },
+    /** edit/rename folder **/
+    editFolder(folder, index)
+    {
+      console.log("editFolder", folder, index)
+      let self = this
+      swal({
+        text: "Edit folder name",
+        content: {
+          element: "input",
+          attributes: {
+            value: folder.name,
+            type: "text",
+          },
+        },
+        button: {
+          text: "Update",
+          closeModal: false,
+        },
+        closeOnClickOutside: false,
+        closeOnEsc: false
+      })
+          .then((value) => {
+            if(value && value != "") {
+              //check if folder name already exists
+              let existing = null
+              if(self.folders.length)
+                existing = self.folders.find(obj => obj.name == value)
+
+              if(!existing)
+              {
+
+
+                //save entry to database
+                axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/assistant/user/update-folder/',{
+                  id: self.$route.params.id,
+                  edit_id: folder.id,
+                  name: value
+                })
+                .then((response) => {
+                  //console.log(response)
+                  if(response.data.status)
+                  {
+                    for (let i = 0; i < self.folders.length; i++) {
+                      if(self.folders[i].id == folder.id)
+                      {
+                        self.folders[i].name = value
+                      }
+                    }
+
+                    if (self.current_folder.id == folder.id)
+                    {
+                      self.current_folder.name = value
+                    }
+                  }
+                  else {
+                    swal(self.$t('server_error_occurred_please_contact_admin'), {
+                      icon: "warning",
+                    })
+                  }
+
+                  swal.stopLoading();
+                  swal.close();
+                  /*self.folders.push({
+                    "id": response.data.data.id,
+                    "name": value,
+                    "photos": []
+                  })*/
+                }, (error) => {
+                  console.log(error)
+                  swal(self.$t('server_error_occurred_please_contact_admin'), {
+                    icon: "warning",
+                  })
+                  swal.stopLoading();
+                  swal.close();
+                })
+              }
+
+
+            }
+            else {
+              swal.stopLoading();
+              swal.close();
+            }
+
+          })
+    },
+    /** delete folder */
+    async deleteFolder(folder)
+    {
+      //console.log("deleteFolder", folder, index)
+      let self = this
+      let willDelete = await swal({
+        title: "Are you sure you want to delete the folder?",
+        text: "All photos inside the folder will be also be deleted.",
+        icon: "warning",
+        buttons: ["Cancel", "Delete"],
+        dangerMode: true,
+      })
+
+      if (willDelete) {
+
+        let response = await axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/assistant/user/delete-folder", {
+          id: self.$route.params.id,
+          delete_id: folder.id
+        })
+
+        if(response.data.status)
+        {
+          this.folders = this.folders.filter(obj => obj.id != folder.id)
+          this.current_folder = null
+          this.current_photo = null
+        }
+        else
+        {
+          swal(self.getTranslation('server_error_occurred_please_contact_admin'), {
+            icon: "warning",
+          })
+          //console.log(response)
+        }
+
+      } else {
+        //pressed cancel button
+      }
+
+    },
+    /** delete single photo **/
+    async deletePhoto(current_photo)
+    {
+      let self = this
+      let willDelete = await swal({
+        title: "Are you sure you want to delete?",
+        //text: "All photos inside the folder will be also be deleted.",
+        icon: "warning",
+        buttons: ["Cancel", "Delete"],
+        dangerMode: true,
+      })
+
+      if (willDelete)
+      {
+        self.deleting_photo = true
+        axios.post(process.env.VUE_APP_API_HOST_NAME + "/api/assistant/user/delete-single-photo", {
+          id: self.$route.params.id,
+          folder_id: self.current_folder.id,
+          photo_id: current_photo.id
+        })
+            .then((response) => {
+              self.deleting_photo = false
+              if(response.data.status)
+              {
+                self.current_folder.photos = self.current_folder.photos.filter(obj => obj._id != current_photo.id)
+                self.current_photo = null
+                if(self.current_folder.photos.length)
+                {
+                  self.current_photo = self.showPhoto(self.current_folder.photos[0])
+                }
+              }
+              else {
+                swal(self.$t('server_error_occurred_please_contact_admin'), {
+                  icon: "warning",
+                })
+              }
+
+            }, (error) => {
+              self.deleting_photo = false
+              swal(self.$t('server_error_occurred_please_contact_admin'), {
+                icon: "warning",
+              })
+              console.log(error)
+            })
+      }
+      else {
+        //pressed cancel button
+      }
+
+
+    },
     openFolder(id) {
       this.current_folder = this.folders.find(obj => obj.id == id)
       if(this.current_folder.photos && this.current_folder.photos.length)
@@ -420,6 +483,7 @@ export default {
     },
     /** show photo after getting it from the server **/
     showPhoto(photo) {
+
       let self = this
       this.loading_image = true
       axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/get-private-image", {
@@ -428,12 +492,24 @@ export default {
       })
       .then((response) => {
         self.loading_image = false
-        //console.log(response.data)
-        self.current_photo = {
-          id: photo._id,
-          mimetype: photo.mimetype,
-          data: response.data.data
+        if(response.data.status)
+        {
+          if(self.folders.length)
+          {
+            self.current_photo = {
+              id: photo._id,
+              mimetype: photo.mimetype,
+              data: response.data.data
+            }
+          }
+
         }
+        else {
+          swal(self.$t('server_error_occurred_please_contact_admin'), {
+            icon: "warning",
+          })
+        }
+
       }, (error) => {
         self.loading_image = false
         console.log(error)
