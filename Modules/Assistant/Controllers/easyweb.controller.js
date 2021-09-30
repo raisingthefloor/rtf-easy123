@@ -131,21 +131,21 @@ class EasyWebController {
                 secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY
             })
             const s3 = new aws.S3()
-
+            let bucket = process.env.AWS_S3_BUCKET
             filename = uniqid + "-" + filename
 
-            let bucket_path = process.env.AWS_S3_BUCKET + "/" + request.body.id + "/easyweb"
+            let bucket_path =  request.body.id + "/easyweb/"+filename
             const s3res = await s3.upload({
-                Bucket: bucket_path,
-                Key: filename,
+                Bucket: bucket,
+                Key: bucket_path,
                 Body: request.files.avatar.data,
                 ACL: "private"
             }).promise()
 
             const s3data =  await s3.getObject(
                 {
-                    Bucket: bucket_path,
-                    Key: filename
+                    Bucket: bucket,
+                    Key: bucket_path
                 }
             ).promise();
 
@@ -159,28 +159,7 @@ class EasyWebController {
             }
             data.message = "success"
             response.send(data)
-            /*response.status(200).send({
-                status: true,
-                data: {'/uploads/'+filename},
-                message: 'success'
-            })*/
 
-            /*avatar.mv('./public/uploads/'+filename, function (err) {
-                if(err) {
-                    response.status(406).send({
-                        status: false,
-                        data: err,
-                        message: 'failed'
-                    })
-                }
-                else {
-                    response.status(200).send({
-                        status: true,
-                        data: '/uploads/'+filename,
-                        message: 'success'
-                    })
-                }
-            })*/
         }
         catch (err)
         {

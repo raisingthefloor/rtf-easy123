@@ -299,6 +299,157 @@ class UserController {
     }
 
     /**
+     * rename folder
+     */
+    async updateFolder(request, response) {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+        try {
+            let folder = await Folder.updateOne({
+                _id: request.body.edit_id
+            }, {
+                name: request.body.name
+            })
+
+            data.status = true
+            data.data = folder
+            data.message = "success"
+            response.send(data)
+        }
+        catch (err)
+        {
+            Sentry.captureException(err)
+            logger.error('Error::' + err)
+
+            data.status = false
+            data.data = null
+            data.error = err
+            data.message = 'failed'
+
+            response.send(data)
+        }
+
+    }
+
+    /**
+     * delete folder
+     */
+    async deleteFolder(request, response) {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+        try {
+            let folder = await Folder.findOne({
+                _id: request.body.delete_id
+            })
+            if(folder && folder.photos && folder.photos.length)
+            {
+                let params = {
+                    Bucket: process.env.AWS_S3_BUCKET,
+                    Delete: {
+                        Objects: []
+                    }
+                }
+                for (let i = 0; i < folder.photos.length; i++) {
+                    params.Delete.Objects.push({
+                        Key: folder.photos[i].path
+                    })
+                }
+                //console.log("params", params, params.Delete.Objects)
+                aws.config.update({
+                    accessKeyId: process.env.AWS_S3_ACCESS_KEY,
+                    secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY
+                })
+
+                const s3 = new aws.S3()
+                s3.deleteObjects(params, function(err, deleteData) {
+                    if(err)
+                    {
+                        Sentry.captureException(err)
+                    }
+                    //console.log("err", err)
+                    //console.log("data", deleteData)
+                })
+
+                //console.log(deleteResponse)
+            }
+
+            await Folder.deleteOne({
+                _id: request.body.delete_id
+            })
+
+            data.status = true
+            data.data = folder
+            data.message = "success"
+            response.send(data)
+        }
+        catch (err)
+        {
+            Sentry.captureException(err)
+            logger.error('Error::' + err)
+
+            data.status = false
+            data.data = null
+            data.error = err
+            data.message = 'failed'
+
+            response.send(data)
+        }
+
+    }
+
+    /**
+     * delete single photo
+     */
+    async deleteSinglePhoto(request, response) {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+        try {
+
+            let folder = await Folder.findOne({
+                _id: request.body.folder_id
+            })
+
+            let photo = folder.photos.find(obj => obj._id == request.body.photo_id)
+
+            await Folder.updateOne({
+                _id: request.body.folder_id
+            }, {
+                "$pull": {
+                    "photos": { _id: request.body.photo_id }
+                }
+            })
+
+            await HelperManager.deleteS3Object(photo.path, photo.name)
+
+            data.status = true
+            data.data = folder
+            data.message = "success"
+            response.send(data)
+        }
+        catch (err)
+        {
+            Sentry.captureException(err)
+            logger.error('Error::' + err)
+
+            data.status = false
+            data.data = null
+            data.error = err
+            data.message = 'failed'
+
+            response.send(data)
+        }
+    }
+
+    /**
      * get all folders of user
      */
     async getAllFolders(request, response) {
@@ -352,19 +503,19 @@ class UserController {
         const s3 = new aws.S3()
         let uniqid = await HelperManager.uniqid()
         filename = uniqid + "-" + filename
-        let bucket_path = process.env.AWS_S3_BUCKET + "/" + request.body.id + "/photos"
+        let bucket = process.env.AWS_S3_BUCKET
+        let bucket_path = request.body.id + "/photos/"+filename
         const s3res = await s3.upload({
-            Bucket: bucket_path,
-            Key: filename,
+            Bucket: bucket,
+            Key: bucket_path,
             Body: request.files.avatar.data,
             ACL: "private"
         }).promise()
 
-
         const s3data =  await s3.getObject(
             {
-                Bucket: bucket_path,
-                Key: filename
+                Bucket: bucket,
+                Key: bucket_path
             }
         ).promise();
 
@@ -393,31 +544,6 @@ class UserController {
             data: folder,
             message: 'success'
         })
-
-
-
-        /*avatar.mv('./public/uploads/'+filename, function (err) {
-            if(err) {
-                response.status(406).send({
-                    status: false,
-                    data: err,
-                    message: 'failed'
-                })
-            }
-            else {
-
-
-                response.status(200).send({
-                    status: true,
-                    data: url.format({
-                        protocol: request.protocol,
-                        host: request.get('host'),
-                        pathname: '/uploads/'+filename
-                    }),
-                    message: 'success'
-                })
-            }
-        })*/
     }
 
     /**
@@ -443,8 +569,8 @@ class UserController {
             {
                 const s3data =  await s3.getSignedUrl('getObject',
                     {
-                        Bucket: request.body.photo.path,
-                        Key: request.body.photo.name,
+                        Bucket: process.env.AWS_S3_BUCKET,
+                        Key: request.body.photo.path,
                         Expires: 60*5
                     }
                 )
@@ -459,8 +585,8 @@ class UserController {
             {
                 const s3data =  await s3.getObject(
                     {
-                        Bucket: request.body.photo.path,
-                        Key: request.body.photo.name
+                        Bucket: process.env.AWS_S3_BUCKET,
+                        Key: request.body.photo.path
                     }
                 ).promise();
                 const b64 = Buffer.from(s3data.Body).toString('base64')
@@ -577,8 +703,6 @@ class UserController {
                 let uniqid = await HelperManager.uniqid()
                 let string = request.body.avatar
 
-                let filepath = "public/uploads/avatar/"
-
                 let mimetype = string.substring(string.indexOf(":")+1, string.indexOf(";"))
 
                 let regex = /^data:.+\/(.+);base64,(.*)$/;
@@ -591,10 +715,11 @@ class UserController {
                 let buffer = Buffer.from(data1, 'base64');
 
                 let filename = uniqid+"."+ext
-                let bucket_path = process.env.AWS_S3_BUCKET + "/" + request.body.id + "/addressBook"
+                let bucket = process.env.AWS_S3_BUCKET
+                let bucket_path = request.body.id + "/addressBook/"+filename
                 const s3res = await s3.upload({
-                    Bucket: bucket_path,
-                    Key: filename,
+                    Bucket: bucket,
+                    Key: bucket_path,
                     Body: buffer,
                     ACL: "private"
                 }).promise()
@@ -669,8 +794,8 @@ class UserController {
                 const s3 = new aws.S3()
 
                 let deleted_data = await s3.deleteObject({
-                    Bucket: contact.avatarPath,
-                    Key: contact.avatarName
+                    Bucket: process.env.AWS_S3_BUCKET,
+                    Key: contact.avatarPath
                 }).promise()
             }
 
@@ -772,10 +897,11 @@ class UserController {
                 let buffer = Buffer.from(data1, 'base64');
 
                 let filename = uniqid+"."+ext
-                let bucket_path = process.env.AWS_S3_BUCKET + "/" + request.body.id + "/addressBook"
+                let bucket = process.env.AWS_S3_BUCKET
+                let bucket_path = request.body.id + "/addressBook/"+filename
                 const s3res = await s3.upload({
-                    Bucket: bucket_path,
-                    Key: filename,
+                    Bucket: bucket,
+                    Key: bucket_path,
                     Body: buffer,
                     ACL: "private"
                 }).promise()
