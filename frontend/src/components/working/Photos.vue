@@ -5,20 +5,22 @@
       <div id="noAlbumsMessage" style="text-align:center; padding:50px; display: none;">There are no albums</div>
 
 
-      <div id="anAlbum" class="anAlbum" style="top: 0px; left: 0px; opacity: 1; width: 119.987px; display: block; height: 139.99px;">
+      <div id="anAlbum" class="anAlbum" style="top: 0px; left: 0px; opacity: 1; width: 119.987px; display: block; height: 139.99px;" v-for="(folder, index) in $store.state.home.folders" :key="index" v-bind:style="{ left: (index * 140) + 'px' }">
         <div class="$showAlbum" style="text-decoration:none; cursor:pointer;">
-          <img class="thumbnailStack" src="images/album/photoPile.png">
+          <img class="thumbnailStack" src="@/assets/images/photo-pile.png">
+
+          <img class="$thumbnailURL albumThumbnail wahighlight" :src="getThumbImage(folder)">
+<!--          <img class="$thumbnailURL albumThumbnail wahighlight" src="https://drive.google.com/uc?export=view&amp;id=0B4EBx0R_Zm3YYzJtY09HTFBaZUk">-->
+          <div class="$name albumTitle">{{ folder.name }}</div>
+        </div>
+      </div>
+<!--      <div id="anAlbum" class="anAlbum" style="top: 0px; left: 140px; opacity: 1; width: 119.987px; display: block; height: 139.99px;">
+        <div class="$showAlbum" style="text-decoration:none; cursor:pointer;">
+          <img class="thumbnailStack" src="@/assets/images/photo-pile.png">
           <img class="$thumbnailURL albumThumbnail wahighlight" src="https://drive.google.com/uc?export=view&amp;id=0B4EBx0R_Zm3YYzJtY09HTFBaZUk">
           <div class="$name albumTitle">2008 Christmas</div>
         </div>
-      </div>
-      <div id="anAlbum" class="anAlbum" style="top: 0px; left: 140px; opacity: 1; width: 119.987px; display: block; height: 139.99px;">
-        <div class="$showAlbum" style="text-decoration:none; cursor:pointer;">
-          <img class="thumbnailStack" src="images/album/photoPile.png">
-          <img class="$thumbnailURL albumThumbnail wahighlight" src="https://drive.google.com/uc?export=view&amp;id=0B4EBx0R_Zm3YYzJtY09HTFBaZUk">
-          <div class="$name albumTitle">2008 Christmas</div>
-        </div>
-      </div>
+      </div>-->
 <!--      <div class="anAlbum anAlbum_CLONED" style="top: 0px; left: 140px; opacity: 1; width: 119.987px; display: block; height: 139.99px;">
         <div class="$showAlbum" style="text-decoration:none; cursor:pointer;">
           <img class="thumbnailStack" src="images/album/photoPile.png">
@@ -90,6 +92,7 @@ img.albumThumbnail {
 </style>
 
 <script>
+
 import axios from "axios";
 export default {
   name: 'Photos',
@@ -100,7 +103,8 @@ export default {
   },
   mounted() {
     let self = this
-    if(self.$store.state.home.folders && self.$store.state.home.folders.length)
+    console.log("here", self.$store.state.home.folders)
+    if(self.$store.state.home.folders && self.$store.state.home.folders.length == 0)
     {
       axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/user/get-folders")
       .then((response) => {
@@ -120,5 +124,13 @@ export default {
     }
 
   },
+  methods: {
+    getThumbImage(folder) {
+      if(folder.photos && folder.photos.length)
+      {
+        //axios.get(process.env.VUE_APP_API_HOST_NAME)
+      }
+    }
+  }
 }
 </script>
