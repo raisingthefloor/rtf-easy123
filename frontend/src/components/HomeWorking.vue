@@ -76,7 +76,12 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         @sendMailDiscard="sendMailDiscard($event)"
       />
 
-      <div id="photocontent"></div>
+      <Photos v-if="showPhotos"></Photos>
+      <div id="photocontent">
+
+      </div>
+
+
     </div>
 
     <div class="flap" style="position:absolute; z-index: 5; left: 852px; top: 61px;" @click="flapClick($event)"> <img src="/images/contact1.png"  /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">A B</div> </div>
@@ -135,7 +140,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         @writeMailClicked="writeMailClicked"
       />
       <AddressBook v-show="!showMailToPrompt"
-        :search-alphabets="searchAlphabets" @resetSearch="resetSearchAlphabet" 
+        :search-alphabets="searchAlphabets" @resetSearch="resetSearchAlphabet"
       />
     </div>
     <!--Write Mail button-->
@@ -266,6 +271,7 @@ import Polaroid2 from "./working/Polaroid2"
 import MailToPrompt from "./working/MailToPrompt";
 import MailLetterPrompt from "./working/MailLetterPrompt"
 import AddressBook from "./working/AddressBook";
+import Photos from "./working/Photos"
 const toBlobURL = require('stream-to-blob-url')
 
 function mySideChange(front) {
@@ -628,7 +634,8 @@ export default {
     "Polaroid2": Polaroid2,
     "MailToPrompt" : MailToPrompt,
     "MailLetterPrompt": MailLetterPrompt,
-    AddressBook
+    AddressBook,
+    "Photos": Photos
   },
   data() {
     return {
@@ -675,7 +682,8 @@ export default {
         left: 500,
         'z-index': 0
       },
-      searchAlphabets: []
+      searchAlphabets: [],
+      showPhotos: false
     }
   },
   computed: {
@@ -1343,6 +1351,15 @@ export default {
     },
     palbumClick() {
       var self = this
+      if(this.showPhotos)
+      {
+        this.showPhotos = false
+      }
+      else
+      {
+        this.showPhotos = true
+      }
+
       if(self.albumOpened==0 && self.loadingPhotos==0)
       {
         var delay=0;

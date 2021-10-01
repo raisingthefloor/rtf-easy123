@@ -22,14 +22,11 @@
  * Adobe Foundation
  * Consumer Electronics Association Foundation
  **/
-let express = require('express');
-let app = require('./server');
-let router = express.Router();
 
-require('./Modules/Auth/route')(router);
-require('./Modules/Admin/route')(router);
-require('./Modules/Assistant/route')(router);
-require('./Modules/Imap/route')(router);
-require('./Modules/User/route')(router);
-app.use(router)
-module.exports = router;
+const UserController = require('./Controllers/user.controller')
+const validateToken = require('../Auth/utils').validateToken
+
+module.exports = function (router) {
+    router.post('/api/user/get-folders', validateToken, UserController.getFolders.bind(UserController))
+
+}

@@ -114,6 +114,13 @@ const mutations = {
         state.layout = payload
     },
 
+    //home
+    /** save folders to state **/
+    STORE_HOME_FOLDERS(state, payload)
+    {
+        state.home.folders = payload
+    },
+
 
 
 
