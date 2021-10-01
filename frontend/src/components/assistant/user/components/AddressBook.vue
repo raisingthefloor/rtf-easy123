@@ -660,7 +660,7 @@ export default {
             }
             else
             {
-              swal(self.getTranslation('server_error_occurred_please_contact_admin'), {
+              swal(self.$t('server_error_occurred_please_contact_admin'), {
                 icon: "warning",
               })
             }

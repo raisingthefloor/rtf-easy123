@@ -48,6 +48,7 @@ const Website = {
 const schema = new mongoose.Schema({
     type: {type: String, trim: true},
     name: {type: String, trim: true},
+    link: {type: String, trim: true, default: null},
     userId: mongoose.Schema.ObjectId,
     image: {type: String, trim: true, default: null},
     imageFileName: {type: String, trim: true, default: null},

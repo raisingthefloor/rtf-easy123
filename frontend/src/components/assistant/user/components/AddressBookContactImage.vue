@@ -1,6 +1,6 @@
 <template>
   <div>
-    <img v-if="!loading" :src="localImage" :alt="image.avatarName" 
+    <img v-if="!loading" :src="localImage" :alt="image.avatarName"
       :height="height" :width="width"
       style="max-width: 200px; max-height: 200px;">
     <span class="mt-3" v-if="loading">{{loadingText}}</span>
@@ -13,6 +13,7 @@
 <script>
 
 import axios from "axios";
+import swal from "sweetalert";
 
 export default {
   name: 'AddressBookContactImage',
@@ -30,7 +31,7 @@ export default {
       if(this.height == 70 && this.width == 70){
         text = "...";
       }
-      return text; 
+      return text;
     }
   },
   watch: {
@@ -47,7 +48,7 @@ export default {
   },
   methods: {
     formateImage(val) {
-      console.log("val", val)
+      //console.log("val", val)
       let self = this
       //check if object
       if(val.avatarName)
@@ -73,19 +74,32 @@ export default {
           })
           .then((response) => {
             self.loading = false
-            let imageData = response.data.data
+            if(response.data.status)
+            {
 
-            let b64 = 'data:'
+              let imageData = response.data.data
 
-            b64 = b64 + val.avatarMIME
-            b64 = b64 + ';base64,'
-            b64 = b64 + imageData
-            self.localImage = b64
-            //emitting an event that updates the original object with imageData
-            self.$emit('privateImageLoaded', {id:self.image.id, imageData});
+              let b64 = 'data:'
+
+              b64 = b64 + val.avatarMIME
+              b64 = b64 + ';base64,'
+              b64 = b64 + imageData
+              self.localImage = b64;
+              //emitting an event that updates the original object with imageData
+              self.$emit('privateImageLoaded', {id:self.image.id, imageData});
+            }
+            else {
+              swal(self.$t('server_error_occurred_please_contact_admin'), {
+                icon: "warning",
+              })
+            }
+
 
           }, (error) => {
             console.log(error)
+            swal(self.$t('server_error_occurred_please_contact_admin'), {
+              icon: "warning",
+            })
             self.loading = false
           })
         }
