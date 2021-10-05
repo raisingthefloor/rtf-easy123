@@ -28,5 +28,6 @@ const validateToken = require('../Auth/utils').validateToken
 
 module.exports = function (router) {
     router.post('/api/user/get-folders', validateToken, UserController.getFolders.bind(UserController))
+    router.post('/api/user/folders/photos', validateToken, UserController.getFolderPhotos.bind(UserController))
 
 }

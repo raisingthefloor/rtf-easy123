@@ -44,7 +44,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           </h3>
         </div>
       </a>
-      <a class="button" style=" position: absolute;  margin:25px;"  href="javascript:void(0)" id="palbum" @click="palbumClick()">
+      <a class="button albumButton" style=" position: absolute;  margin:25px;"  href="javascript:void(0)" id="palbum" @click="palbumClick()">
         <div id="palbum_cont" style="vertical-align:middle; top:50%; left:50%; position:absolute; margin-top:-80px; margin-left:-88px; z-index:3"><img width="175" height="175" id="palbumimg" src="/mail/album2.png" /> </div>
       </a>
       <a class="button" style=" position: absolute;  margin:25px;"  href="javascript:void(0)" id="icontact" @click="icontactClick">
@@ -712,9 +712,28 @@ export default {
   },
   mounted() {
     this.initMount()
+    this.getPhotosFolders()
     //console.log("date", moment())
   },
   methods: {
+    getPhotosFolders() {
+      let self = this
+      axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/user/get-folders")
+          .then((response) => {
+            if(response.data.status)
+            {
+              self.$store.commit('STORE_HOME_FOLDERS', response.data.data)
+              //self.$store.state.home.folders = response.data.data
+            }
+            else {
+              console.log("response", response.data)
+            }
+
+
+          }, (error) => {
+            console.log("error", error)
+          })
+    },
     initMount() {
       var self = this
 
@@ -1350,17 +1369,38 @@ export default {
       }
     },
     palbumClick() {
-      var self = this
+      let self = this
       if(this.showPhotos)
       {
-        this.showPhotos = false
+
+        var pos = $('.albumButton').position();
+        var css = {
+          top: pos.top + 50 + 'px',
+          left: pos.left + 100 - $('#albumContents').position().left + 'px',
+          opacity: 0
+        };
+        $('.anAlbum').animate(css, 500);
+        setTimeout(function() {
+          $('#albumContents').hide();
+          self.showPhotos = false
+          }, 500);
       }
       else
       {
         this.showPhotos = true
+
+        this.showMailToPrompt = false;
+        $('.tray').hide();
+        $('#mail-btn').hide();
+        $('.trash1').hide();
+        $('.trash2').hide();
+
+
+
+
       }
 
-      if(self.albumOpened==0 && self.loadingPhotos==0)
+      /*if(self.albumOpened==0 && self.loadingPhotos==0)
       {
         var delay=0;
         self.albumOpened=1;
@@ -1399,7 +1439,7 @@ export default {
       {
         self.albumOpened=0;
         self.albumin();
-      }
+      }*/
     },
     icontactClick() {
       var self = this
