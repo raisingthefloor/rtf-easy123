@@ -22,6 +22,7 @@
  * Adobe Foundation
  * Consumer Electronics Association Foundation
  **/
+const {User} = require("../Modules/Auth/Models/user.model")
 
 exports.uniqid = async function (prefix = "", random = false) {
     return new Promise((resolve, reject) => {
@@ -47,5 +48,32 @@ exports.deleteS3Object = async function (path, name) {
         }).promise()
 
         resolve(deleted_data)
+    })
+}
+
+exports.getLoggedInUser = async function (decoded_data) {
+    return new Promise(async (resolve, reject) => {
+        let user = await User.findOne({
+            _id: decoded_data.id
+        })
+
+        if(user)
+        {
+            if(user.role == "assistant")
+            {
+                let ouser = await User.findOne({
+                    user_id: user.createdBy,
+                    role: "user"
+                })
+                resolve(ouser)
+            }
+            else
+            {
+                resolve(user)
+            }
+        }
+        else {
+            reject('Logged in user not found')
+        }
     })
 }

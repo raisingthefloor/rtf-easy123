@@ -39,6 +39,9 @@ const state = {
     route: '/',
     AppActiveUser           : userDefaults,
     setInitialDone: false,
+    home: {
+        folders: []
+    },
 
 
 

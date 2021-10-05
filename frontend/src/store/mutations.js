@@ -114,6 +114,45 @@ const mutations = {
         state.layout = payload
     },
 
+    //home
+    /** save folders to state **/
+    STORE_HOME_FOLDERS(state, payload)
+    {
+        state.home.folders = payload
+    },
+
+    /** store image signed url from aws s3 **/
+    STORE_HOME_FOLDER_PHOTO_URL(state, payload)
+    {
+        //console.log("imageData in store", payload)
+        for (let i = 0; i < state.home.folders.length; i++)
+        {
+            if (state.home.folders[i].id == payload.folder_id)
+            {
+                for (let j = 0; j < state.home.folders[i].photos.length; j++)
+                {
+                    if (state.home.folders[i].photos[j]._id == payload.photo_id)
+                    {
+                        //console.log("imageData in store matched", state.home.folders[j].photos[j])
+                        state.home.folders[i].photos[j].imageData = payload.imageData
+                        break
+                    }
+                }
+            }
+        }
+    },
+
+    /** store folder photos array **/
+     STORE_HOME_FOLDER_PHOTOS_ARRAY(state, payload)
+     {
+         for (let i = 0; i < state.home.folders.length; i++) {
+             if(state.home.folders[i].id == payload.folder_id)
+             {
+                 state.home.folders[i].photosUrls = payload.urls
+                 break
+             }
+         }
+     },
 
 
 
