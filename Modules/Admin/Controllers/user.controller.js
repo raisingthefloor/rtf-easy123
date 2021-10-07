@@ -41,10 +41,62 @@ class UserController {
         }
 
         try {
+
+            let retUsers = []
+            let total = await User.countDocuments({
+                deleted: false,
+                role: {$in: ["admin", "assistant"]}
+            })
+
+            let users = await User.find({
+                deleted: false,
+                role: {$in: ["admin", "assistant"]}
+            })
+                .sort({
+                role: 1,
+                updatedAt: -1
+            })
+                .limit(request.body.tableConfig.perPage)
+                .skip(request.body.tableConfig.perPage * (request.body.tableConfig.page-1))
+
+            for (let i = 0; i < users.length; i++) {
+                if (users[i].role == "assistant")
+                {
+                    let tempObj = {}
+                    let user = await User.findOne({
+                        createdBy: users[i]._id,
+                        role: "user"
+                    })
+                    if(user)
+                    {
+                        //tempObj.id = users[i].id
+                        tempObj.name = users[i].name
+                        tempObj.email = users[i].email
+                        tempObj.id = users[i].id
+                        tempObj.account_name = user.name
+                        tempObj.account_nickname = user.nickname
+                        //console.log(tempObj)
+                        tempObj.role = "Assistant/User"
+                        retUsers.push(tempObj)
+                    }
+
+                }
+                else {
+                    users[i].role = "Admin"
+                    retUsers.push(users[i])
+                }
+            }
+
             data.status = true
-            data.data = await User.find({deleted: false})
+            data.data = {
+                users: retUsers,
+                total: total
+            }
+
+
             response.send(data)
         } catch (err) {
+            console.log(err)
             Sentry.captureException(err)
             logger.error('Error::' + err)
 
@@ -71,7 +123,20 @@ class UserController {
         }
         try {
             //find one
-            let user = await User.findOne({_id:request.body.id}).exec()
+            let user = await User.findOne({
+                _id:request.body.id
+            }).exec()
+
+            if(user.role == "assistant")
+            {
+                //soft delete user created by this assistant
+                let createdUser = await User.findOne({
+                    createdBy: user.id,
+                    deleted: false,
+                    role: 'user'
+                })
+                await createdUser.softdelete()
+            }
 
             //soft delete
             user = await user.softdelete()
