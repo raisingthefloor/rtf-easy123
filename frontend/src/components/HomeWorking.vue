@@ -25,31 +25,37 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 <template>
   <div>
     <div id="containment-wrapper" >
-      <a class="button" style=" position: absolute; left: 0px; top: 0px; margin:25px;" id="mail" @click="mailClick()" href="javascript:void(0)">
-        <div id="mailbox_cont" style="vertical-align:middle; top:50%; left:50%; position:absolute; margin-top: -88px; margin-left: -88px; z-index:1">
-          <img  id="mailbox" src="/mail/mailbox_c.png" />
+      <a class="button" style="position: absolute; left: 0px; top: 0px; margin:25px; width: 145px; height: 145px;" id="mail" @click="mailClick()" href="javascript:void(0)">
+        <div id="mailbox_cont" style="vertical-align:middle; top:50%; left:50%; position:absolute; margin-top: -62px; margin-left: -75px; z-index:1">
+          <img  id="mailbox" src="/mail/mailbox_c.png" width="125px" height="125px" />
         </div>
 
         <div  style=" position:absolute; left:55%; z-index:2; top:0%" v-show="mails.length || loading_mails">
-          <img  align='right' src='/mail/call1.png' width="110" height="110" alt='' style="z-index:2;" />
+          <img  align='right' src='/mail/call1.png' width="90" height="90" alt='' style="z-index:2;" />
         </div>
         <div style=" position:absolute; position:absolute; left:67%; top:10%; z-index:3; width: 130px" v-if="mails.length && !loading_mails">
           <h3>
             <b id="new_emails" style='color:#ffffff; font-size: 20px'>{{ mails.length }} New </b>
           </h3>
         </div>
-        <div style=" position:absolute; position:absolute; left:63%; top:10%; z-index:3; width: 130px" v-if="loading_mails">
+        <div style=" position:absolute; position:absolute; left:63%; top:8%; z-index:3; width: 130px" v-if="loading_mails">
           <h3>
-            <b id="new_emails" style='color:#ffffff; font-size: 19px'>Checking </b>
+            <b id="new_emails" style='color:#ffffff; font-size: 15px'>Checking </b>
           </h3>
         </div>
       </a>
-      <a class="button albumButton" style=" position: absolute;  margin:25px;"  href="javascript:void(0)" id="palbum" @click="palbumClick()">
-        <div id="palbum_cont" style="vertical-align:middle; top:50%; left:50%; position:absolute; margin-top:-80px; margin-left:-88px; z-index:3"><img width="175" height="175" id="palbumimg" src="/mail/album2.png" /> </div>
+      <a class="button albumButton" style=" position: absolute;  margin:25px;  width: 145px; height: 145px;"  href="javascript:void(0)" id="palbum" @click="palbumClick()">
+        <div id="palbum_cont" style="vertical-align:middle; top:50%; left:50%; position:absolute; margin-top:-56px; margin-left:-64px; z-index:3"><img  width="125" height="125" id="palbumimg" src="/mail/album2.png" /> </div>
       </a>
-      <a class="button" style=" position: absolute;  margin:25px;"  href="javascript:void(0)" id="icontact" @click="icontactClick">
-        <div id="palbum_cont" style="vertical-align:middle; top:50%; left:50%; position:absolute; margin-top:-70px; margin-left:-75px; z-index:3">
-          <img id="palbumimg" src="/mail/contact.png" />
+      <a class="button" style=" position: absolute;  margin:25px;  width: 145px; height: 145px;"  href="javascript:void(0)" id="icontact" @click="icontactClick">
+        <div id="palbum_cont" style="vertical-align:middle; top:50%; left:50%; position:absolute; margin-top:-60px; margin-left:-65px; z-index:3">
+          <img id="palbumimg" src="/mail/contact.png" width="125" height="125" />
+        </div>
+      </a>
+
+      <a class="button" style=" position: absolute;  margin:25px;  width: 145px; height: 145px;"  href="javascript:void(0)" id="easyweb" @click="easywebClick">
+        <div id="easyweb_cont" style="vertical-align:middle; top:50%; left:50%; position:absolute; margin-top:-62px; margin-left:-62px; z-index:3">
+          <img id="easywebimg" src="/mail/easyweb.png" />
         </div>
       </a>
 
@@ -80,6 +86,9 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
       <div id="photocontent">
 
       </div>
+      <Easyweb v-if="showEasyweb"></Easyweb>
+
+
 
 
     </div>
@@ -255,12 +264,6 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 }
 </style>
 
-<script>
-import Polaroid2 from "./working/Polaroid2";
-export default {
-  components: {Polaroid2}
-}
-</script>
 <script type="text/javascript" src="jquery/jquery-ui.min.js"></script>
 <script type="text/javascript" src="mail/jquery-css-transform.js"></script>
 <script type="text/javascript" src="mail/rotate3Di.js"></script>
@@ -272,6 +275,7 @@ import MailToPrompt from "./working/MailToPrompt";
 import MailLetterPrompt from "./working/MailLetterPrompt"
 import AddressBook from "./working/AddressBook";
 import Photos from "./working/Photos"
+import Easyweb from "./working/Easyweb"
 const toBlobURL = require('stream-to-blob-url')
 
 function mySideChange(front) {
@@ -635,7 +639,8 @@ export default {
     "MailToPrompt" : MailToPrompt,
     "MailLetterPrompt": MailLetterPrompt,
     AddressBook,
-    "Photos": Photos
+    "Photos": Photos,
+    "Easyweb": Easyweb
   },
   data() {
     return {
@@ -683,7 +688,8 @@ export default {
         'z-index': 0
       },
       searchAlphabets: [],
-      showPhotos: false
+      showPhotos: false,
+      showEasyweb: false
     }
   },
   computed: {
@@ -713,9 +719,29 @@ export default {
   mounted() {
     this.initMount()
     this.getPhotosFolders()
+    this.getEasywebFoldersAndLinks()
     //console.log("date", moment())
   },
   methods: {
+    getEasywebFoldersAndLinks() {
+      let self = this
+      axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/user/get-easyweb-links-folders")
+          .then((response) => {
+            if(response.data.status)
+            {
+
+              self.$store.commit('STORE_HOME_EASYWEB_DATA', response.data.data)
+              //self.$store.state.home.folders = response.data.data
+            }
+            else {
+              console.log("response", response.data)
+            }
+
+
+          }, (error) => {
+            console.log("error", error)
+          })
+    },
     getPhotosFolders() {
       let self = this
       axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/user/get-folders")
@@ -915,10 +941,17 @@ export default {
       this.moimg=new Image();
 
       $(this.moimg).attr('src','/mail/mailbox_o.png');
+      $(this.moimg).attr('width','160');
+      $(this.moimg).attr('height','182');
+      // $(this.moimg).css('z-index','4');
+      //$(this.moimg).parent().css('margin-left','-75px');
       $(this.moimg).attr('id','mailbox');
 
       this.mcimg=new Image();
       $(this.mcimg).attr('src','/mail/mailbox_c.png');
+      $(this.mcimg).attr('width','125');
+      $(this.mcimg).attr('height','125');
+      //$(this.moimg).parent().css('margin-left','-65px');
       $(this.mcimg).attr('id','mailbox');
 
       var csstrash = {
@@ -944,6 +977,9 @@ export default {
 
       $("#icontact").css('left','0px');
       $("#icontact").css('top',2 * self.getInt($('#palbum').css('margin'))+ 2 * self.getInt($('#palbum').css('height'))+'px');
+
+      $("#easyweb").css('left','0px');
+      $("#easyweb").css('top',3 * self.getInt($('#icontact').css('margin'))+ 3 * self.getInt($('#icontact').css('height'))+'px');
 
       $(".tray").css(csstrash);
 
@@ -1146,6 +1182,17 @@ export default {
 
       if(self.mailOpened==0)
       {
+        if(self.showPhotos)
+        {
+          //self.showPhotos = false
+          self.closePhotosAlbum()
+        }
+
+        if(self.showEasyweb)
+        {
+          self.closeEasyweb()
+        }
+
         if(self.albumOpened==1)
         {
           self.albumOpened=0;
@@ -1372,18 +1419,8 @@ export default {
       let self = this
       if(this.showPhotos)
       {
-
-        var pos = $('.albumButton').position();
-        var css = {
-          top: pos.top + 50 + 'px',
-          left: pos.left + 100 - $('#albumContents').position().left + 'px',
-          opacity: 0
-        };
-        $('.anAlbum').animate(css, 500);
-        setTimeout(function() {
-          $('#albumContents').hide();
-          self.showPhotos = false
-          }, 500);
+        self.closePhotosAlbum()
+        //self.showPhotos  = false
       }
       else
       {
@@ -1394,6 +1431,30 @@ export default {
         $('#mail-btn').hide();
         $('.trash1').hide();
         $('.trash2').hide();
+
+        if(self.contactOpened==1)
+        {
+          self.contactOpened=0;
+          self.contactin();
+        }
+
+        if(self.showMailToPrompt){
+          self.showMailToPrompt = false;
+          self.showMailLetter = false;
+          self.contactin();
+        }
+
+        if(self.mailOpened==1)
+        {
+          self.mailOpened=0;
+          self.mailin(self.mcimg);
+
+        }
+
+        if(self.showEasyweb)
+        {
+          self.closeEasyweb()
+        }
 
 
 
@@ -1466,6 +1527,19 @@ export default {
           this.contactin();
           this.sendMailDiscard();
         }
+
+        if(self.showPhotos)
+        {
+          //self.showPhotos = false
+          self.closePhotosAlbum()
+        }
+
+        if(self.showEasyweb)
+        {
+          self.closeEasyweb()
+        }
+
+
         $('.tray').hide();
         $('#mail-btn').hide();
         $('.trash1').show();
@@ -1481,7 +1555,7 @@ export default {
           $('#person_contact').hide();
           $('#newspaper-b').hide();
           $('#contact').show();
-          $('#person').animate({'position':'absolute','left':'300px', 'top':'20px',    'width':'550px','height':'650px'},1000,function() {
+          $('#person').animate({'position':'absolute','left':'300px', 'top':'20px', 'opacity':1,   'width':'550px','height':'650px'},1000,function() {
             if(self.isPerson==1) {
               $('#person_contact').show();
             }
@@ -1490,7 +1564,7 @@ export default {
               $('#person').hide();
             }
           });
-          $('#contact').animate({'position':'absolute','left':'300px', 'top':'20px', 'width':'550px','height':'650px'},1000,function(){
+          $('#contact').animate({'position':'absolute','left':'300px', 'top':'20px', 'opacity':1, 'width':'550px','height':'650px'},1000,function(){
             $('#newspaper-b').show();
             $(".flap").show();
             $('.spiral').show();
@@ -1502,6 +1576,49 @@ export default {
       {
         self.contactOpened=0;
         self.contactin();
+      }
+    },
+    easywebClick() {
+      let self = this
+      if(this.showEasyweb)
+      {
+        //this.showEasyweb = false
+        this.closeEasyweb()
+      }
+      else
+      {
+        $('.tray').hide();
+        $('#mail-btn').hide();
+        $('.trash1').hide();
+        $('.trash2').hide();
+
+        if(self.showPhotos)
+        {
+          //self.showPhotos = false
+          self.closePhotosAlbum()
+        }
+
+
+        if(self.contactOpened==1)
+        {
+          self.contactOpened=0;
+          self.contactin();
+        }
+
+        if(self.showMailToPrompt){
+          self.showMailToPrompt = false;
+          self.showMailLetter = false;
+          self.contactin();
+        }
+
+        if(self.mailOpened==1)
+        {
+          self.mailOpened=0;
+          self.mailin(self.mcimg);
+
+        }
+
+        this.showEasyweb = true
       }
     },
     replyClick(e) {
@@ -2745,6 +2862,8 @@ export default {
     },
     contactin() {
       var self = this
+      var pos = $('#icontact').position();
+
       $('.polaroid').each(function(){
         var type=$(this).attr('t');
         if(type=='reply')
@@ -2755,13 +2874,55 @@ export default {
       $('#newspaper-b').hide();
       $(".flap").hide();
       $('.spiral').hide();
-      $('#contact').animate({'position':'absolute','left':'60px', 'top':'506px', 'z-index':'2', 'width':'120px', 'height':'143px'},1000,function(){
+      $('#contact').animate({'position':'absolute','left': pos.left, 'top':pos.top, 'opacity':0, 'z-index':'2', 'width':'120px', 'height':'143px'},1000,function(){
         $(this).hide();
       });
       $('#person_contact').hide();
-      $('#person').animate({'position':'absolute','left':'60px', 'top':'506px', 'z-index':'2', 'width':'120px', 'height':'143px'},1000,function(){
+      $('#person').animate({'position':'absolute','left': pos.left, 'top': pos.top, 'opacity':0, 'z-index':'2', 'width':'120px', 'height':'143px'},1000,function(){
         $(this).hide();
       });
+    },
+    /** close photos album **/
+    closePhotosAlbum() {
+      let self = this
+      var pos = $('.albumButton').position();
+      var css = {
+        top: pos.top + 50 + 'px',
+        left: pos.left + 100 - $('#albumContents').position().left + 'px',
+        opacity: 0
+      };
+      $('.anAlbum').animate(css, 500);
+      setTimeout(function() {
+        $('#albumContents').hide();
+        self.showPhotos = false
+      }, 500);
+    },
+    /** close easyweb **/
+    closeEasyweb() {
+      let self = this
+      //self.showEasyweb = false
+
+
+
+
+      var filePrev = $('.file-prev');
+
+      if (filePrev.length)
+      {
+        for(var i=0; i<filePrev.length; i++) {
+          $(filePrev[i]).removeClass('file', 1000)
+          //$(filePrev[i]).addClass('file-prev', 1000)
+        }
+      }
+
+      $('#easyweb-content').removeClass('easyweb-content', 1000)
+      //$('#easyweb-content').addClass('easyweb-content-prev', 1000)
+
+      setTimeout(function() {
+        //$('#albumContents').hide();
+        self.showEasyweb = false
+      }, 1000);
+
     },
     myComplete2(targetElement) {
       var self = this

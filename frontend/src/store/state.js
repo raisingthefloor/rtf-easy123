@@ -40,7 +40,8 @@ const state = {
     AppActiveUser           : userDefaults,
     setInitialDone: false,
     home: {
-        folders: []
+        folders: [],
+        easyweb: []
     },
 
 
