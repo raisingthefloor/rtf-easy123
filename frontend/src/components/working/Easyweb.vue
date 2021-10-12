@@ -3,7 +3,7 @@
     <div id="easyweb-content" class="easyweb-content-pre">
       <div class="easyweb-grid">
 
-        <div class="file-prev" @click="openMyFav()">
+        <div class="file-prev" @click="openMyFav()" ref="my_ref">
           <div class="text-center">
             <h6 class="text-center" style="margin-top: 1rem; margin-bottom: 0.7rem;"><b>{{ $t('my_favorites') }}</b></h6>
             <font-awesome-icon :icon="['fas', 'star']" class="my-fav-star" />
@@ -86,7 +86,7 @@
       </div>
       <div style="padding-right: 4px; padding-left: 4px; position: relative; display:flex;
   flex-wrap: wrap;">
-        <div class="file" v-for="(item, index) in openFolder.websites" :key="'easyweb_'+index" :ref="'file_'+item.id" v-bind:class="{ 'folder': item.type == 'folder' }" @click="openEasyweb(item)">
+        <div class="file" v-for="(item, index) in openFolder.websites" :key="'easyweb_'+index" :ref="'file_'+item._id" v-bind:class="{ 'folder': item.type == 'folder' }" @click="openEasyweb(item)">
           <div class="text-center">
 
             <h6 class="text-center" style="margin-top: 1rem; margin-bottom: 0.7rem;"><b>{{ item.name }}</b></h6>
@@ -125,7 +125,7 @@
         </div>
       </div>
       <div style="padding-right: 4px; padding-left: 4px; display:flex; flex-wrap: wrap;">
-        <div class="file" v-for="(item, index) in getMyFavorites" :key="'easyweb_'+index" v-bind:class="{ 'folder': item.type == 'folder' }" >
+        <div class="file" v-for="(item, index) in getMyFavorites" :key="'easyweb_'+index" v-bind:class="{ 'folder': item.type == 'folder' }" :ref="'my_fav_'+item.id">
           <span class="star-badge website-fav" @click="alterMyFav('fav', item)">
             <font-awesome-icon :icon="['fas', 'star']" style="color: #ffc107;" />
           </span>
@@ -301,9 +301,26 @@ export default {
     /** open easyweb item **/
     openEasyweb(item)
     {
-      let el = this.$refs['file_'+item.id][0]
-      //console.log("er", el, el.top)
-      //console.log("el", this.$refs['file_'+item.id])
+      let el
+      if(this.openMyFavorites)
+      {
+        el = this.$refs['my_fav_'+item.id][0]
+
+      }
+      else
+      {
+        if(this.openFolder)
+        {
+          el = this.$refs['file_'+item._id][0]
+        }
+        else {
+          el = this.$refs['file_'+item.id][0]
+        }
+        //el = this.$refs['file_'+item.id][0]
+      }
+
+      //console.log("el", el)
+
       let self = this
       if(item.type == "website")
       {
@@ -316,6 +333,8 @@ export default {
           "top": properties.top,
           "left": properties.left
         }
+
+        //console.log(cssObj)
         let newCssObj = {
           "position": "absolute",
           "top": "34px",
@@ -323,12 +342,12 @@ export default {
           "backgroundColor": "#f0f8ff",
           "width": "71rem",
           "height": "40rem",
-          "z-index": "4",
+          "z-index": "5",
           "opacity": "1",
         }
         $(".open-folder-pre").css(cssObj)
         $(".open-folder-pre").animate(newCssObj, 1000, function () {
-          $(".open-folder-pre").css(cssObj)
+          //$(".open-folder-pre").css(cssObj)
           $(".open-folder-pre").hide()
           self.openWebsite = item
         })
@@ -352,7 +371,7 @@ export default {
           "backgroundColor": "#f0f8ff",
           "width": "71rem",
           "height": "40rem",
-          "z-index": "4",
+          "z-index": "5",
           "opacity": "1",
         }
 
@@ -363,32 +382,30 @@ export default {
           self.openFolder = item
         })
 
-
-        /*$(".open-folder-pre").addClass('open-folder', 1000, function () {
-          $(".open-folder-pre").removeClass('open-folder')
-          $(".open-folder-pre").hide()
-          self.openFolder = item
-        })*/
-
-
-
-
-        /*this.openFolder = item
-        this.$nextTick(function() {
-          $('#openFolder').show()
-          let folder_view = $('#openFolder')
-          //folder_view.show()
-          folder_view.removeClass('open-folder-pre', 1000)
-          folder_view.addClass('open-folder', 1000)
-        })*/
-
-
       }
     },
     /** close website **/
     closeWebsite() {
-
-      let el = this.$refs['file_'+this.openWebsite.id][0]
+      //console.log("here")
+      let el
+      if(this.openMyFavorites)
+      {
+        el = this.$refs['my_fav_'+this.openWebsite.id][0]
+        //console.log("el", el)
+      }
+      else
+      {
+        if(this.openFolder)
+        {
+          el = this.$refs['file_'+this.openWebsite._id][0]
+        }
+        else {
+          el = this.$refs['file_'+this.openWebsite.id][0]
+        }
+        //el = this.$refs['file_'+this.openWebsite.id][0]
+      }
+      //console.log("el", el)
+      //el = this.$refs['file_'+this.openWebsite.id][0]
 
       let properties = el.getBoundingClientRect()
       let cssObj = {
@@ -406,23 +423,16 @@ export default {
         "backgroundColor": "#f0f8ff",
         "width": "71rem",
         "height": "40rem",
-        "z-index": "4",
+        "z-index": "5",
         "opacity": "1",
       }
 
       $(".open-folder-pre").css(newCssObj)
       this.openWebsite = null
       $(".open-folder-pre").animate(cssObj, 1000, function () {
-        //$(".open-folder-pre").css(cssObj)
         $(".open-folder-pre").hide()
       })
 
-      /*$(".open-folder-pre").addClass('open-folder')
-      $(".open-folder-pre").removeClass('open-folder', 1000, function () {
-        //$(".open-folder-pre").removeClass('open-folder')
-        $(".open-folder-pre").hide()
-        //self.openFolder = item
-      })*/
     },
     /** close folder **/
     closeFolder: function () {
@@ -444,7 +454,7 @@ export default {
         "backgroundColor": "#f0f8ff",
         "width": "71rem",
         "height": "40rem",
-        "z-index": "4",
+        "z-index": "5",
         "opacity": "1",
       }
 
@@ -454,39 +464,68 @@ export default {
         //$(".open-folder-pre").css(cssObj)
         $(".open-folder-pre").hide()
       })
-
-
-      //this.openFolder = null
-      /*$(".open-folder-pre").addClass('open-folder')
-      $(".open-folder-pre").removeClass('open-folder', 1000, function () {
-        //$(".open-folder-pre").removeClass('open-folder')
-        $(".open-folder-pre").hide()
-        //self.openFolder = item
-      })*/
-
-
-      /*$('#openFolder').removeClass('open-folder')
-      $('#openFolder').addClass('open-folder-pre')
-      $('#openFolder').hide()*/
     },
     /** open my fav folder **/
     openMyFav() {
       let self = this
-      $(".open-folder-pre").addClass('open-folder', 1000, function () {
-        $(".open-folder-pre").removeClass('open-folder')
+      //my_ref
+      let el = this.$refs.my_ref
+      let properties = el.getBoundingClientRect()
+      let cssObj = {
+        "position": "absolute",
+        "backgroundColor": "#f0f8ff",
+        "width": "200px",
+        "height": "200px",
+        "top": properties.top,
+        "left": properties.left
+      }
+      let newCssObj = {
+        "position": "absolute",
+        "top": "34px",
+        "left": "105px",
+        "backgroundColor": "#f0f8ff",
+        "width": "71rem",
+        "height": "40rem",
+        "z-index": "5",
+        "opacity": "1",
+      }
+
+      $(".open-folder-pre").css(cssObj)
+      $(".open-folder-pre").animate(newCssObj, 1000, function () {
         $(".open-folder-pre").hide()
         self.openMyFavorites = true
       })
-      //this.openMyFavorites = true
+
     },
     /** close my fav folder **/
     closeMyFavFolder() {
       this.openMyFavorites = false
-      $(".open-folder-pre").addClass('open-folder')
-      $(".open-folder-pre").removeClass('open-folder', 1000, function () {
-        //$(".open-folder-pre").removeClass('open-folder')
+
+      let el = this.$refs.my_ref
+      let properties = el.getBoundingClientRect()
+      let cssObj = {
+        "position": "absolute",
+        "backgroundColor": "#f0f8ff",
+        "width": "200px",
+        "height": "200px",
+        "top": properties.top,
+        "left": properties.left
+      }
+      let newCssObj = {
+        "position": "absolute",
+        "top": "34px",
+        "left": "105px",
+        "backgroundColor": "#f0f8ff",
+        "width": "71rem",
+        "height": "40rem",
+        "z-index": "5",
+        "opacity": "1",
+      }
+
+
+      $(".open-folder-pre").css(newCssObj)
+      $(".open-folder-pre").animate(cssObj, 1000, function () {
         $(".open-folder-pre").hide()
-        //self.openFolder = item
       })
 
     },
