@@ -28,7 +28,6 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
       <div id="noAlbumsMessage" style="text-align:center; padding:50px; display: none;">There are no albums</div>
 
-
       <div class="anAlbum" style="top: 284.961px; left: -150px; opacity: 0; width: 119.987px; display: block; height: 139.99px;" v-for="(folder, index) in $store.state.home.folders" :key="index" v-bind:style="{ left: (index * 140) + 'px' }">
         <div class="$showAlbum" style="text-decoration:none; cursor:pointer;" @click="showAlbum(folder, index)" :id="'showAlbum_'+index">
           <img class="thumbnailStack" src="@/assets/images/photo-pile.png">
@@ -39,22 +38,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         </div>
       </div>
 
-
       <div id="albumGallery" v-if="showAlbumStatus == 'SHOWING'">
-
-<!--        <div class="galleryPicture" v-bind:class="{
-          'prevSecondAlbumImage': (index == (current_photo_index-2) && current_photo_index > index),
-          'prevFirstAlbumImage': (index == (current_photo_index-1) && current_photo_index > index),
-          'firstAlbumImage': index == current_photo_index,
-          'secondAlbumImage': (index == (current_photo_index+1) && current_photo_index < index),
-          'thirdAlbumImage': (index == (current_photo_index+2) && current_photo_index < index),
-          'fourthAlbumImage': (index != current_photo_index && index != (current_photo_index+1) && index != (current_photo_index+2) && current_photo_index < index),
-          'prevThirdAlbumImage': (index != current_photo_index && index != (current_photo_index-1) && index != (current_photo_index-2) && current_photo_index > index)
-        }" v-for="(photo, index) in current_album.photos" :key="'photo_'+index" @click="nextActiveIndex(index)">
-          <photos-image :image="photo" style="opacity: 1;" :folder="current_album.id"></photos-image>
-
-          <div class="pictureNumber">{{ (index + 1) }}</div>
-        </div>-->
 
       </div>
       <div id="galleryTitle" style="width: 171px; height: 167px;" v-if="showAlbumStatus == 'SHOWING'">{{ current_album.name }}</div>

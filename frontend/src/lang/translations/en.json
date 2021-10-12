@@ -48,5 +48,6 @@
   "login_to_resent_verification_link": "Please login again to resent verification link.",
 
   "//": "Home",
-  "connect_google_account_desc": "Connect to your Google account to enable Email access and management"
+  "connect_google_account_desc": "Connect to your Google account to enable Email access and management",
+  "my_favorites": "My Favorites"
 }

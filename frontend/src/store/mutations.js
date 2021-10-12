@@ -143,16 +143,42 @@ const mutations = {
     },
 
     /** store folder photos array **/
-     STORE_HOME_FOLDER_PHOTOS_ARRAY(state, payload)
-     {
-         for (let i = 0; i < state.home.folders.length; i++) {
-             if(state.home.folders[i].id == payload.folder_id)
-             {
-                 state.home.folders[i].photosUrls = payload.urls
-                 break
-             }
+    STORE_HOME_FOLDER_PHOTOS_ARRAY(state, payload)
+    {
+     for (let i = 0; i < state.home.folders.length; i++) {
+         if(state.home.folders[i].id == payload.folder_id)
+         {
+             state.home.folders[i].photosUrls = payload.urls
+             break
          }
-     },
+     }
+    },
+
+    /** store easyweb data **/
+    STORE_HOME_EASYWEB_DATA(state, payload)
+    {
+        state.home.easyweb = payload
+    },
+
+    /** update easyweb fav flag **/
+    CHANGE_EASYWEB_FAV(state, payload)
+    {
+        for (let i = 0; i < state.home.easyweb.length; i++) {
+            if(state.home.easyweb[i].id == payload.item_id)
+            {
+                if(payload.type == "fav")
+                {
+                    state.home.easyweb[i].fav = false
+                }
+                else if (payload.type == "add")
+                {
+                    state.home.easyweb[i].fav = true
+                }
+            }
+        }
+    },
+
+
 
 
 

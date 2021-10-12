@@ -22,8 +22,11 @@
  * Adobe Foundation
  * Consumer Electronics Association Foundation
  **/
+
+
 const logger = require('../../../logger/api.logger')
 const {Folder} = require("../../Auth/Models/folder.model")
+const {EasyWeb} = require("../../Auth/Models/easyweb.model")
 const HelperManager = require("../../../Managers/HelperManager")
 const Sentry = require("@sentry/node")
 const aws = require("aws-sdk")
@@ -44,36 +47,6 @@ class UserController {
             let folders = await Folder.find({
                 userId: user.id
             })
-
-            /*aws.config.update({
-                accessKeyId: process.env.AWS_S3_ACCESS_KEY,
-                secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
-                signatureVersion: 'v4',
-                region: 'us-east-2'
-            })
-
-            for (let i = 0; i < folders.length; i++)
-            {
-                if (folders[i].photos && folders[i].photos.length)
-                {
-                    for (let j = 0; j < folders[i].photos.length; j++)
-                    {
-                        const s3 = new aws.S3()
-
-                        const s3data =  await s3.getSignedUrl('getObject',
-                            {
-                                Bucket: process.env.AWS_S3_BUCKET,
-                                Key: folders[i].photos[j].path,
-                                Expires: 60*5
-                            }
-                        )
-
-                        folders[i].photos[j].imageData = s3data
-                        console.log("\n\ns3data", s3data, folders[i].photos[j])
-                    }
-                }
-            }
-            console.log("photos", folders[0].photos)*/
 
             data.status = true
             data.data = folders
@@ -144,6 +117,90 @@ class UserController {
             response.send(data)
         }
     }
+
+    /** get easyweb data **/
+    async getEasywebData(request, response) {
+        let data = {
+            status: false,
+            data: null,
+            message: ""
+        }
+
+        try
+        {
+            let user = await HelperManager.getLoggedInUser(request.decoded)
+
+            let easywebs = await EasyWeb.find({
+                userId: user.id,
+                deleted: false
+            })
+            //console.log(easywebs)
+
+            data.status = true
+            data.data = easywebs
+            data.message = "success"
+            response.send(data)
+        }
+        catch (err)
+        {
+            console.log(err)
+            Sentry.captureException(err)
+            logger.error('Error::' + err)
+
+            data.message = "failed"
+            response.send(data)
+        }
+    }
+
+    /** change easyweb fav **/
+    async changeFav(request, response) {
+        let data = {
+            status: false,
+            data: null,
+            message: ""
+        }
+
+        try
+        {
+            //console.log(request.body)
+            if(request.body.type == "fav")
+            {
+                let easyweb = await EasyWeb.updateOne({
+                    _id: request.body.item_id
+                }, {
+                    fav: false
+                })
+
+                data.status = true
+                data.data = easyweb
+                data.message = "success"
+                response.send(data)
+            }
+            else if (request.body.type == "add")
+            {
+                let easyweb = await EasyWeb.updateOne({
+                    _id: request.body.item_id
+                }, {
+                    fav: true
+                })
+
+                data.status = true
+                data.data = easyweb
+                data.message = "success"
+                response.send(data)
+            }
+        }
+        catch (err)
+        {
+            console.log(err)
+            Sentry.captureException(err)
+            logger.error('Error::' + err)
+
+            data.message = "failed"
+            response.send(data)
+        }
+    }
+
 }
 
 module.exports = new UserController()
