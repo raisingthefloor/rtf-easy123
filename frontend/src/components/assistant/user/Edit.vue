@@ -51,6 +51,9 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           <li class="nav-item" role="presentation">
             <button class="nav-link" id="easyweb-tab" data-bs-toggle="tab" data-bs-target="#easyweb" type="button" role="tab" aria-controls="easyweb" aria-selected="false">EasyWeb</button>
           </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="easyweb-tab" data-bs-toggle="tab" data-bs-target="#generalsettings" type="button" role="tab" aria-controls="generalsettings" aria-selected="false">General Settings</button>
+          </li>
         </ul>
         <div class="tab-content" id="myTabContent">
           <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
@@ -216,6 +219,33 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           <div class="tab-pane fade" id="easyweb" role="tabpanel" aria-labelledby="easyweb-tab">
             <EasyWeb></EasyWeb>
           </div>
+          <div class="tab-pane fade" id="generalsettings" role="tabpanel" aria-labelledby="generalsettings-tab">
+            <form @submit.prevent="submitGeneralSettings()">
+              <div>
+                <div class="mt-3 mb-3 row">
+                  <label for="screen_saver_start_after" class="col-sm-3 col-form-label">Screen Saver - Start After</label>
+                  <div class="col-sm-9">
+                    <select name="screen_saver_start_after" id="screen_saver_start_after" class="form-control" v-model="screenSaverStartAfter">
+                      <option :value="i" v-for="i in 60" :key="'option_'+i">{{ i }} {{ (i == 1)?' minute':' minutes' }}</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="mt-3 mb-3 row">
+                  <label for="screen_saver_photo_transition_period" class="col-sm-3 col-form-label">Screen Saver - Photo transition period</label>
+                  <div class="col-sm-9">
+                    <select name="screen_saver_photo_transition_period" id="screen_saver_photo_transition_period" class="form-control" v-model="screenSaverPhotoTransitionPeriod">
+                      <option :value="i" v-for="i in 60" :key="'option_'+i">{{ i }} {{ (i == 1)?' second':' seconds' }}</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn btn-primary mb-5" :readonly="generalSettingSubmitStatus == 'PROCESSING'" :disabled="generalSettingSubmitStatus == 'PROCESSING'">
+                <span v-if="generalSettingSubmitStatus == 'PROCESSING'">Saving...</span>
+                <span v-if="generalSettingSubmitStatus != 'PROCESSING'">Save</span>
+              </button>
+            </form>
+          </div>
         </div>
 
       </div>
@@ -287,7 +317,11 @@ export default {
       smtp_authentication: 'Password',
       imapSmtpFormSubmitStatus: 'NOT_SUBMITTED',
       testIncomingMailStatus: "NONE",
-      testOutgoingMailStatus: "NONE"
+      testOutgoingMailStatus: "NONE",
+
+      screenSaverStartAfter: 1,
+      screenSaverPhotoTransitionPeriod: 2,
+      generalSettingSubmitStatus: 'NOT_SUBMITTED'
     }
   },
   validations: {
@@ -397,7 +431,10 @@ export default {
         self.smtp_host =  response.data.data.smtpHost
         self.smtp_port =  response.data.data.smtpPortNumber
         self.smtp_use_tls_ssl =  response.data.data.smtpUseTlsSsl
-        self.smtp_authentication =  response.data.data.smtpAuthentication
+        self.smtp_authentication =  response.data.data.smtpAuthentication,
+
+        self.screenSaverStartAfter = response.data.data.settings.screenSaverStartAfter
+        self.screenSaverPhotoTransitionPeriod = response.data.data.settings.screenSaverPhotoTransitionPeriod
 
         if(response.data.data.password)
         {
@@ -497,6 +534,30 @@ export default {
       }
 
       console.log("submitImapSmtpDetails")
+    },
+    submitGeneralSettings() {
+      let self = this
+      self.generalSettingSubmitStatus = "PROCESSING"
+      axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/assistant/member/save-general-settings", {
+        id: self.$route.params.id,
+        screenSaverStartAfter: self.screenSaverStartAfter,
+        screenSaverPhotoTransitionPeriod: self.screenSaverPhotoTransitionPeriod
+      })
+      .then((response) => {
+        self.generalSettingSubmitStatus = "PROCESSING_SUCCESS"
+        if(response.data.status)
+        {
+          swal("Success", "Settings saved successfully.", "success");
+        }
+        else {
+          swal("Error", "Failed to save settings.", "error");
+        }
+      }, (error) => {
+        self.generalSettingSubmitStatus = "ERROR"
+        swal("Error", "Server error, please contact administrator.", "error");
+        console.log(error)
+      })
+      //console.log("submitGeneralSettings", this.screenSaverStartAfter)
     },
     async deleteUserAlert(id) {
       //console.log(id)

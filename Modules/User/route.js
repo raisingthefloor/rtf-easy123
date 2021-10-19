@@ -31,5 +31,6 @@ module.exports = function (router) {
     router.post('/api/user/folders/photos', validateToken, UserController.getFolderPhotos.bind(UserController))
     router.post('/api/user/get-easyweb-links-folders', validateToken, UserController.getEasywebData.bind(UserController))
     router.post('/api/user/easyweb/change-fav', validateToken, UserController.changeFav.bind(UserController))
+    router.post('/api/user/get-user-general-settings', validateToken, UserController.getUserGeneralSettings.bind(UserController))
 
 }

@@ -23,7 +23,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 * Consumer Electronics Association Foundation
 -->
 <template>
-  <div>
+  <div id="homeworking-component">
     <div id="containment-wrapper" >
       <a class="button" style="position: absolute; left: 0px; top: 0px; margin:25px; width: 145px; height: 145px;" id="mail" @click="mailClick()" href="javascript:void(0)">
         <div id="mailbox_cont" style="vertical-align:middle; top:50%; left:50%; position:absolute; margin-top: -62px; margin-left: -75px; z-index:1">
@@ -267,6 +267,8 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 <script type="text/javascript" src="jquery/jquery-ui.min.js"></script>
 <script type="text/javascript" src="mail/jquery-css-transform.js"></script>
 <script type="text/javascript" src="mail/rotate3Di.js"></script>
+<script type="text/javascript" src="js/screensaver.js"></script>
+
 <script>
 const axios = require('axios')
 import Polaroid from "./working/Polaroid"
@@ -689,7 +691,17 @@ export default {
       },
       searchAlphabets: [],
       showPhotos: false,
-      showEasyweb: false
+      showEasyweb: false,
+
+      screensaverTimer: 0,
+      screensaverPhotoTransitionTimer: 0,
+      userGeneralSettings: {
+        screenSaverStartAfter: 0,
+        screenSaverPhotoTransitionPeriod: 0
+      },
+      newMailsCount: 0,
+      screensaverPhotoIndex: 0,
+      screensaverImages: []
     }
   },
   computed: {
@@ -702,6 +714,11 @@ export default {
       {
         return "Checking"
       }
+    },
+    getScreenSaverFolder() {
+      let screensaver = this.$store.state.home.folders.find(obj => obj.name == "Screensaver")
+
+      return screensaver
     }
   },
   watch: {
@@ -714,15 +731,161 @@ export default {
       $(".polaroid").draggable({drag: function() {
           self.lastDragged=$(this);
         },containment: "#drag-wrapper", scroll: false});
+    },
+    screensaverTimer: function(newVal) {
+      let self = this
+      if(this.userGeneralSettings.screenSaverStartAfter != 0 && newVal >= (this.userGeneralSettings.screenSaverStartAfter*60))
+      {
+        //console.log(this.getScreenSaverFolder)
+        if(this.newMailsCount)
+        {
+          $("#newMailText").html("You have " + this.newMailsCount + " new mails")
+          $("#newMailText").show()
+
+          var x = Math.floor(Math.random()*$(document).width())
+          var y = Math.floor(Math.random()*$(document).height())
+          var documentHeight = $(document).height()
+          var documentWidth = $(document).width()
+          let divHeight = $('#newMailText').height
+          let divWidth = $('#newMailText').width()
+
+          if(documentWidth-( x + divWidth ) < 0 )
+            x = 0
+          if(documentHeight-( y + divHeight + 100 ) < 0 )
+            y = 0
+          $('#newMailText').show()
+          $("#newMailText").animate({top:y, left:x}, 3000 )
+        }
+        else if(this.userGeneralSettings.screenSaverPhotoTransitionPeriod && this.getScreenSaverFolder) {
+          //$('#screensaver').show()
+          $('#screensaver').fadeIn(2000, function() {
+            $('#screenSaverGallery').css('position', 'absolute')
+            $('#screenSaverGallery').css('z-index','2001')
+            $('#screenSaverGallery').css('align','center')
+
+
+
+
+            //$("#screenSaverGallery").show()
+            $('#screenSaverGallery').load(function() {
+              var imgWidth = $('#screenSaverGallery').width();
+              var imgHeight = $('#screenSaverGallery').height();
+
+              let viewportheight = window.innerHeight
+              let viewportwidth = window.innerWidth
+
+              imgWidth = viewportheight/imgHeight*imgWidth;
+              imgHeight = viewportheight;
+
+              $('#screenSaverGallery').css('left',(viewportwidth - imgWidth)/2 +'px');
+              $('#screenSaverGallery').css('top',(viewportheight - imgHeight)/2 +'px');
+              //$('#screenSaverGallery').css('width',imgWidth +'px');
+              $('#screenSaverGallery').css('height','100%');
+            //}).attr('src', images[self.screensaverPhotoIndex])
+            }).attr('src', self.screensaverImages[self.screensaverPhotoIndex])
+
+          })
+
+
+
+        }
+
+        //check if already showing
+        if($("#screensaver").css("display") == "none")
+        {
+          $("#screensaver").show()
+        }
+
+      }
+      else
+      {
+        $("#screensaver").hide()
+        $("#newMailText").hide()
+        $("#screenSaverGallery").hide()
+      }
     }
   },
   mounted() {
+    let self = this
     this.initMount()
     this.getPhotosFolders()
     this.getEasywebFoldersAndLinks()
+    this.getUserGeneralSettings()
+
+    setInterval(function() {
+      self.screensaverTimer++
+      //self.screensaverTimer = self.screensaverTimer + 3
+    } , 1000)
+
+    //let el = document.getElementById("homeworking-component")
+    let el = window
+
+    el.addEventListener('keyup', event => {
+      self.resetTimer()
+    })
+    el.addEventListener('load', event => {
+      self.resetTimer()
+    })
+    el.addEventListener('mousemove', event => {
+      self.resetTimer()
+    })
+    el.addEventListener('mousedown', event => {
+      self.resetTimer()
+    })
+    el.addEventListener('touchstart', event => {
+      self.resetTimer()
+    })
+    el.addEventListener('click', event => {
+      self.resetTimer()
+    })
+    el.addEventListener('keydown', event => {
+      self.resetTimer()
+    })
+    el.addEventListener('scroll', event => {
+      self.resetTimer()
+    })
+
     //console.log("date", moment())
+
+    /*//screen saver
+    $(document).mousemove(clearScreensaver);
+    $(document).click(clearScreensaver);
+    $(document).keyup(clearScreensaver);
+
+    clearScreensaver();*/
+  },
+  beforeDestroy() {
+    let self = this
+    if(window.removeEventListener)
+    {
+      window.removeEventListener('keyup', self.resetTimer())
+      //load mousemove mousedown touchstart click keydown scroll
+      window.removeEventListener('load', self.resetTimer())
+      window.removeEventListener('mousemove', self.resetTimer())
+      window.removeEventListener('mousedown', self.resetTimer())
+      window.removeEventListener('touchstart', self.resetTimer())
+      window.removeEventListener('click', self.resetTimer())
+      window.removeEventListener('keydown', self.resetTimer())
+      window.removeEventListener('scroll', self.resetTimer())
+    }
+    else {
+      window.detachEvent('keyup', self.resetTimer())
+      window.detachEvent('load', self.resetTimer())
+      window.detachEvent('mousemove', self.resetTimer())
+      window.detachEvent('mousedown', self.resetTimer())
+      window.detachEvent('touchstart', self.resetTimer())
+      window.detachEvent('click', self.resetTimer())
+      window.detachEvent('keydown', self.resetTimer())
+      window.detachEvent('scroll', self.resetTimer())
+    }
+
   },
   methods: {
+    /** reset timer **/
+    resetTimer() {
+      this.screensaverTimer = 0
+    },
+    /** get easyweb folders & links **/
     getEasywebFoldersAndLinks() {
       let self = this
       axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/user/get-easyweb-links-folders")
@@ -742,6 +905,7 @@ export default {
             console.log("error", error)
           })
     },
+    /** get photos folders **/
     getPhotosFolders() {
       let self = this
       axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/user/get-folders")
@@ -749,6 +913,24 @@ export default {
             if(response.data.status)
             {
               self.$store.commit('STORE_HOME_FOLDERS', response.data.data)
+              let folder = response.data.data.find(obj => obj.name == 'Screensaver')
+              if(folder)
+              {
+                //get screensaver images
+                axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/user/folders/photos", {
+                  folder_id: folder.id
+                })
+                    .then(response1 => {
+                      if(response1.data.status)
+                      {
+                        self.screensaverImages = response1.data.data
+                      }
+
+                    }, error1 => {
+                      console.log(error1)
+                    })
+              }
+
               //self.$store.state.home.folders = response.data.data
             }
             else {
@@ -759,6 +941,30 @@ export default {
           }, (error) => {
             console.log("error", error)
           })
+    },
+    /** get user general settings **/
+    getUserGeneralSettings() {
+      let self = this
+      axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/user/get-user-general-settings")
+      .then((response) => {
+        if(response.data.status)
+        {
+          self.userGeneralSettings = response.data.data.settings
+
+          setInterval(function() {
+            if(self.screensaverImages.length > (self.screensaverPhotoIndex + 1))
+            {
+              self.screensaverPhotoIndex++
+            }
+            else
+            {
+              self.screensaverPhotoIndex = 0
+            }
+          }, self.userGeneralSettings.screenSaverPhotoTransitionPeriod * 1000)
+        }
+      }, (error) => {
+        console.log(error)
+      })
     },
     initMount() {
       var self = this
@@ -2901,9 +3107,6 @@ export default {
     closeEasyweb() {
       let self = this
       //self.showEasyweb = false
-
-
-
 
       var filePrev = $('.file-prev');
 

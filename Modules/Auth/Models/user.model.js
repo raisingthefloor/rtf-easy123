@@ -25,6 +25,12 @@
 const mongoose = require('mongoose');
 
 const modelName = "user"
+
+const settingSchema = {
+    screenSaverStartAfter: { type: Number, default: 0 },
+    screenSaverPhotoTransitionPeriod: { type: Number, default: 0 }
+}
+
 const schema = new mongoose.Schema({
     name: {type: String, trim: true},
     nickname: {type: String, trim: true},
@@ -45,6 +51,8 @@ const schema = new mongoose.Schema({
     smtpPortNumber: { type: Number, default: null },
     smtpUseTlsSsl: { type: Boolean, default: false },
     smtpAuthentication: { type: String, default: 'Password' },
+
+    settings: settingSchema,
 
     emailVerified: {type: Boolean, default: false},
     createdBy: mongoose.Schema.ObjectId,

@@ -40,6 +40,7 @@ import Vuelidate from 'vuelidate'
 import {VueAvatar} from 'vue-avatar-editor-improved'
 
 
+
 Vue.use(Vuelidate)
 
 library.add([faEye, faEyeSlash, faStar, faTrash, faPlus, faExclamationCircle, faWindowClose, faEdit])

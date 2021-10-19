@@ -460,6 +460,23 @@ class UserController {
         }
 
         try {
+            //check if screensaver folder exists, if not create one
+            const folder = await Folder.findOne({
+                name: "Screensaver",
+                userId: request.body.id
+            })
+            //console.log("folders", folder)
+            if(!folder)
+            {
+                await Folder.create({
+                    name: "Screensaver",
+                    userId: request.body.id,
+                    order: 0,
+                    createdBy: request.decoded.id
+                })
+            }
+
+
             const folders = await Folder.find({
                 userId: request.body.id
             })
@@ -1147,6 +1164,49 @@ class UserController {
         }
         catch (err)
         {
+            logger.error('Error::' + err)
+            Sentry.captureException(err)
+
+            data.status = false
+            data.data = null
+            data.error = err
+            data.message = 'failed'
+
+            response.send(data)
+        }
+    }
+
+    /** save general settings of user **/
+    async userProfileSaveGeneralSettings(request, response)
+    {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+
+        try
+        {
+            let user = await User.findOne({
+                _id: request.body.id
+            })
+            if(!user.settings)
+            {
+                user.settings = {}
+            }
+            user.settings.screenSaverStartAfter = request.body.screenSaverStartAfter
+            user.settings.screenSaverPhotoTransitionPeriod = request.body.screenSaverPhotoTransitionPeriod
+            await user.save()
+
+            data.status = true
+            data.data = user
+            data.message = "success"
+
+            response.send(data)
+        }
+        catch (err)
+        {
+            console.log(err)
             logger.error('Error::' + err)
             Sentry.captureException(err)
 
