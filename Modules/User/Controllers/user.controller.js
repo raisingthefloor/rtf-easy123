@@ -46,7 +46,7 @@ class UserController {
 
             let folders = await Folder.find({
                 userId: user.id
-            })
+            }).sort({order:1})
 
             data.status = true
             data.data = folders
@@ -95,7 +95,7 @@ class UserController {
                     {
                         Bucket: process.env.AWS_S3_BUCKET,
                         Key: folder.photos[i].path,
-                        Expires: 60*5
+                        Expires: 60*60*5
                     }
                 )
 
@@ -189,6 +189,34 @@ class UserController {
                 data.message = "success"
                 response.send(data)
             }
+        }
+        catch (err)
+        {
+            console.log(err)
+            Sentry.captureException(err)
+            logger.error('Error::' + err)
+
+            data.message = "failed"
+            response.send(data)
+        }
+    }
+
+    /** get user general settings **/
+    async getUserGeneralSettings(request, response)
+    {
+        let data = {
+            status: false,
+            data: null,
+            message: ""
+        }
+
+        try {
+            let user = await HelperManager.getLoggedInUser(request.decoded)
+
+            data.status = true
+            data.data = user
+            data.message = "success"
+            response.send(data)
         }
         catch (err)
         {
