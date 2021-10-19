@@ -20,7 +20,6 @@
     "cors": "^2.8.5",
     "cropperjs": "^1.5.12",
     "get-website-favicon": "^0.0.7",
-    "idle-vue": "^2.0.5",
     "jquery": "^3.6.0",
     "mimemessage": "^1.0.5",
     "moment": "^2.29.1",
