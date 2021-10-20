@@ -129,6 +129,21 @@ export default {
       }
     },
     thisMousedown(event) {
+      let self = this
+      if(!self.mail.attrs.flags.includes("\\Seen") && self.mail.r != "read"){
+        let uid = self.mail.attrs.uid;
+        axios.put(process.env.VUE_APP_API_HOST_NAME+`/api/message/${uid}/set-flag/seen`)
+            .then(response => {
+              if(!response.error)
+              {
+                self.mail.r="read"
+                self.$emit('seenMessage', uid)
+              }
+              console.log(response);
+              //this.$emit('closeClick', event);
+            })
+            .catch(err => console.log(err));
+      }
       this.$emit('mousedown', event)
     },
     thisMouseup(event) {
@@ -137,16 +152,21 @@ export default {
     replyClick(event) {
       this.$emit('replyClick', event)
     },
-    closeClick(event, mail) {
-      if(!mail.attrs.flags.includes("\\Seen")){
+    closeClick(event) {
+      //let self = this
+      /*if(!mail.attrs.flags.includes("\\Seen")){
         let uid = mail.attrs.uid;
         axios.put(process.env.VUE_APP_API_HOST_NAME+`/api/message/${uid}/set-flag/seen`)
           .then(response => {
+            /!*if(!response.error)
+            {
+              self.$emit('seenMessage', uid)
+            }*!/
             console.log(response);
             //this.$emit('closeClick', event);
           })
           .catch(err => console.log(err));
-      }
+      }*/
       this.$emit('closeClick', event);
     },
     throwawayClick(event, messageId) {
