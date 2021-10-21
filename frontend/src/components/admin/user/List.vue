@@ -76,7 +76,7 @@ export default {
   name: 'NewUser',
   metaInfo: {
     // if no subcomponents specify a metaInfo.title, this title will be used
-    title: 'Easy123 Admin - Users List',
+    title: 'Easy123 Users',
   },
   components: {
     //DataTable
