@@ -31,12 +31,11 @@ const photo = {
         {
             path: {type: String, trim: true},
             name: {type: String, trim: true},
-            mimetype: {type: String, trim: true}
+            mimetype: {type: String, trim: true},
+            order: { type: Number }
         },
         { timestamps: true }
     )
-
-
 }
 
 const schema = new mongoose.Schema({
