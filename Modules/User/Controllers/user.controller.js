@@ -45,7 +45,8 @@ class UserController {
             let user = await HelperManager.getLoggedInUser(request.decoded)
 
             let folders = await Folder.find({
-                userId: user.id
+                userId: user.id,
+                photos: { $exists: true, $not: { $size: 0 } }
             }).sort({order:1})
 
             data.status = true

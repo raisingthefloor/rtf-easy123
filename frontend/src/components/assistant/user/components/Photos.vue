@@ -44,10 +44,10 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                 :options="{ animation:200, handle:'.item' }"
                 @change="folderMoved"
             >
-              <a href="javascript:void(0)" class="user-folder me-3 mb-3" :ref="'folder_'+index" v-bind:class="{ 'folder-selected': (current_folder && current_folder.id == folder.id), 'item': folder.name != 'Screensaver' }" v-for="(folder, index) in folders" :key="folder.id" @click="openFolder(folder.id)" style="text-decoration: none; position: relative;" @keydown="folderKeyDown($event, index)">
+              <a href="javascript:void(0)" class="user-folder me-3 mb-3" :ref="'folder_'+index" v-bind:class="{ 'folder-selected': (current_folder && current_folder.id == folder.id), 'item': folder.name != 'Slideshow' }" v-for="(folder, index) in folders" :key="folder.id" @click="openFolder(folder.id)" style="text-decoration: none; position: relative;" @keydown="folderKeyDown($event, index)">
                   <div>{{ folder.name }}</div>
-                <font-awesome-icon :icon="['fas', 'edit']" style="position: absolute; right: 27px; top: 19px; font-size: 15px; color: #4DCBF0;" @click="editFolder(folder, index)" v-if="folder.name != 'Screensaver'"></font-awesome-icon>
-                <font-awesome-icon :icon="['fas', 'trash']" style="position: absolute; right: 10px; top: 19px; font-size: 15px; color: #DC4543;" @click="deleteFolder(folder, index)" v-if="folder.name != 'Screensaver'"></font-awesome-icon>
+                <font-awesome-icon :icon="['fas', 'edit']" style="position: absolute; right: 27px; top: 19px; font-size: 15px; color: #4DCBF0;" @click="editFolder(folder, index)" v-if="folder.name != 'Slideshow'"></font-awesome-icon>
+                <font-awesome-icon :icon="['fas', 'trash']" style="position: absolute; right: 10px; top: 19px; font-size: 15px; color: #DC4543;" @click="deleteFolder(folder, index)" v-if="folder.name != 'Slideshow'"></font-awesome-icon>
               </a>
 
             </draggable>
