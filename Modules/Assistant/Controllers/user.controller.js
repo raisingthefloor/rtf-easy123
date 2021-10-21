@@ -335,6 +335,89 @@ class UserController {
     }
 
     /**
+     * rename folder photo
+     */
+    async updateFolderPhoto(request, response) {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+        try {
+            aws.config.update({
+                accessKeyId: process.env.AWS_S3_ACCESS_KEY,
+                secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY
+            })
+            const s3 = new aws.S3()
+            let folder = await Folder.findOne({
+                _id: request.body.folder_id
+            })
+            let photo = folder.photos.find(obj => obj._id == request.body.edit_id)
+            /*let folder = await Folder.updateOne({
+                _id: request.body.edit_id
+            }, {
+                name: request.body.name
+            })*/
+            let bucket = process.env.AWS_S3_BUCKET
+            let source_name = photo.path
+
+            let new_source_name = photo.path.replace(photo.name, request.body.name)
+
+            let copyParams = {
+                Bucket: bucket,
+                CopySource: bucket + "/" +source_name,
+                Key: new_source_name
+            }
+            //console.log("copyParams", copyParams)
+            await s3.copyObject(copyParams).promise()
+
+            let deleteParams = {
+                Bucket: bucket,
+                Key: source_name
+            }
+            //console.log("deleteParams", deleteParams)
+            await s3.deleteObject(deleteParams).promise()
+
+            let s = await Folder.updateOne({
+                "photos": {
+                    "$elemMatch": {
+                        "_id": request.body.edit_id
+                    }
+                }
+            }, {
+                "$set": {
+                    "photos.$.name": request.body.name,
+                    "photos.$.path": new_source_name
+                }
+            })
+
+            let folderNew = await Folder.findOne({
+                _id: request.body.folder_id
+            })
+
+
+
+            data.status = true
+            data.data = folderNew
+            data.message = "success"
+            response.send(data)
+        }
+        catch (err)
+        {
+            console.log(err)
+            Sentry.captureException(err)
+            logger.error('Error::' + err)
+
+            data.status = false
+            data.data = null
+            data.error = err
+            data.message = 'failed'
+
+            response.send(data)
+        }
+    }
+
+    /**
      * delete folder
      */
     async deleteFolder(request, response) {
@@ -504,6 +587,12 @@ class UserController {
      * upload images
      */
     async uploadImage(request, response) {
+        let data = {
+            status: false,
+            data: null,
+            message: "failed"
+        }
+        //console.log(request.body)
         var url = require('url')
 
         let avatar = request.files.avatar
@@ -517,50 +606,132 @@ class UserController {
             secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY
         })
 
-        const s3 = new aws.S3()
-        let uniqid = await HelperManager.uniqid()
-        filename = uniqid + "-" + filename
-        let bucket = process.env.AWS_S3_BUCKET
-        let bucket_path = request.body.id + "/photos/"+filename
-        const s3res = await s3.upload({
-            Bucket: bucket,
-            Key: bucket_path,
-            Body: request.files.avatar.data,
-            ACL: "private"
-        }).promise()
+        //get all files
 
-        const s3data =  await s3.getObject(
+        const s3 = new aws.S3()
+        //let uniqid = await HelperManager.uniqid()
+        //filename = uniqid + "-" + filename
+        let bucket = process.env.AWS_S3_BUCKET
+        let bucket_path = request.body.id + "/photos/"+ request.body.folderId +"/"+filename
+
+
+        try {
+            let order = 1
+
+            let folder = await Folder.findOne({
+                _id: request.body.folderId
+            })
+
+            if(folder.photos && folder.photos.length)
             {
+                order = folder.photos.length
+            }
+
+
+            const s3data_exists = await s3.headObject({
                 Bucket: bucket,
                 Key: bucket_path
+            }).promise();
+            //console.log(s3data_exists)
+
+            //rename filename
+            let uniqid = await HelperManager.uniqid()
+            filename = uniqid + "-" + filename
+            bucket_path = request.body.id + "/photos/"+filename
+
+            const s3res = await s3.upload({
+                Bucket: bucket,
+                Key: bucket_path,
+                Body: request.files.avatar.data,
+                ACL: "private"
+            }).promise()
+
+            //add to database
+
+            folder.photos.push({
+                name: filename,
+                path: bucket_path,
+                mimetype: mimetype,
+                order: order + 1
+            })
+            console.log("order", {
+                name: filename,
+                path: bucket_path,
+                mimetype: mimetype,
+                order: order + 1
+            })
+            await folder.save()
+            //end add to database
+
+
+            response.status(200).send({
+                status: true,
+                data: folder,
+                message: 'success'
+            })
+
+            //console.log("Image already exists")
+            /*Sentry.captureException("Image already exists")
+
+            data.status = false
+            data.data = null
+            data.message = "failed"
+            response.status(403).send(data)*/
+        }
+        catch (e) {
+            //console.log("catch error:::::::::::", e)
+            if(e.code === "NotFound")
+            {
+                const s3res = await s3.upload({
+                    Bucket: bucket,
+                    Key: bucket_path,
+                    Body: request.files.avatar.data,
+                    ACL: "private"
+                }).promise()
+
+                let order = 1
+                //add to database
+                let folder = await Folder.findOne({
+                    _id: request.body.folderId
+                })
+
+                if(folder.photos && folder.photos.length)
+                {
+                    order = folder.photos.length
+                }
+
+                folder.photos.push({
+                    name: filename,
+                    path: bucket_path,
+                    mimetype: mimetype,
+                    order: order + 1
+                })
+                await folder.save()
+                //end add to database
+
+                response.status(200).send({
+                    status: true,
+                    data: folder,
+                    message: 'success'
+                })
             }
-        ).promise();
+            else {
+                console.log(e)
+                Sentry.captureException(e)
 
-        const b64 = Buffer.from(s3data.Body).toString('base64');
+                data.status = false
+                data.data = null
+                data.message = "failed"
+                response.status(403).send(data)
+            }
 
-        //console.log("s3res data", s3data)
-        //console.log("s3res data", s3data.Body)
-
-
-        //add to database
-        let folder = await Folder.findOne({
-            _id: request.body.folderId
-        })
-
-        folder.photos.push({
-            name: filename,
-            path: bucket_path,
-            mimetype: mimetype
-        })
-        await folder.save()
-        //end add to database
+        }
 
 
-        response.status(200).send({
-            status: true,
-            data: folder,
-            message: 'success'
-        })
+
+
+
+
     }
 
     /**
@@ -659,6 +830,60 @@ class UserController {
             response.send(data)
         }
         catch (err) {
+            Sentry.captureException(err)
+            logger.error('Error::' + err)
+
+            data.status = false
+            data.data = null
+            data.error = err
+            data.message = 'failed'
+
+            response.send(data)
+        }
+    }
+
+    /**
+     * update folders photos order
+     */
+    async updateFoldersPhotosOrder(request, response) {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+
+        try {
+            let requestPhotos = request.body.photos
+            let folder = await Folder.findOne({
+                _id: request.body.folder_id
+            })
+
+            folder.photos.forEach(function(obj) {
+                let photo = requestPhotos.find(innerObj => innerObj._id == obj._id)
+                //console.log("photo", photo)
+                obj.order = photo.order
+            })
+            await folder.save()
+
+            //requestFolders.forEach((folder))
+            /*for (const folder of requestFolders) {
+                await Folder.findOneAndUpdate({
+                    _id: folder.id
+                }, {
+                    order: folder.order
+                })
+            }*/
+            //let folders = await Folder.collection.insertMany(requestFolders)
+
+            data.status = true
+            data.data = folder
+            data.message = 'success'
+
+            response.send(data)
+        }
+        catch (err)
+        {
+            console.log(err)
             Sentry.captureException(err)
             logger.error('Error::' + err)
 

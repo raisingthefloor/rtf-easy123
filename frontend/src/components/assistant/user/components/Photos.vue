@@ -65,9 +65,20 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
             ></vue-dropzone>
 
             <div class="list-group address-book-contact-list mb-5" id="address-book-contact-list" style="max-height: 75vh; overflow-y: scroll;">
-              <a href="javascript:void(0)" class="list-group-item list-group-item-action address-book-list-item" :ref="'photo_'+index" v-bind:class="(current_photo.id == photo._id)?'active':''"  v-for="(photo, index) in current_folder.photos" :key="photo._id" @click="showPhoto(photo)" @keydown="photoKeyDown($event, index)">
-                {{ photo.name }}
-              </a>
+              <draggable
+                  v-model="photos"
+                  group="photos"
+                  @start="drag=true"
+                  @end="drag=false"
+                  style=""
+                  :options="{ animation:200, handle:'.item' }"
+                  @change="photoMoved"
+              >
+                <a href="javascript:void(0)" class="list-group-item list-group-item-action address-book-list-item item" :ref="'photo_'+index" v-bind:class="(current_photo.id == photo._id)?'active':''"  v-for="(photo, index) in photos" :key="photo._id" @click="showPhoto(photo)" @keydown="photoKeyDown($event, index)">
+                  {{ photo.name }}
+                  <font-awesome-icon :icon="['fas', 'edit']" @click="editPhoto(photo, index)" class="text-info float-end"></font-awesome-icon>
+                </a>
+              </draggable>
             </div>
           </div>
         </div>
@@ -151,6 +162,7 @@ export default {
       id: 1,
       photo_id: null,
       folders: [],
+      photos: [],
       current_folder: null,
       myFiles: [],
       current_photo: null,
@@ -196,6 +208,12 @@ export default {
     });
   },
   methods: {
+    /** sort photos by orde **/
+    sortPhotosOrder() {
+      this.photos.sort((a, b) => {
+        return a.order - b.order
+      })
+    },
     /** Load existing folders **/
     loadFolders() {
       let self = this
@@ -294,9 +312,9 @@ export default {
           })
     },
     /** edit/rename folder **/
-    editFolder(folder, index)
+    editFolder(folder)
     {
-      console.log("editFolder", folder, index)
+      //console.log("editFolder", folder, index)
       let self = this
       swal({
         text: "Edit folder name",
@@ -471,19 +489,23 @@ export default {
     },
     openFolder(id) {
       this.current_folder = this.folders.find(obj => obj.id == id)
+
       if(this.current_folder.photos && this.current_folder.photos.length)
       {
+        this.photos = this.current_folder.photos
+        this.sortPhotosOrder()
         this.showPhoto(this.current_photo = this.current_folder.photos[0])
       }
       else
       {
+        this.photos = []
         this.current_photo = {}
       }
+
 
     },
     /** show photo after getting it from the server **/
     showPhoto(photo) {
-
       let self = this
       this.loading_image = true
       axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/get-private-image", {
@@ -527,6 +549,15 @@ export default {
         if(data.data.id == this.current_folder.id)
         {
           this.current_folder = data.data
+          if(this.current_folder.photos && this.current_folder.photos.length)
+          {
+            this.photos = this.current_folder.photos
+          }
+          else
+          {
+            this.photos = []
+          }
+
         }
 
         for (let i = 0; i < this.folders.length; i++) {
@@ -545,6 +576,7 @@ export default {
     sendingDropzoneEvent(file, xhr, formData) {
       formData.append('folderId', this.current_folder.id);
     },
+    /** folder order changed **/
     folderMoved() {
 
       this.folders.map((folder, index) => {
@@ -560,6 +592,37 @@ export default {
         console.log(error)
       })
 
+    },
+    /** photo order changed **/
+    photoMoved() {
+      let self = this
+      this.photos.map((photo, index) => {
+        photo.order = index + 1
+      })
+
+      let folder_id = this.current_folder.id
+
+      axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/assistant/user/update-folders-photos-order", {
+        folder_id: folder_id,
+        photos: self.photos
+      })
+      .then((response) => {
+        if(response.data.status)
+        {
+          self.current_folder = response.data.data
+          for (let i = 0; i < self.folders; i++) {
+            if (self.folders[i].id == response.data.data.id)
+            {
+              self.folders = response.data.data
+            }
+          }
+        }
+        //console.log(response.data)
+      }, err =>{
+        console.log(err)
+      })
+
+      //console.log("photo moved")
     },
     /** keydown event for folder **/
     folderKeyDown(event, folder_index) {
@@ -699,6 +762,125 @@ export default {
 
       console.log("event", event)
       console.log("photo_index", photo_index)
+    },
+
+    /** edit photo name **/
+    editPhoto(photo)
+    {
+      let self = this
+      //console.log("photo edit", photo, index)
+
+      swal({
+        text: "Edit photo name",
+        content: {
+          element: "input",
+          attributes: {
+            value: photo.name,
+            type: "text",
+          },
+        },
+        button: {
+          text: "Update",
+          closeModal: false,
+        },
+        closeOnClickOutside: false,
+        closeOnEsc: false
+      })
+      .then((value) => {
+        if(value && value != "") {
+          console.log("here")
+          //check if folder name already exists
+          let existing = null
+          if(self.current_folder.photos.length)
+            existing = self.current_folder.photos.find(obj => (obj._id != photo._id && obj.name == value))
+
+          if(!existing)
+          {
+
+
+            //save entry to database
+            axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/assistant/user/update-folder-photo/',{
+              id: self.$route.params.id,
+              folder_id: self.current_folder.id,
+              edit_id: photo._id,
+              name: value
+            })
+                .then((response) => {
+                  //console.log(response)
+                  if(response.data.status)
+                  {
+                    //console.log("Data", response.data.data)
+                    for (let i = 0; i < self.folders.length; i++) {
+                      if(self.folders[i].id == response.data.data.id)
+                      {
+
+                        self.folders[i] = response.data.data
+                        self.current_folder = response.data.data
+                        if(self.current_folder.photos && self.current_folder.photos.length)
+                        {
+                          self.photos = self.current_folder.photos
+                        }
+                        else
+                        {
+                          self.photos = []
+                        }
+                        //console.log("self.folders[i]", self.folders[i])
+                        //let current_folder = self.folders.find(obj => obj.id == response.data.data.id)
+                        //self.current_folder = current_folder
+                        //console.log("current_folder", current_folder)
+                        //console.log("this current_folder", self.current_folder)
+                        //self.openFolder(response.data.data.id)
+
+                        //self.current_folder = response.data.data
+                        let current_photo = self.current_folder.photos.find(obj => obj._id == photo._id)
+                        self.showPhoto(current_photo)
+                        //console.log("currnet photo", current_photo)
+                        /*for (let j = 0; j < self.folders[i].photos.length; j++) {
+                          if(self.folders[i].photos[j]._id == photo._id)
+                          {
+                            self.folders[i].photos[j].name = value
+
+                            self.current_photo.name = value
+                          }
+                        }*/
+
+                      }
+                    }
+
+                    //self.current_folder = self.folders.find(obj => obj.id == self.id)
+
+                  }
+                  else {
+                    swal(self.$t('server_error_occurred_please_contact_admin'), {
+                      icon: "warning",
+                    })
+                  }
+
+                  swal.stopLoading();
+                  swal.close();
+                  /*self.folders.push({
+                    "id": response.data.data.id,
+                    "name": value,
+                    "photos": []
+                  })*/
+                }, (error) => {
+                  console.log(error)
+                  swal(self.$t('server_error_occurred_please_contact_admin'), {
+                    icon: "warning",
+                  })
+                  swal.stopLoading();
+                  swal.close();
+                })
+          }
+
+
+        }
+        else {
+          swal.stopLoading();
+          swal.close();
+        }
+
+      })
     }
   }
 }
