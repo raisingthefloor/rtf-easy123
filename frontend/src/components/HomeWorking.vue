@@ -719,7 +719,7 @@ export default {
       }
     },
     getScreenSaverFolder() {
-      let screensaver = this.$store.state.home.folders.find(obj => obj.name == "Screensaver")
+      let screensaver = this.$store.state.home.folders.find(obj => obj.name == "Slideshow")
 
       return screensaver
     }
@@ -919,7 +919,7 @@ export default {
             if(response.data.status)
             {
               self.$store.commit('STORE_HOME_FOLDERS', response.data.data)
-              let folder = response.data.data.find(obj => obj.name == 'Screensaver')
+              let folder = response.data.data.find(obj => obj.name == 'Slideshow')
               if(folder)
               {
                 //get screensaver images

@@ -42,8 +42,8 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
       </div>
       <div id="galleryTitle" style="width: 171px; height: 167px;" v-if="showAlbumStatus == 'SHOWING'">{{ current_album.name }}</div>
-      <div id="closeGallery" style="position: absolute; width: 171px; height: 167px; left: 0px; top: 220px;" v-if="selectedAlbum">
-        <button style="background-color: #E94600; border: 1px solid transparent; color: rgb(255, 255, 255); text-align: center; text-decoration: none; padding: 0.375rem 0.75rem; font-size: 1rem; border-radius: 0.25rem;" @click="hideAlbum">Close</button>
+      <div id="closeGallery" style="position: absolute; width: 171px; height: 167px; right: 0px; top: 180px;" v-if="selectedAlbum">
+        <button style="background-color: #6c757d; border: 1px solid transparent; color: rgb(255, 255, 255); text-align: center; text-decoration: none; padding: 0.375rem 0.75rem; font-size: 1rem; border-radius: 0.25rem;" @click="hideAlbum">Close</button>
       </div>
 
     </div>

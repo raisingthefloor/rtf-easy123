@@ -545,14 +545,14 @@ class UserController {
         try {
             //check if screensaver folder exists, if not create one
             const folder = await Folder.findOne({
-                name: "Screensaver",
+                name: "Slideshow",
                 userId: request.body.id
             })
             //console.log("folders", folder)
             if(!folder)
             {
                 await Folder.create({
-                    name: "Screensaver",
+                    name: "Slideshow",
                     userId: request.body.id,
                     order: 0,
                     createdBy: request.decoded.id
