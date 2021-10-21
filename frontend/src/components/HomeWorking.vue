@@ -764,6 +764,7 @@ export default {
           if(documentHeight-( y + divHeight + 100 ) < 0 )
             y = 0
           $('#newMailText').show()
+          $("#screenSaverGallery").hide()
           $("#newMailText").animate({top:y, left:x}, 3000 )
         }
         else if(this.userGeneralSettings.screenSaverPhotoTransitionPeriod && this.getScreenSaverFolder) {
@@ -777,6 +778,7 @@ export default {
 
 
             $("#screenSaverGallery").show()
+            $('#newMailText').hide()
             $('#screenSaverGallery').load(function() {
               var imgWidth = $('#screenSaverGallery').width();
               var imgHeight = $('#screenSaverGallery').height();
