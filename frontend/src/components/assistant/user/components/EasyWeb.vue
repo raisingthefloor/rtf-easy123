@@ -811,9 +811,14 @@ export default {
 
             self.closeAddWebsiteForm()
           }
-          else
+          else if(response.data.message == "website_loading_failed")
           {
-            console.log(response.data)
+            //console.log(response.data)
+            swal({
+              title: "Failed",
+              text: "Website is not allowed to open in iframe. X-Frame-Options header set to sameorigin.",
+              icon: "error",
+            })
           }
 
         }, (error) => {
@@ -841,7 +846,7 @@ export default {
       if(this.selected_folder && this.selected_folder.id)
       {
         website = this.selected_folder.websites.find(obj => obj._id == item_id)
-        console.log("website", item_id, this.selected_folder, website)
+        //console.log("website", item_id, this.selected_folder, website)
       }
       else
       {
@@ -1000,14 +1005,17 @@ export default {
                self.openFolderOrWebsite(sf)
               })
 
-
+              self.closeAddWebsiteForm()
             }
-
-            self.closeAddWebsiteForm()
           }
-          else
+          else if(response.data.message == "website_loading_failed")
           {
-            console.log(response.data)
+            //console.log(response.data)
+            swal({
+              title: "Failed",
+              text: "Website is not allowed to open in iframe. X-Frame-Options header set to sameorigin.",
+              icon: "error",
+            })
           }
 
         }, (error) => {

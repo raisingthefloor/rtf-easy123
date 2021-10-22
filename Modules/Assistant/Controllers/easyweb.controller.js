@@ -202,6 +202,19 @@ class EasyWebController {
                 userId: request.body.id,
                 createdBy: request.decoded.id
             }
+
+            let isBlocked = await HelperManager.websiteOpensInIfram(request.body.website_url)
+
+            if(isBlocked)
+            {
+                data.status = false
+                data.data = null
+                data.message = "website_loading_failed"
+                response.send(data)
+                return
+            }
+
+
             if(!request.body.websiteImageFileName && request.body.website_sample_image_url)
             {
                 newWebsite.imageType = "favcon"
@@ -484,7 +497,7 @@ class EasyWebController {
         try
         {
             let website
-            console.log("data", request.body)
+            //console.log("data", request.body)
             let updateWebsite = {
                 name: request.body.text_to_put_on_button,
                 link: request.body.website_url,
@@ -493,6 +506,19 @@ class EasyWebController {
                 imageMimeType: request.body.websiteImageMimeType,
                 imagePath: request.body.websiteImagePath
             }
+
+            let isBlocked = await HelperManager.websiteOpensInIfram(request.body.website_url)
+
+            if(isBlocked)
+            {
+                data.status = false
+                data.data = null
+                data.message = "website_loading_failed"
+                response.send(data)
+                return
+            }
+
+
             if(!request.body.websiteImageFileName && request.body.website_sample_image_url)
             {
                 updateWebsite.imageType = "favcon"
