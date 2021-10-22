@@ -42,14 +42,14 @@ class UserController {
         
         try
         {
-            console.log("decoded", request.decoded)
+            //console.log("decoded", request.decoded)
             let user = await HelperManager.getLoggedInUser(request.decoded)
-            console.log("user", user)
+            //console.log("user", user)
             let folders = await Folder.find({
                 userId: user.id,
                 photos: { $exists: true, $not: { $size: 0 } }
             }).sort({order:1})
-            console.log("folders", folders)
+            //console.log("folders", folders)
 
             data.status = true
             data.data = folders

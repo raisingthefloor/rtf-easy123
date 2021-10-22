@@ -57,7 +57,7 @@ exports.getLoggedInUser = async function (decoded_data) {
             _id: decoded_data.id
         })
 
-        console.log("found user", user)
+        //console.log("found user", user)
 
         if(user)
         {
@@ -68,7 +68,7 @@ exports.getLoggedInUser = async function (decoded_data) {
                     role: "user",
                     deleted: false
                 })
-                console.log("found user ass", user)
+                //console.log("found user ass", user)
                 resolve(ouser)
             }
             else
