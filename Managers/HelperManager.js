@@ -81,3 +81,33 @@ exports.getLoggedInUser = async function (decoded_data) {
         }
     })
 }
+
+exports.websiteOpensInIfram = async function(website_url) {
+    return new Promise(async (resolve, reject) => {
+        //check website opens in iframe
+        let isBlocked = false
+        const axios = require('axios').default;
+        let website_fetched = await axios.get(website_url)
+        //console.log("website_fetched", website_fetched)
+        if(website_fetched && website_fetched.status == 200)
+        {
+            // Grab the headers
+            let headers = website_fetched.headers
+
+            // Grab the x-frame-options header if it exists
+            let xFrameOptions = headers['x-frame-options'] || ''
+
+            // Normalize the header to lowercase
+            xFrameOptions = xFrameOptions.toLowerCase()
+
+            // Check if it's set to a blocking option
+            if (
+                xFrameOptions === 'sameorigin' ||
+                xFrameOptions === 'deny'
+            ) {
+                isBlocked = true
+            }
+        }
+        resolve(isBlocked)
+    })
+}
