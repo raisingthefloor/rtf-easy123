@@ -63,7 +63,8 @@ exports.getLoggedInUser = async function (decoded_data) {
             {
                 let ouser = await User.findOne({
                     user_id: user.createdBy,
-                    role: "user"
+                    role: "user",
+                    deleted: false
                 })
                 resolve(ouser)
             }
