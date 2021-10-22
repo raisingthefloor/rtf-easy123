@@ -1000,10 +1000,18 @@ export default {
                self.openFolderOrWebsite(sf)
               })
 
-
+              self.closeAddWebsiteForm()
+            }
+            else if(response.data.message == "website_loading_failed")
+            {
+              swal({
+                title: "Failed",
+                text: "Website is not allowed to open in iframe. X-Frame-Options header set to sameorigin",
+                icon: "error",
+              })
             }
 
-            self.closeAddWebsiteForm()
+
           }
           else
           {

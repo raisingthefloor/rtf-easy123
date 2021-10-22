@@ -484,7 +484,7 @@ class EasyWebController {
         try
         {
             let website
-            console.log("data", request.body)
+            //console.log("data", request.body)
             let updateWebsite = {
                 name: request.body.text_to_put_on_button,
                 link: request.body.website_url,
@@ -493,6 +493,93 @@ class EasyWebController {
                 imageMimeType: request.body.websiteImageMimeType,
                 imagePath: request.body.websiteImagePath
             }
+
+            //check website opens in iframe
+            /*const https = require('https')
+            let isBlocked = 'No'
+            let requestPResponse = await https.request({ hostname: request.body.website_url })
+            console.log("requestPResponse", requestPResponse.statusCode)
+            if(requestPResponse.statusCode == 200)
+            {
+                // Grab the headers
+                let headers = requestPResponse.headers
+                console.log("headers", headers)
+
+                // Grab the x-frame-options header if it exists
+                let xFrameOptions = headers['x-frame-options'] || ''
+
+                // Normalize the header to lowercase
+                xFrameOptions = xFrameOptions.toLowerCase()
+
+                // Check if it's set to a blocking option
+                if (
+                    xFrameOptions === 'sameorigin' ||
+                    xFrameOptions === 'deny'
+                ) {
+                    isBlocked = 'Yes'
+                }
+            }
+
+            if(isBlocked == 'Yes')
+            {
+                data.status = false
+                data.message = "website_loading_failed"
+                data.data = null
+                response.send(data)
+            }*/
+            /*const https = require('https')
+            let options = {
+                hostname: request.body.website_url,
+                path: '/',
+                port: 80,
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            }
+            const req = https.request(options, res => {
+                console.log(`statusCode: ${res.statusCode}`)
+
+                res.on('data', d => {
+                    console.log("data", d)
+                })
+            })
+
+            req.on('error', error => {
+                console.error("now err,", error)
+            })*/
+
+            let isBlocked = false
+            const axios = require('axios').default;
+            let website_fetched = await axios.get(request.body.website_url)
+            //console.log("website_fetched", website_fetched)
+            if(website_fetched && website_fetched.status == 200)
+            {
+                // Grab the headers
+                let headers = website_fetched.headers
+
+                // Grab the x-frame-options header if it exists
+                let xFrameOptions = headers['x-frame-options'] || ''
+
+                // Normalize the header to lowercase
+                xFrameOptions = xFrameOptions.toLowerCase()
+
+                // Check if it's set to a blocking option
+                if (
+                    xFrameOptions === 'sameorigin' ||
+                    xFrameOptions === 'deny'
+                ) {
+                    isBlocked = true
+
+                    data.status = false
+                    data.message = "website_loading_failed"
+                    data.data = null
+                    response.send(data)
+                    return
+                }
+            }
+
+
             if(!request.body.websiteImageFileName && request.body.website_sample_image_url)
             {
                 updateWebsite.imageType = "favcon"
