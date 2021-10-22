@@ -42,6 +42,7 @@ class UserController {
         
         try
         {
+            console.log("decoded", request.decoded)
             let user = await HelperManager.getLoggedInUser(request.decoded)
             console.log("user", user)
             let folders = await Folder.find({

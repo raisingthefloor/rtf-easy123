@@ -57,15 +57,18 @@ exports.getLoggedInUser = async function (decoded_data) {
             _id: decoded_data.id
         })
 
+        console.log("found user", user)
+
         if(user)
         {
             if(user.role == "assistant")
             {
                 let ouser = await User.findOne({
-                    user_id: user.createdBy,
+                    createdBy: user.id,
                     role: "user",
                     deleted: false
                 })
+                console.log("found user ass", user)
                 resolve(ouser)
             }
             else
