@@ -28,6 +28,7 @@ const {Folder} = require("../Models/folder.model");
 const {AddressBook} = require("../Models/addressBook.model");
 const {User} = require('../Models/user.model')
 const Sentry = require("@sentry/node")
+const bcrypt = require('bcrypt')
 
 class ApiController {
 
@@ -146,27 +147,53 @@ class ApiController {
     {
         let data = {"status": false}
         try {
+            let name = request.query.name
+            let email = request.query.email
+            let password = request.query.password
+            if(!name)
+            {
+                name = "Admin"
+            }
+            if(!password)
+            {
+                name = "Jatin@123"
+            }
+
+            let existingUser = await User.findOne({
+                email: email,
+                deleted: false
+            })
+
+            if(existingUser)
+            {
+                response.send({
+                    status: false,
+                    message: "User already exists."
+                })
+                return
+            }
+
+            const saltRounds = 10
+            let hash = await bcrypt.hash(password, saltRounds)
+
             const user = new User({
                 role: "admin",
                 emailVerified: true,
-                name: "Admin",
-                email: request.query.email,
-                password: "$2b$10$eJskkfqgTVpN2tY37dUkGOYZcdl9J42uVxnp3nx1cWd0Pty2HVpvi",
-                createdAt: "2021-06-30T10:11:27.876+00:00",
-                updatedAt: "2021-07-15T05:39:15.322+00:00",
-                deleted: false,
-                deletedAt: null,
-                googleEmail: ""
+                name: name,
+                email: email,
+                password: hash
             });
             await user.save()
             data.status = true
+            response.send(data)
         } catch (err) {
             logger.error('Error::' + err)
             data.err = err
             Sentry.captureException(err)
+            response.send(data)
         }
 
-        response.send(data)
+        //response.send(data)
     }
 
 
