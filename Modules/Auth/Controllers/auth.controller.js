@@ -55,6 +55,7 @@ class AuthController {
                     data: null,
                     message: 'User not found'
                 })
+                return
             }
 
             bcrypt.compare(request.body.password, user.password)
@@ -94,6 +95,7 @@ class AuthController {
                                 role: user.role
                             }
                         })
+                        return;
                     }
                     else
                     {
@@ -102,6 +104,7 @@ class AuthController {
                             data: null,
                             message: 'Please enter correct email or password'
                         })
+                        return;
                     }
                 })
 
@@ -117,6 +120,7 @@ class AuthController {
                 error: err,
                 message: 'failed'
             })
+            return 
         }
     }
 

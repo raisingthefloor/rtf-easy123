@@ -186,11 +186,13 @@ class ApiController {
             await user.save()
             data.status = true
             response.send(data)
+            return
         } catch (err) {
             logger.error('Error::' + err)
             data.err = err
             Sentry.captureException(err)
             response.send(data)
+            return
         }
 
         //response.send(data)
