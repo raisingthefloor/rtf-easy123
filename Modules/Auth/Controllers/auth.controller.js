@@ -120,7 +120,7 @@ class AuthController {
                 error: err,
                 message: 'failed'
             })
-            return 
+            return
         }
     }
 

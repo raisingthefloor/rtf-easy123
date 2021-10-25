@@ -188,6 +188,7 @@ class ApiController {
             response.send(data)
             return
         } catch (err) {
+            console.log(err)
             logger.error('Error::' + err)
             data.err = err
             Sentry.captureException(err)
