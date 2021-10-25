@@ -166,7 +166,8 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
       </div>
     </div>
     <img id='paper_big' src='/mail/paper2.png' style="display:none;width:500px;height:700px;position:absolute;left:670px;z-index:99"/>
-    <router-link to="/assistant" v-if="$store.state.AppActiveUser.role == 'assistant'" style="top: 1rem; right: 1rem; position: absolute; background-color: #6c757d; border-color: #6c757d; color: #fff; text-align: center; text-decoration: none; border: 1px solid transparent; padding: 0.375rem 0.75rem; font-size: 1rem; border-radius: 0.25rem;">Back</router-link>
+<!--    <router-link id="screensaverBackButton" @click="hideScreensaver()" to="/assistant" v-if="$store.state.AppActiveUser.role == 'assistant'" style="top: 1rem; right: 1rem; position: absolute; background-color: #6c757d; border-color: #6c757d; color: #fff; text-align: center; text-decoration: none; border: 1px solid transparent; padding: 0.375rem 0.75rem; font-size: 1rem; border-radius: 0.25rem;">Back</router-link>-->
+    <a href="javascript:void(0)" id="screensaverBackButton" @click="hideScreensaver()" v-if="$store.state.AppActiveUser.role == 'assistant'" style="top: 1rem; right: 1rem; position: absolute; background-color: #6c757d; border-color: #6c757d; color: #fff; text-align: center; text-decoration: none; border: 1px solid transparent; padding: 0.375rem 0.75rem; font-size: 1rem; border-radius: 0.25rem;">Back</a>
     <img src="/mail/trash1_1.png" class="trash1 trash" @mousedown="trashMousedown" @mouseup="trashMouseup" />
     <img src="/mail/trash1_2.png" class="trash2 trash" @mousedown="trashMousedown" @mouseup="trashMouseup" />
     <img src="/mail/desk.png" class="tray" @mousedown="trayMousedown" width="133" height="133" style="position:absolute; top:100px;"/>
@@ -819,43 +820,51 @@ export default {
   },
   mounted() {
     let self = this
+    if(!this.$route.query && this.$route.query.screensaver != "true")
+    {
+      let el = window
+
+      el.addEventListener('keyup', event => {
+        self.resetTimer()
+      })
+      el.addEventListener('load', event => {
+        self.resetTimer()
+      })
+      el.addEventListener('mousemove', event => {
+        self.resetTimer()
+      })
+      el.addEventListener('mousedown', event => {
+        self.resetTimer()
+      })
+      el.addEventListener('touchstart', event => {
+        self.resetTimer()
+      })
+      el.addEventListener('click', event => {
+        self.resetTimer()
+      })
+      el.addEventListener('keydown', event => {
+        self.resetTimer()
+      })
+      el.addEventListener('scroll', event => {
+        self.resetTimer()
+      })
+
+      setInterval(function() {
+        self.screensaverTimer++
+        //self.screensaverTimer = self.screensaverTimer + 3
+      } , 1000)
+    }
+    //console.log("route", this.$route.query)
+    //screensaverTimer
     this.initMount()
     this.getPhotosFolders()
     this.getEasywebFoldersAndLinks()
     this.getUserGeneralSettings()
 
-    setInterval(function() {
-      self.screensaverTimer++
-      //self.screensaverTimer = self.screensaverTimer + 3
-    } , 1000)
+
 
     //let el = document.getElementById("homeworking-component")
-    let el = window
 
-    el.addEventListener('keyup', event => {
-      self.resetTimer()
-    })
-    el.addEventListener('load', event => {
-      self.resetTimer()
-    })
-    el.addEventListener('mousemove', event => {
-      self.resetTimer()
-    })
-    el.addEventListener('mousedown', event => {
-      self.resetTimer()
-    })
-    el.addEventListener('touchstart', event => {
-      self.resetTimer()
-    })
-    el.addEventListener('click', event => {
-      self.resetTimer()
-    })
-    el.addEventListener('keydown', event => {
-      self.resetTimer()
-    })
-    el.addEventListener('scroll', event => {
-      self.resetTimer()
-    })
 
   },
   beforeDestroy() {
@@ -948,6 +957,15 @@ export default {
             console.log("error", error)
           })
     },
+    /** hide screensaver **/
+    hideScreensaver() {
+      this.$router.push('/assistant')
+      //console.log("not working")
+      $("#screensaver").hide()
+      $("#newMailText").hide()
+      $("#screenSaverGallery").hide()
+      $("#screensaverBackButton").css('z-index', 'initial')
+    },
     /** get user general settings **/
     getUserGeneralSettings() {
       let self = this
@@ -956,6 +974,16 @@ export default {
         if(response.data.status)
         {
           self.userGeneralSettings = response.data.data.settings
+
+          if(self.$route.query && self.$route.query.screensaver == "true")
+          {
+            self.screensaverTimer = (response.data.data.settings.screenSaverStartAfter * 60) + 1
+            $("#screensaverBackButton").css('z-index', 2001)
+            setInterval(function() {
+              self.screensaverTimer++
+              //self.screensaverTimer = self.screensaverTimer + 3
+            } , 1000)
+          }
 
           setInterval(function() {
             if(self.screensaverImages.length > (self.screensaverPhotoIndex + 1))
