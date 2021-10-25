@@ -820,8 +820,9 @@ export default {
   },
   mounted() {
     let self = this
-    if(!this.$route.query && this.$route.query.screensaver != "true")
+    if(this.$route.query && this.$route.query.screensaver != "true")
     {
+      console.log("here")
       let el = window
 
       el.addEventListener('keyup', event => {
