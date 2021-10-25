@@ -18,7 +18,7 @@
   "resend_verification_email": "Resend Verification Email",
   "sending_verification_email": "Sending Verification Email...",
   "verification_email_sent_to": "Verification email sent to",
-  "please_enter_correct_username_or_password": "Please enter correct email address or password",
+  "please_enter_correct_username_or_password": "Incorrect email or password. Please try again.",
   "not_a_user": "Not a user?",
 
   "//": "Register",
