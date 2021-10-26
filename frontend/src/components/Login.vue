@@ -54,8 +54,10 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           <label for="floatingInput">{{ $t('email_address') }}</label>
         </div>
         <div class="form-floating">
-          <input type="password" class="form-control" id="floatingPassword" :placeholder="$t('password')" v-model="password" name="new_password_easy123_2">
+          <input :type="(show_password_protected)?'password':'text'" class="form-control" id="floatingPassword" :placeholder="$t('password')" v-model="password" name="new_password_easy123_2" style="position:relative;">
           <label for="floatingPassword">{{ $t('password') }}</label>
+          <a href="javascript:void(0)" style="position: absolute; right: 8px; top: 22px; text-decoration: none; font-size: 0.9rem;" @click="show_password_protected=false" v-show="show_password_protected">{{ $t('show') }}</a>
+          <a href="javascript:void(0)" style="position: absolute; right: 8px; top: 22px; text-decoration: none; font-size: 0.9rem;" @click="show_password_protected=true" v-show="!show_password_protected">{{ $t('hide') }}</a>
         </div>
         <div class="float-end mb-3">
           <router-link to="/forgot-password">{{ $t('login_forgot_password') }}</router-link>
@@ -97,7 +99,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 }
 
 .form-signin input[type="password"] {
-  margin-bottom: 10px;
+  /*margin-bottom: 10px;*/
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
@@ -131,7 +133,8 @@ export default {
       verificationLinkMail: null,
       sentVerificationEmail: false,
       sendingVerificationEmail: false,
-      loginSubmitClicked: false
+      loginSubmitClicked: false,
+      show_password_protected: true
     }
   },
   computed: {

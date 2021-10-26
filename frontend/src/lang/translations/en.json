@@ -21,6 +21,8 @@
   "please_enter_correct_username_or_password": "Incorrect email or password. Please try again.",
   "not_a_user": "Not a user?",
   "login_forgot_password": "Forgot Password",
+  "show": "Show",
+  "hide": "Hide",
 
   "//": "Register",
   "register": "Register",
