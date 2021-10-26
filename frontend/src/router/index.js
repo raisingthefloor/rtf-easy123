@@ -26,6 +26,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Login from '@/components/Login'
 import Register from '@/components/Register'
+import ForgotPassword from '@/components/ForgotPassword'
+import ResetForgotPassword from '@/components/ResetForgotPassword'
 import VerifyEmail from '@/components/VerifyEmail'
 import HomeWorking from "@/components/HomeWorking"
 
@@ -55,6 +57,16 @@ const router = new Router({
             path: '/register',
             name: 'Register',
             component: Register
+        },
+        {
+            path: '/forgot-password',
+            name: 'ForgotPassword',
+            component: ForgotPassword
+        },
+        {
+            path: '/reset-password/:email/:token',
+            name: 'ResetForgotPassword',
+            component: ResetForgotPassword
         },
         {
             path: '/confirmation/:email/:token',

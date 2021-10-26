@@ -23,6 +23,7 @@
  * Consumer Electronics Association Foundation
  **/
 const mongoose = require('mongoose');
+const crypto = require('crypto')
 
 const modelName = "user"
 
@@ -54,6 +55,10 @@ const schema = new mongoose.Schema({
 
     settings: settingSchema,
 
+    passwordChangedAt: Date,
+    passwordResetToken: String,
+    passwordResetExpires: Date,
+
     emailVerified: {type: Boolean, default: false},
     createdBy: mongoose.Schema.ObjectId,
     deleted: {type: Boolean},
@@ -73,6 +78,7 @@ const schema = new mongoose.Schema({
         }
     }
 });
+
 
 
 //for soft delete
@@ -115,6 +121,23 @@ schema.query.isDeleted = async function(cond) {
     });
 };
 //end for soft delete
+
+
+schema.methods.createPasswordResetToken = function () {
+    const resetToken = crypto
+        .randomBytes(32)
+        .toString('hex')
+    this.passwordResetToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex')
+    this.passwordResetExpires = Date.now() + 60 * 60 * 1000
+
+
+    //console.log("passwordResetExpires", Date.now(), this.passwordResetExpires)
+    return resetToken
+}
+
 
 
 const User = mongoose.model(modelName, schema);

@@ -20,6 +20,7 @@
   "verification_email_sent_to": "Verification email sent to",
   "please_enter_correct_username_or_password": "Incorrect email or password. Please try again.",
   "not_a_user": "Not a user?",
+  "login_forgot_password": "Forgot Password",
 
   "//": "Register",
   "register": "Register",
@@ -40,8 +41,20 @@
   "name": "Name",
   "password_placeholder": "Enter Password",
 
+  "//": "forgot password",
+  "forgot_password": "Forgot Password",
+  "forgot_password_link_sent": "Forgot password link sent on {email}",
+  "user_not_found": "User not found with email address {email}",
 
-  "//": "Verfiy Email",
+  "//": "Reset Forgot Password",
+  "reset_password": "Reset Password",
+  "confirm_password": "Confirm Password",
+  "password_confirm_password_not_match": "Password is not matching.",
+  "password_error": "Password should be a string of 8 char long.",
+  "password_changed_successfully": "Password changed successfully.",
+  "invalid_token_or_expired": "Invalid token or expired.",
+
+  "//": "Verify Email",
   "verifying_email": "Verifying Email...",
   "your_email_is_verified": "You are email is verified.",
   "to_login": "to login",

@@ -360,6 +360,7 @@ class AuthController {
                 //console.log(result.body)
             })
             .catch(err => {
+                Sentry.captureException(err)
                 console.log(err.statusCode)
             })
 
@@ -423,6 +424,185 @@ class AuthController {
         }
 
 
+    }
+
+    /**
+     * forgot password
+     */
+    async forgotPassword(request, response) {
+        let data = {
+            status: false,
+            data: null,
+            message: "failed"
+        }
+
+        try {
+            let user = await User.findOne({ email: request.body.email })
+            if(!user)
+            {
+                data.message = "user_not_found"
+                response.send(data)
+                return
+            }
+
+            let resetToken = user.createPasswordResetToken()
+
+            await user.save()
+
+            //send mail mailjet
+            const mailjet = require('node-mailjet').connect(
+                process.env.MJ_APIKEY_PUBLIC,
+                process.env.MJ_APIKEY_PRIVATE
+            )
+
+            const mailRequest = mailjet.post('send', { version: 'v3.1' }).request({
+                Messages: [
+                    {
+                        From: {
+                            Email: process.env.MJ_SENDER_EMAIL,
+                            Name: process.env.MJ_SENDER_NAME,
+                        },
+                        To: [
+                            {
+                                Email: user.email,
+                                Name: user.name,
+                            },
+                        ],
+                        Subject: 'Email Verification - Easy123',
+                        TextPart: 'Greetings from Mailjet!',
+                        HTMLPart: 'Hello '+ user.name + ',<br><br>' + 'Forgot your password? <a href="'+process.env.FRONT_URL+'reset-password\/'+user.email+'\/'+resetToken+'">Reset Password</a><br><br>Thank You!<br>Easy123 Team'
+                    },
+                ],
+            })
+
+            mailRequest
+                .then(result => {
+                    //console.log(result.body)
+                })
+                .catch(err => {
+                    Sentry.captureException(err)
+                    console.log(err.statusCode)
+                })
+
+            data.status = true
+            data.message = "success"
+            response.send(data)
+        }
+        catch (err) {
+            console.log(err)
+            logger.error('Error::' + err)
+            Sentry.captureException(err)
+            response.send(data)
+        }
+    }
+
+    /**
+     * check forgot password token
+     */
+    async checkForgotPasswordToken(request, response)
+    {
+        let data = {
+            status: false,
+            data: null,
+            message: "failed"
+        }
+
+        try {
+            const hashedToken = crypto
+                .createHash('sha256')
+                .update(request.body.token)
+                .digest('hex')
+
+            const hashedToken1 = crypto
+                .createHash('sha256')
+                .update(request.body.token)
+                .digest('hex')
+
+            let now = Date.now()
+
+            const user = await User.findOne({
+                passwordResetToken: hashedToken,
+                passwordResetExpires: { $gt: now }
+            })
+
+            if(!user)
+            {
+                data.message = "token_invalid_or_expired"
+                response.send(data)
+                return
+            }
+
+            data.status = true
+            data.data = user.id
+            data.message = "success"
+            response.send(data)
+            return
+
+
+            /*user.password = request.body.password
+            user.passwordResetToken = null
+            user.passwordResetExpires = null
+            await user.save()*/
+
+
+        }
+        catch (err) {
+            console.log(err)
+            logger.error('Error::' + err)
+            Sentry.captureException(err)
+            response.send(data)
+        }
+    }
+
+    /**
+     * reset forgot password
+     */
+    async resetForgotPassword(request, response) {
+        let data = {
+            status: false,
+            data: null,
+            message: "failed"
+        }
+
+        try {
+            const hashedToken = crypto
+                .createHash('sha256')
+                .update(request.body.token)
+                .digest('hex')
+
+            const user = await User.findOne({
+                passwordResetToken: hashedToken,
+                //passwordResetExpired: { $gt: Date.now() }
+            })
+
+            if(!user)
+            {
+                data.message = "token_invalid_or_expired"
+                response.send(data)
+                return
+            }
+
+            let password = request.body.password
+            const saltRounds = 10
+            let hash = await bcrypt.hash(password, saltRounds)
+
+            user.password = hash
+            user.passwordResetToken = null
+            user.passwordResetExpires = null
+            await user.save()
+
+            data.status = true
+            data.data = user.id
+            data.message = "success"
+            response.send(data)
+            return
+        }
+        catch (err) {
+            console.log(err)
+            logger.error('Error::' + err)
+            Sentry.captureException(err)
+            response.send(data)
+        }
     }
 }
 
