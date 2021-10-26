@@ -39,6 +39,9 @@ module.exports = function (router) {
     //unprotected routes
     router.post('/api/login', authController.login.bind(authController))
     router.post('/api/register', middelware.createUser, authController.register.bind(authController))
+    router.post('/api/forgot-password', authController.forgotPassword.bind(authController))
+    router.post('/api/check-forgot-password-token', authController.checkForgotPasswordToken.bind(authController))
+    router.post('/api/reset-forgot-password', authController.resetForgotPassword.bind(authController))
     router.post('/api/confirmation', authController.confirmation.bind(authController))
     router.post('/api/resend-verification-mail', authController.resendVerificationEmail.bind(authController))
     router.get('/api/check-email-exists', authController.checkIfEmailExists.bind(authController))
