@@ -26,7 +26,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
   <div class="container-fluid row">
     <div class="col-md-12">
 
-      <button class="btn btn-primary float-end mt-3 mb-2" @click="addFolder">Add Folder</button>
+      <button class="btn btn-primary mt-3 mb-2" @click="addFolder">Add Folder</button>
       <!--      <button class="btn btn-primary float-end mt-3" @click="uploadImages" v-if="current_folder != null">Upload Images</button>-->
 
     </div>
@@ -695,7 +695,7 @@ export default {
       {
         //this.$refs['folder_'+this.current_folder]
         let i = this.folders.findIndex(item => item.id === this.current_folder.id)
-        console.log("index", i)
+
         let el = this.$refs['folder_'+i][0]
         if(el)
         {
@@ -717,7 +717,7 @@ export default {
           {
             new_index = photo_index - 1
           }
-
+          this.showPhoto(this.current_folder.photos[new_index])
           let el = this.$refs['photo_'+new_index][0]
           if(el)
           {
@@ -750,6 +750,8 @@ export default {
             new_index = 0
           }
 
+          this.showPhoto(this.current_folder.photos[new_index])
+
           let el = this.$refs['photo_'+new_index][0]
           if(el)
           {
@@ -760,8 +762,8 @@ export default {
         }
       }
 
-      console.log("event", event)
-      console.log("photo_index", photo_index)
+      //console.log("event", event)
+      //console.log("photo_index", photo_index)
     },
 
     /** edit photo name **/
@@ -779,10 +781,14 @@ export default {
             type: "text",
           },
         },
-        button: {
+        buttons: ["Cancel", {
           text: "Update",
           closeModal: false,
-        },
+        }],
+        /*button: {
+          text: "Update",
+          closeModal: false,
+        },*/
         closeOnClickOutside: false,
         closeOnEsc: false
       })
