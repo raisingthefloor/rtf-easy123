@@ -121,23 +121,6 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
     <div class="flap" style="position:absolute;z-index: 5; left: 852px; top: 626px;" @click="flapClick($event)"> <img src="/images/contact1.png" /><div style="position:absolute; left: 7px; top: 7px; font-size: 22px">Y Z</div></div>
 
-    <!-- <div id="person" ref="person" style= "position:absolute;left:60px; top:306px;    width:120px; height:143px;border : 1px solid #f0e9eb; display:none; z-index: 3; background-color: #fefefe;     ">
-      <div id="person_contact" ref="person_contact" style="display:none;">
-        <img id="person_pic" src="/contacts/gregg.gif" width="128" height="128" style="margin:30px;"/>
-        <div id="person_name" align="left" style="padding-left:0px;position:absolute; left:188px; top:80px; font-size: 30px"></div>
-        <div id ="options" style="position:absolute; left: -1px; top: 203px;" align="center">
-
-          <a class="large awesome reply" @click="replyClick($event)" href="javascript:void(0)">
-            <img align="left" style="padding:0px" src="/images/mail2.png"  />
-            <div id="email" align="left" style="padding-left:80px; padding-top: 17px; font-size: 26px">Write Email to Gregg</div>
-          </a>
-          <a class="large awesome" href="#"><img align="left" style="padding:0px" src="/images/phone1.png"  ><div id="call" align="left" style="padding-left:80px; padding-top: 17px; font-size: 26px">Call Gregg</div></a>
-          <a class="large awesome" href="#"><img align="left" style="padding:0px" src="/images/stack3.png" width="70" height="70" ><div id="photo" align="left" style="padding-left:80px; padding-top: 17px; font-size: 26px">View Gregg's Photos</div></a>
-          <a class="large awesome" href="#"><img align="left" style="padding:0px" src="/images/Chat.png"  ><div  id="chat" align="left" style="padding-left:80px; padding-top: 17px; font-size: 26px">Chat with Gregg</div></a>
-        </div>
-      </div>
-    </div> -->
-
     <img class="spiral" src="/mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
     <img class="spiral" src="/mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
     <img class="spiral" src="/mail/spiral1.png" style="position:absolute;top:80px;left:267px; z-index:3"/>
@@ -166,8 +149,10 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
       </div>
     </div>
     <img id='paper_big' src='/mail/paper2.png' style="display:none;width:500px;height:700px;position:absolute;left:670px;z-index:99"/>
-<!--    <router-link id="screensaverBackButton" @click="hideScreensaver()" to="/assistant" v-if="$store.state.AppActiveUser.role == 'assistant'" style="top: 1rem; right: 1rem; position: absolute; background-color: #6c757d; border-color: #6c757d; color: #fff; text-align: center; text-decoration: none; border: 1px solid transparent; padding: 0.375rem 0.75rem; font-size: 1rem; border-radius: 0.25rem;">Back</router-link>-->
-    <a href="javascript:void(0)" id="screensaverBackButton" @click="hideScreensaver()" v-if="$store.state.AppActiveUser.role == 'assistant'" style="top: 1rem; right: 1rem; position: absolute; background-color: #6c757d; border-color: #6c757d; color: #fff; text-align: center; text-decoration: none; border: 1px solid transparent; padding: 0.375rem 0.75rem; font-size: 1rem; border-radius: 0.25rem;">Back</a>
+    <a href="javascript:void(0)" v-if="showScreensaverFlag == false && $store.state.AppActiveUser.role == 'assistant'" style="position: absolute; right: 90px; top: 22px;" @click="showScreensaverFlag = true">Screen Saver Test</a>
+    <a href="javascript:void(0)" v-if="showScreensaverFlag == true && $store.state.AppActiveUser.role == 'assistant'" style="position: absolute; right: 90px; top: 22px; z-index: 2001; color: white;" @click="showScreensaverFlag = false">Hide Screen Saver Test</a>
+
+    <a href="javascript:void(0)" id="screensaverBackButton" @click="$router.push('/assistant')" v-if="$store.state.AppActiveUser.role == 'assistant'" style="top: 1rem; right: 1rem; position: absolute; background-color: #6c757d; border-color: #6c757d; color: #fff; text-align: center; text-decoration: none; border: 1px solid transparent; padding: 0.375rem 0.75rem; font-size: 1rem; border-radius: 0.25rem;">Back</a>
     <img src="/mail/trash1_1.png" class="trash1 trash" @mousedown="trashMousedown" @mouseup="trashMouseup" />
     <img src="/mail/trash1_2.png" class="trash2 trash" @mousedown="trashMousedown" @mouseup="trashMouseup" />
     <img src="/mail/desk.png" class="tray" @mousedown="trayMousedown" width="133" height="133" style="position:absolute; top:100px;"/>
@@ -705,7 +690,8 @@ export default {
       newMailsCount: 0,
       screensaverPhotoIndex: 0,
       screensaverImages: [],
-      mailInterval: null
+      mailInterval: null,
+      showScreensaverFlag: false
     }
   },
   computed: {
@@ -744,117 +730,61 @@ export default {
       deep: true
     },
     screensaverTimer: function(newVal) {
-      let self = this
-      if(this.userGeneralSettings.screenSaverStartAfter != 0 && newVal >= (this.userGeneralSettings.screenSaverStartAfter*60))
+      if(this.showScreensaverFlag)
       {
-        //console.log(this.getScreenSaverFolder)
-        if(this.newMailsCount)
-        {
-          $("#newMailText").html("You have " + this.newMailsCount + " new mails")
-          $("#newMailText").show()
-
-          var x = Math.floor(Math.random()*$(document).width())
-          var y = Math.floor(Math.random()*$(document).height())
-          var documentHeight = $(document).height()
-          var documentWidth = $(document).width()
-          let divHeight = $('#newMailText').height
-          let divWidth = $('#newMailText').width()
-
-          if(documentWidth-( x + divWidth ) < 0 )
-            x = 0
-          if(documentHeight-( y + divHeight + 100 ) < 0 )
-            y = 0
-          $('#newMailText').show()
-          $("#screenSaverGallery").hide()
-          $("#newMailText").animate({top:y, left:x}, 3000 )
-        }
-        else if(this.userGeneralSettings.screenSaverPhotoTransitionPeriod && this.getScreenSaverFolder) {
-          //$('#screensaver').show()
-          $('#screensaver').fadeIn(2000, function() {
-            $('#screenSaverGallery').css('position', 'absolute')
-            $('#screenSaverGallery').css('z-index','2001')
-            $('#screenSaverGallery').css('align','center')
-
-
-
-
-            $("#screenSaverGallery").show()
-            $('#newMailText').hide()
-            $('#screenSaverGallery').load(function() {
-              var imgWidth = $('#screenSaverGallery').width();
-              var imgHeight = $('#screenSaverGallery').height();
-
-              let viewportheight = window.innerHeight
-              let viewportwidth = window.innerWidth
-
-              imgWidth = viewportheight/imgHeight*imgWidth;
-              imgHeight = viewportheight;
-
-              $('#screenSaverGallery').css('left',(viewportwidth - imgWidth)/2 +'px');
-              $('#screenSaverGallery').css('top',(viewportheight - imgHeight)/2 +'px');
-              //$('#screenSaverGallery').css('width',imgWidth +'px');
-              $('#screenSaverGallery').css('height','100%');
-            //}).attr('src', images[self.screensaverPhotoIndex])
-            }).attr('src', self.screensaverImages[self.screensaverPhotoIndex])
-
-          })
-
-
-
-        }
-
-        //check if already showing
-        if($("#screensaver").css("display") == "none")
-        {
-          $("#screensaver").show()
-        }
-
+        this.showScreensaver()
       }
       else
       {
-        $("#screensaver").hide()
-        $("#newMailText").hide()
-        $("#screenSaverGallery").hide()
+        if(this.userGeneralSettings.screenSaverStartAfter != 0 && newVal >= (this.userGeneralSettings.screenSaverStartAfter*60))
+        {
+          this.showScreensaver()
+
+        }
+        else
+        {
+          this.hideScreensaver()
+        }
       }
+
     }
   },
   mounted() {
     let self = this
-    if(this.$route.query && this.$route.query.screensaver != "true")
-    {
-      console.log("here")
-      let el = window
 
-      el.addEventListener('keyup', event => {
-        self.resetTimer()
-      })
-      el.addEventListener('load', event => {
-        self.resetTimer()
-      })
-      el.addEventListener('mousemove', event => {
-        self.resetTimer()
-      })
-      el.addEventListener('mousedown', event => {
-        self.resetTimer()
-      })
-      el.addEventListener('touchstart', event => {
-        self.resetTimer()
-      })
-      el.addEventListener('click', event => {
-        self.resetTimer()
-      })
-      el.addEventListener('keydown', event => {
-        self.resetTimer()
-      })
-      el.addEventListener('scroll', event => {
-        self.resetTimer()
-      })
+    //console.log("here")
+    let el = window
 
-      setInterval(function() {
-        self.screensaverTimer++
-        //self.screensaverTimer = self.screensaverTimer + 3
-      } , 1000)
-    }
+    el.addEventListener('keyup', event => {
+      self.resetTimer()
+    })
+    el.addEventListener('load', event => {
+      self.resetTimer()
+    })
+    el.addEventListener('mousemove', event => {
+      self.resetTimer()
+    })
+    el.addEventListener('mousedown', event => {
+      self.resetTimer()
+    })
+    el.addEventListener('touchstart', event => {
+      self.resetTimer()
+    })
+    el.addEventListener('click', event => {
+      self.resetTimer()
+    })
+    el.addEventListener('keydown', event => {
+      self.resetTimer()
+    })
+    el.addEventListener('scroll', event => {
+      self.resetTimer()
+    })
+
+    setInterval(function() {
+      self.screensaverTimer++
+      //self.screensaverTimer = self.screensaverTimer + 3
+    } , 1000)
+
     //console.log("route", this.$route.query)
     //screensaverTimer
     this.initMount()
@@ -892,7 +822,7 @@ export default {
       window.detachEvent('keydown', self.resetTimer())
       window.detachEvent('scroll', self.resetTimer())
     }
-
+    this.hideScreensaver()
     clearInterval(this.mailInterval)
 
   },
@@ -958,14 +888,79 @@ export default {
             console.log("error", error)
           })
     },
+    /** show screensaver **/
+    showScreensaver() {
+      let self = this
+      //this.showScreensaverFlag = true
+      if(this.newMailsCount)
+      {
+        $("#newMailText").html("You have " + this.newMailsCount + " new mails")
+        $("#newMailText").show()
+
+        var x = Math.floor(Math.random()*$(document).width())
+        var y = Math.floor(Math.random()*$(document).height())
+        var documentHeight = $(document).height()
+        var documentWidth = $(document).width()
+        let divHeight = $('#newMailText').height
+        let divWidth = $('#newMailText').width()
+
+        if(documentWidth-( x + divWidth ) < 0 )
+          x = 0
+        if(documentHeight-( y + divHeight + 100 ) < 0 )
+          y = 0
+        $('#newMailText').show()
+        $("#screenSaverGallery").hide()
+        $("#newMailText").animate({top:y, left:x}, 3000 )
+      }
+      else if(this.userGeneralSettings.screenSaverPhotoTransitionPeriod && this.getScreenSaverFolder) {
+        //$('#screensaver').show()
+        $('#screensaver').fadeIn(2000, function() {
+          $('#screenSaverGallery').css('position', 'absolute')
+          $('#screenSaverGallery').css('z-index','2001')
+          $('#screenSaverGallery').css('align','center')
+
+
+
+
+          $("#screenSaverGallery").show()
+          $('#newMailText').hide()
+          $('#screenSaverGallery').load(function() {
+            var imgWidth = $('#screenSaverGallery').width();
+            var imgHeight = $('#screenSaverGallery').height();
+
+            let viewportheight = window.innerHeight
+            let viewportwidth = window.innerWidth
+
+            imgWidth = viewportheight/imgHeight*imgWidth;
+            imgHeight = viewportheight;
+
+            $('#screenSaverGallery').css('left',(viewportwidth - imgWidth)/2 +'px');
+            $('#screenSaverGallery').css('top',(viewportheight - imgHeight)/2 +'px');
+            //$('#screenSaverGallery').css('width',imgWidth +'px');
+            $('#screenSaverGallery').css('height','100%');
+            //}).attr('src', images[self.screensaverPhotoIndex])
+          }).attr('src', self.screensaverImages[self.screensaverPhotoIndex])
+
+        })
+
+
+
+      }
+
+      //check if already showing
+      if($("#screensaver").css("display") == "none")
+      {
+        $("#screensaver").show()
+      }
+    },
     /** hide screensaver **/
     hideScreensaver() {
-      this.$router.push('/assistant')
+      //this.$router.push('/assistant')
       //console.log("not working")
       $("#screensaver").hide()
       $("#newMailText").hide()
       $("#screenSaverGallery").hide()
-      $("#screensaverBackButton").css('z-index', 'initial')
+      //$("#screensaverBackButton").css('z-index', 'initial')
     },
     /** get user general settings **/
     getUserGeneralSettings() {
@@ -976,7 +971,7 @@ export default {
         {
           self.userGeneralSettings = response.data.data.settings
 
-          if(self.$route.query && self.$route.query.screensaver == "true")
+          /*if(self.$route.query && self.$route.query.screensaver == "true")
           {
             self.screensaverTimer = (response.data.data.settings.screenSaverStartAfter * 60) + 1
             $("#screensaverBackButton").css('z-index', 2001)
@@ -984,7 +979,7 @@ export default {
               self.screensaverTimer++
               //self.screensaverTimer = self.screensaverTimer + 3
             } , 1000)
-          }
+          }*/
 
           setInterval(function() {
             if(self.screensaverImages.length > (self.screensaverPhotoIndex + 1))
@@ -1003,59 +998,13 @@ export default {
     },
     initMount() {
       var self = this
-
-      /*if(this.$store.state.AppActiveUser.googleEmail == null || this.$store.state.AppActiveUser.googleEmail == "")
-      {
-        swal({
-          text: self.$t('connect_google_account_desc'),
-          buttons: {
-            connect: {
-              text: "Connect",
-              value: "connect",
-              closeModal: false,
-            }
-          },
-          closeOnClickOutside: false,
-          closeOnEsc: false
-        })
-        .then((value) => {
-          if(value == "connect")
-          {
-            //get connect URL and connect with Google Calendar
-            axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/connect/', {})
-                .then(function (response) {
-                  if (response.data.status)
-                  {
-                    //console.log(response.data)
-                    window.location.href = response.data.data.url
-                    // self.$router.push(response.data.data.url)
-                    swal.close()
-                  }
-                })
-                .catch(function (error) {
-                  if(error.response.status == 401)
-                  {
-                    swal.close()
-                  }
-                  console.log(error)
-                })
-          }
-        })
-
-      }*/
-
       //get unread mails
-      //if(this.$store.state.AppActiveUser.googleEmail != "")
-      //{
+
       self.fetchMails()
       this.mailInterval = setInterval(function() {
         self.fetchMails()
 
       }, 30000)
-
-
-
-      //}
 
 
       this.people[0]=new Array("Adam Smith","Anna Johnson","Becky Jones");  //AB

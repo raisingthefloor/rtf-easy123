@@ -45,7 +45,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           <td style="text-transform: capitalize;">{{ user.role }}</td>
           <td>
             <button type="button" class="btn btn-info btn-sm me-2" @click="viewAsUser(user)" v-show="user.role == 'user'">View as User</button>
-            <button type="button" class="btn btn-info btn-sm me-2" @click="checkScreenSaver(user)" v-show="user.role == 'user'">Check Screen Saver</button>
+<!--            <button type="button" class="btn btn-info btn-sm me-2" @click="checkScreenSaver(user)" v-show="user.role == 'user'">Check Screen Saver</button>-->
             <button type="button" class="btn btn-info btn-sm me-2" v-if="$store.state.AppActiveUser.email != user.email" @click="editUser(user)" v-show="user.role != 'admin'">Edit</button>
             <button type="button" class="btn btn-danger btn-sm"  v-if="$store.state.AppActiveUser.email != user.email" @click="deleteUserAlert(user.id)" v-show="user.role != 'admin'">Delete</button>
           </td>
