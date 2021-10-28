@@ -22,6 +22,7 @@
  * Adobe Foundation
  * Consumer Electronics Association Foundation
  **/
+
 const logger = require('../../../logger/api.logger')
 const {User} = require('../../Auth/Models/user.model')
 const {EasyWeb} = require('../../Auth/Models/easyweb.model')
@@ -30,6 +31,7 @@ var getFavicons = require('get-website-favicon')
 const aws = require("aws-sdk")
 const HelperManager = require("../../../Managers/HelperManager")
 const Sentry = require("@sentry/node")
+const faviget = require('retrieve-favicon')
 
 
 class EasyWebController {
@@ -347,32 +349,63 @@ class EasyWebController {
 
         try
         {
+
             let data1 = await getFavicons(request.body.website_url)
             let fav_url = null
-            //console.log(data)
+            //console.log(data1)
             if(data1.icons.length)
             {
                 fav_url = data1.icons[0].src
+
+                data.status = true
+                data.data = fav_url
+                data.message = "success"
+
+                response.send(data)
+                return
             }
 
-            data.status = true
-            data.data = fav_url
-            data.message = "success"
 
-            response.send(data)
+            // general favicon retrieval
+            faviget.get(request.body.website_url, function(err, resp) {
+                if (!err) {
+                    if(resp.length)
+                    {
+                        fav_url = resp[0]
+                    }
+
+                    data.status = true
+                    data.data = fav_url
+                    data.message = "success"
+                    response.send(data)
+                    return
+
+
+
+
+                    //console.log("Favicon retriever got " + resp.length + " icons.");
+                }
+                else
+                {
+                    console.log(err)
+                    logger.error('Error::' + err)
+                    Sentry.captureException(err)
+
+                    data.message = "failed"
+                    response.send(data)
+                }
+            })
+
         }
         catch (err)
         {
             console.log(err)
             logger.error('Error::' + err)
+            Sentry.captureException(err)
 
             data.message = "failed"
             response.send(data)
         }
-        //let captureWebsite = require('capture-website')
-        //let image = await captureWebsite.file('https://sindresorhus.com', 'screenshot.png');
-
-
     }
 
     /**
@@ -442,11 +475,11 @@ class EasyWebController {
             console.log(err)
             logger.error('Error::' + err)
 
+            Sentry.captureException(err)
+
             data.message = "failed"
             response.send(data)
         }
-
-
     }
 
     /**
