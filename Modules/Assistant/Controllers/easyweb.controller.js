@@ -32,6 +32,7 @@ const aws = require("aws-sdk")
 const HelperManager = require("../../../Managers/HelperManager")
 const Sentry = require("@sentry/node")
 const faviget = require('retrieve-favicon')
+const sharp = require('sharp')
 
 
 class EasyWebController {
@@ -137,10 +138,16 @@ class EasyWebController {
             filename = uniqid + "-" + filename
 
             let bucket_path =  request.body.id + "/easyweb/"+filename
+            let requestImage = await sharp(request.files.avatar.data)
+                .resize(200, 152)
+                .png()
+                .toBuffer()
+
             const s3res = await s3.upload({
                 Bucket: bucket,
                 Key: bucket_path,
-                Body: request.files.avatar.data,
+                //Body: request.files.avatar.data,
+                Body: requestImage,
                 ACL: "private"
             }).promise()
 
@@ -165,6 +172,8 @@ class EasyWebController {
         }
         catch (err)
         {
+            //console.log(err)
+            console.log(err)
             Sentry.captureException(err)
             logger.error('Error::' + err)
 
@@ -255,6 +264,7 @@ class EasyWebController {
         }
         catch (err)
         {
+            console.log(err)
             logger.error('Error::' + err)
             Sentry.captureException(err)
 

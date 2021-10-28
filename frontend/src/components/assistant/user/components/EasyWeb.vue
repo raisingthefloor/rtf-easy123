@@ -50,6 +50,9 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
             <span class="files_and_folder_delete badge bg-info mt-1 me-1" @click="editFolderForm(item.id)" style="right: 30px;" v-if="item.type == 'folder'">
               <font-awesome-icon :icon="['fas','edit']"></font-awesome-icon>
             </span>
+            <span class="files_and_folder_delete badge bg-secondary mt-1 me-1" @click="addWebsiteInFolderWithPlusIcon(item)" style="right: 62px;" v-if="item.type == 'folder'">
+              <font-awesome-icon :icon="['fas','plus']"></font-awesome-icon>
+            </span>
             <span class="files_and_folder_delete badge bg-info mt-1 me-1" @click="editWebsite(item.id)" style="right: 28px;" v-if="item.type == 'website'">
               <font-awesome-icon :icon="['fas','edit']"></font-awesome-icon>
             </span>
@@ -1058,6 +1061,11 @@ export default {
       //this.selected_folder = {}
       this.add_website_form = true
       this.show_files_and_folders = false
+    },
+    /** show add website form for folder **/
+    addWebsiteInFolderWithPlusIcon(item) {
+      this.openFolderOrWebsite(item)
+      this.addSiteInFolder()
     },
     closeFolder() {
       this.show_folder = false
