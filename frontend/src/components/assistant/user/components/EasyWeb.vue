@@ -1156,7 +1156,7 @@ export default {
           })
           .then((response) => {
             self.favicon_loading = false
-            //console.log(response.data)
+            console.log(response.data)
             if(response.data.status && response.data.data)
             {
               self.website_sample_image_url = response.data.data

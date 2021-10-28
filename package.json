@@ -23,7 +23,6 @@
     "express-fileupload": "^1.2.1",
     "express-validator": "^6.12.0",
     "get-website-favicon": "^0.0.7",
-    "googleapis": "^73.0.0",
     "jsonwebtoken": "^8.5.1",
     "mailparser": "^3.3.0",
     "mimemessage": "^1.0.5",
@@ -32,7 +31,8 @@
     "node-mailjet": "^3.3.4",
     "nodemailer": "^6.6.3",
     "pine": "^1.1.1",
-    "qboxmail-imap": "^0.8.26"
+    "qboxmail-imap": "^0.8.26",
+    "retrieve-favicon": "*"
   },
   "devDependencies": {
     "nodemon": "^2.0.7"
