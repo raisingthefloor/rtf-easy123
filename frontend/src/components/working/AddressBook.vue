@@ -113,14 +113,14 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                         </div>
 
                         <!--User Photos -->
-                        <div>
+<!--                        <div>
                             <a class="large awesome" href="javascript:void(0)">
                                 <img align="left" style="padding:0px" src="/images/stack3.png" width="70" height="70" />
                                 <div id="photo" align="left" style="padding-left:80px; padding-top: 17px; font-size: 26px">
                                     View <span v-if="contactDetails.contactName">{{contactDetails.contactName.split(' ')[0]}}</span>'s Photos
                                 </div>
                             </a>
-                        </div>
+                        </div>-->
 
                         <!--Chat Button-->
                         <!-- <div>

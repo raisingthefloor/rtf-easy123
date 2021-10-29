@@ -205,6 +205,7 @@ class EasyWebController {
                 type: "website",
                 name: request.body.text_to_put_on_button,
                 link: request.body.website_url,
+                openInNewTab: request.body.openInNewTab,
                 image: request.body.website_image,
                 imageFileName: request.body.websiteImageFileName,
                 imageMimeType: request.body.websiteImageMimeType,
@@ -214,17 +215,19 @@ class EasyWebController {
                 createdBy: request.decoded.id
             }
 
-            let isBlocked = await HelperManager.websiteOpensInIfram(request.body.website_url)
-
-            if(isBlocked)
+            if(!request.body.openInNewTab)
             {
-                data.status = false
-                data.data = null
-                data.message = "website_loading_failed"
-                response.send(data)
-                return
-            }
+                let isBlocked = await HelperManager.websiteOpensInIfram(request.body.website_url)
 
+                if(isBlocked)
+                {
+                    data.status = false
+                    data.data = null
+                    data.message = "website_loading_failed"
+                    response.send(data)
+                    return
+                }
+            }
 
             if(!request.body.websiteImageFileName && request.body.website_sample_image_url)
             {
@@ -544,22 +547,27 @@ class EasyWebController {
             let updateWebsite = {
                 name: request.body.text_to_put_on_button,
                 link: request.body.website_url,
+                openInNewTab: request.body.openInNewTab,
                 image: request.body.website_image,
                 imageFileName: request.body.websiteImageFileName,
                 imageMimeType: request.body.websiteImageMimeType,
                 imagePath: request.body.websiteImagePath
             }
 
-            let isBlocked = await HelperManager.websiteOpensInIfram(request.body.website_url)
-
-            if(isBlocked)
+            if(!request.body.openInNewTab)
             {
-                data.status = false
-                data.data = null
-                data.message = "website_loading_failed"
-                response.send(data)
-                return
+                let isBlocked = await HelperManager.websiteOpensInIfram(request.body.website_url)
+
+                if(isBlocked)
+                {
+                    data.status = false
+                    data.data = null
+                    data.message = "website_loading_failed"
+                    response.send(data)
+                    return
+                }
             }
+
 
 
             if(!request.body.websiteImageFileName && request.body.website_sample_image_url)

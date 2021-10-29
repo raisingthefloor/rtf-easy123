@@ -24,11 +24,12 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 -->
 <template>
   <div class="container-fluid">
-    <nav class="mt-3" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+    <nav class="mt-3" style="--bs-breadcrumb-divider: '>'; position: relative;" aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"> <router-link to="/assistant">Members</router-link> </li>
         <li class="breadcrumb-item active" aria-current="page">Edit Member</li>
       </ol>
+      <router-link to="/assistant" class="btn btn-secondary btn-sm" style="position: absolute; right: 0px; top: 0px;">Go back to Members List</router-link>
     </nav>
 
     <div class="row">
@@ -37,7 +38,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
         <ul class="nav nav-tabs" id="myTab" role="tablist">
           <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">Profile <font-awesome-icon :icon="['fas', 'exclamation-circle']" style="color: red" v-if="!email || !passwordIsSet" /></button>
+            <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">User Profile <font-awesome-icon :icon="['fas', 'exclamation-circle']" style="color: red" v-if="!email || !passwordIsSet" /></button>
           </li>
           <li class="nav-item" role="presentation">
             <button class="nav-link" id="imapdetails-tab" data-bs-toggle="tab" data-bs-target="#imapdetails" type="button" role="tab" aria-controls="imapdetails" aria-selected="false">IMAP/SMTP details</button>
@@ -76,7 +77,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                 </div>
               </div>
               <div class="mb-3">
-                <label for="email" class="form-label">Easy123 Email (use User Account's email address)</label>
+                <label for="email" class="form-label">Easy123 User Name (recommend to use User’s email address)</label>
                 <input type="email" class="form-control" v-bind:class="{ 'is-invalid': $v.email.$error }" id="email" v-model.trim="$v.email.$model" placeholder="Enter a login password.">
                 <div class="invalid-feedback">
                   <span v-if="!$v.email.required">Email is required.</span>
@@ -108,10 +109,10 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
               <div>
                 <h6 class="mt-3"><b>Incoming Mail Server (IMAP)</b></h6>
                 <div class="mb-3">
-                  <label for="imap_username" class="form-label">User Name</label>
+                  <label for="imap_username" class="form-label">Email address</label>
                   <input type="text" class="form-control" id="imap_username" v-model.trim="$v.imap_username.$model" v-bind:class="{ 'is-invalid': $v.imap_username.$error }">
                   <div class="invalid-feedback">
-                    <span v-if="!$v.imap_username.required">User Name is required.</span>
+                    <span v-if="!$v.imap_username.required">Email address is required.</span>
                   </div>
                 </div>
                 <div class="mb-3">
@@ -143,10 +144,10 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
               <div>
                 <h6 class="mt-4"><b>Outgoing Mail Server (SMTP)</b></h6>
                 <div class="mb-3">
-                  <label for="smtp_username" class="form-label">User Name</label>
+                  <label for="smtp_username" class="form-label">Email address</label>
                   <input type="text" class="form-control" id="smtp_username" v-model.trim="$v.smtp_username.$model" v-bind:class="{ 'is-invalid': $v.smtp_username.$error }">
                   <div class="invalid-feedback">
-                    <span v-if="!$v.smtp_username.required">User Name is required.</span>
+                    <span v-if="!$v.smtp_username.required">Email address is required.</span>
                   </div>
                 </div>
                 <div class="mb-3">
