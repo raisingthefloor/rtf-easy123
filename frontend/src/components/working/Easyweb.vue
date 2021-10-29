@@ -324,6 +324,11 @@ export default {
       let self = this
       if(item.type == "website")
       {
+        if(item.openInNewTab)
+        {
+          window.open(item.link, "_blank")
+          return
+        }
         let properties = el.getBoundingClientRect()
         let cssObj = {
           "position": "absolute",

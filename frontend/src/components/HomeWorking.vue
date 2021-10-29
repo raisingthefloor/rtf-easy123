@@ -1919,7 +1919,7 @@ export default {
           $('#person_contact').hide();
           $('#newspaper-b').hide();
           $('#contact').show();
-          $('#person').animate({'position':'absolute','left':'300px', 'top':'20px', 'opacity':1,   'width':'550px','height':'650px'},1000,function() {
+          $('#person').animate({'position':'absolute','left':'300px', 'top':'20px', 'opacity':1,   'width':'550px','height':'650px'},500,function() {
             if(self.isPerson==1) {
               $('#person_contact').show();
             }
@@ -1928,7 +1928,7 @@ export default {
               $('#person').hide();
             }
           });
-          $('#contact').animate({'position':'absolute','left':'300px', 'top':'20px', 'opacity':1, 'width':'550px','height':'650px'},1000,function(){
+          $('#contact').animate({'position':'absolute','left':'300px', 'top':'20px', 'opacity':1, 'width':'550px','height':'650px'},500,function(){
             $('#newspaper-b').show();
             $(".flap").show();
             $('.spiral').show();

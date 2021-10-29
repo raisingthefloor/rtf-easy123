@@ -794,7 +794,7 @@ export default {
       })
       .then((value) => {
         if(value && value != "") {
-          console.log("here")
+          //console.log("here")
           //check if folder name already exists
           let existing = null
           if(self.current_folder.photos.length)
