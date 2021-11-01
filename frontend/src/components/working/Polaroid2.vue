@@ -45,7 +45,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
       <div style='position:absolute; left: 12px; top: 5px; font:Times New Roman; font-size:20px'> {{ $t('home_module.from') }}</div>
       <div id="from" style='position:absolute; left: 12px; top: 29px; font:Times New Roman; font-size:20px;width:191px'>{{ strip_html_tags(mail.from) }}</div>
       <div style='position:absolute; left: 120px; top: 104px; font:Times New Roman; font-size:20px' class="mail-to"> {{ $t('home_module.to') }}</div>
-      <div style='position:absolute; left: 120px; top: 128px; font:Times New Roman; font-size:20px'> {{ strip_html_tags(mail.to) }}</div>
+      <div style='position:absolute; left: 120px; top: 128px; font:Times New Roman; font-size:20px;text-overflow: ellipsis;width: 221px;height: 60px;overflow: hidden;'> {{ strip_html_tags(mail.to) }}</div>
       <div style='position:absolute; width:300px; left: 10px; top: 204px; font:Times New Roman; font-size:18px; color:#333333' class="mail-subject">{{ $t('home_module.about') }}:
         {{ strip_html_tags(mail.subject) }}</div>
       <input type="hidden" name="mail_subject" id="mail-subject" :value="mail.subject">

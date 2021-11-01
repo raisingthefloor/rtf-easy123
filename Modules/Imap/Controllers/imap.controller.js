@@ -22,6 +22,7 @@
  * Adobe Foundation
  * Consumer Electronics Association Foundation
  **/
+
 const Imap = require('qboxmail-imap');
 const { inspect } = require('util');
 const logger = require('../../../logger/api.logger')
@@ -179,8 +180,31 @@ class ImapController {
     }
 
     /**Opens a mailbox and processes the passed callback*/
-    openMailBox(boxType, readOnly, callback){
-        this.imapClient.openBox(boxType, readOnly, callback)
+    async openMailBox(boxType, readOnly, req, res, callback){
+        //console.log(this.imapClient.state)
+        if (this.imapClient.state === 'authenticated') {
+            //await this.constructIMAP(req, res)
+            this.imapClient.openBox(boxType, readOnly, callback)
+        }
+        else {
+            this.imapClient.destroy()
+
+            this.imapClient.once('close', async () => {
+                console.log(`[CONNECT] Authenticating ${this.imapClient.state}`)
+
+                if(!this.imapClient)
+                {
+                    await this.constructIMAP(req, res)
+                }
+
+                this.imapClient.once('ready', () => {
+                    this.imapClient.openBox(boxType, readOnly, callback)
+                })
+
+
+            })
+        }
+
         //openBox(mailboxName, readOnly, callback)
 
     }
@@ -194,20 +218,32 @@ class ImapController {
 
         //Check whether user exists for the decoded id
         User.findOne({_id: req.decoded.id})
-            .then(user => {
+            .then(async user => {
                 //user is found
                 if(user){
+                    if(!this.imapClient)
+                    {
+                        await this.constructIMAP(req, res)
+                    }
                     //Imap Connection is Established
-                    this.imapClient.once('ready', () => {
+                    this.imapClient.once('ready', async () => {
                         if(req.query && req.query.test)
                         {
+                            if(!this.imapClient)
+                            {
+                                await this.constructIMAP(req, res)
+                            }
                             this.imapClient.end()
                         }
                         else
                         {
                             //Opening the Inbox via IMAP
-                            this.openMailBox('INBOX', true, (err, box) => {
+                            this.openMailBox('INBOX', true, req, res, async (err, box) => {
                                 if(!err){
+                                    if(!this.imapClient)
+                                    {
+                                        await this.constructIMAP(req, res)
+                                    }
                                     let fetchedMessagesEvent = this.imapClient.seq.fetch((box.messages.total)+":1", {
                                         bodies: '',
                                         struct: true
@@ -253,12 +289,21 @@ class ImapController {
                                     });
 
                                     //all messages from inbox  are fetched
-                                    fetchedMessagesEvent.once('end', () => {
+                                    fetchedMessagesEvent.once('end', async () => {
+                                        if(!this.imapClient)
+                                        {
+                                            await this.constructIMAP(req, res)
+                                        }
                                         //close inbox and open trashbox
-                                        this.imapClient.closeBox((err) => {
+                                        console.log(this.imapClient)
+                                        this.imapClient.closeBox(async (err) => {
                                             if(!err){
+                                                if(!this.imapClient)
+                                                {
+                                                    await this.constructIMAP(req, res)
+                                                }
                                                 //method to get messages from trash box
-                                                this.getTrashedMessages(this.imapClient, data, payload);
+                                                this.getTrashedMessages(this.imapClient, data, payload, req, res);
                                             }
                                         });
                                         //imapClient.end();
@@ -286,6 +331,7 @@ class ImapController {
                             message: err
                         }
                         res.status(500).send(dataRes)
+                        console.log(err)
                         logger.error('imap connection error :: '+err);
 
                         Sentry.captureException(err)
@@ -330,8 +376,8 @@ class ImapController {
     }
 
     //this method is called after all the messages from inbox are fetched
-    getTrashedMessages(imapClient, data, payload){
-        this.openMailBox("[Gmail]/Trash", false, (err, box) => {
+    getTrashedMessages(imapClient, data, payload, req, res){
+        this.openMailBox("[Gmail]/Trash", false, req, res, (err, box) => {
             if(!err && box.messages?.total){
                 let trashedMessagesEvent = imapClient.seq.fetch((box.messages.total)+":1", {
                     bodies: '',
@@ -478,7 +524,7 @@ class ImapController {
 
         this.imapClient.once('ready', () => {
             //Opening the Inbox via IMAP
-            this.openMailBox('INBOX', false, (err, box) => {
+            this.openMailBox('INBOX', false, req, res, (err, box) => {
                 if(!err){
                     //sets the \Deleted flag on message 
                     this.imapClient.addFlags(req.params.id, 'Deleted', (err) => {
@@ -490,6 +536,11 @@ class ImapController {
                             this.imapClient.end();
                         });
                     });
+                }
+                else
+                {
+                    console.log(err)
+                    Sentry.captureException(err)
                 }
             });
         });
@@ -592,12 +643,13 @@ class ImapController {
         }
         let mails = req.body;
         this.imapClient.once('ready', () => {
-            this.openMailBox(source, false, (err, box) => {
+            this.openMailBox(source, false, req, res, (err, box) => {
                 if(!err && box.messages.total){
                     mails.forEach(mail => {
                         const {from, to, subject, date} = mail;
-                        this.imapClient.search([['FROM', this.strip_html(from)], ['TO', this.strip_html(to)], ['SUBJECT', subject], ['ON', date]], (err, results) => {
+                        this.imapClient.search([['FROM', this.strip_html(from)], ['TO', this.strip_html(to)], ['SUBJECT', subject], ['ON', date]], async (err, results) => {
                             if(!err && results.length){
+                                await this.constructIMAP(req, res)
                                 this.imapClient.move(results, destination, err => {
                                     if(!err){
                                         logger.info(`Message move from ${source} to ${destination}`);
@@ -607,6 +659,7 @@ class ImapController {
                             }
                             else{
                                 error = true;
+                                await this.constructIMAP(req, res)
                                 this.imapClient.end();
                             }
                         
@@ -633,11 +686,19 @@ class ImapController {
         let flag = "\\"+req.params.flag.charAt(0).toUpperCase()+req.params.flag.slice(1);
         this.imapClient.once('ready', (err) => {
             if(!err){
-                this.openMailBox('INBOX', false, (err, box) => {
+                this.openMailBox('INBOX', false, req, res, async (err, box) => {
                     if(!err){
                         //logger.info(box.messages.new);
-                        this.imapClient.addFlags(req.params.uid, "\\Seen", () => {
+                        if(!this.imapClient)
+                        {
+                            await this.constructIMAP(req, res)
+                        }
+                        this.imapClient.addFlags(req.params.uid, "\\Seen", async () => {
                             //logger.info("Flag added");
+                            if(!this.imapClient)
+                            {
+                                await this.constructIMAP(req, res)
+                            }
                             this.imapClient.end();
                         });
                         //imapClient.end();
@@ -716,7 +777,7 @@ class ImapController {
                         message: 'failed'
                     })
                 }
-
+                console.log(err)
                 Sentry.captureException(err)
             })
             connection.on('end', function (err) {
