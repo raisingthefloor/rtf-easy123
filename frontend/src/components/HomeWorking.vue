@@ -27,20 +27,20 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
     <div id="containment-wrapper" >
       <a class="button" style="position: absolute; left: 0px; top: 0px; margin:25px; width: 145px; height: 145px;" id="mail" @click="mailClick()" href="javascript:void(0)">
         <div id="mailbox_cont" style="vertical-align:middle; top:50%; left:50%; position:absolute; margin-top: -62px; margin-left: -75px; z-index:1">
-          <img  id="mailbox" src="/mail/mailbox_c.png" width="125px" height="125px" />
+          <img id="mailbox" src="/mail/mailbox_c.png" width="125px" height="125px" />
         </div>
 
-        <div  style=" position:absolute; left:55%; z-index:2; top:0%" v-show="newMailsCount || loading_mails">
-          <img  align='right' src='/mail/call1.png' width="90" height="90" alt='' style="z-index:2;" />
+        <div style=" position:absolute; left:55%; z-index:2; top:0%" v-show="newMailsCount || loading_mails">
+          <img align='right' src='/mail/call1.png' width="90" height="90" alt='' style="z-index:2;" />
         </div>
         <div style=" position:absolute; position:absolute; left:67%; top:10%; z-index:3; width: 130px" v-if="newMailsCount && !loading_mails">
           <h3>
-            <b id="new_emails" style='color:#ffffff; font-size: 20px'>{{ newMailsCount }} New </b>
+            <b id="new_emails" style='color:#ffffff; font-size: 20px'> {{ $t('home_module.count_new', { newMailCount: newMailsCount }) }} </b>
           </h3>
         </div>
         <div style=" position:absolute; position:absolute; left:63%; top:8%; z-index:3; width: 130px" v-if="loading_mails">
           <h3>
-            <b id="new_emails" style='color:#ffffff; font-size: 15px'>Checking </b>
+            <b id="new_emails" style='color:#ffffff; font-size: 15px'>{{ $t('home_module.checking') }} </b>
           </h3>
         </div>
       </a>
@@ -149,14 +149,14 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
       </div>
     </div>
     <img id='paper_big' src='/mail/paper2.png' style="display:none;width:500px;height:700px;position:absolute;left:670px;z-index:99"/>
-    <a href="javascript:void(0)" v-if="showScreensaverFlag == false && $store.state.AppActiveUser.role == 'assistant'" style="position: absolute; right: 90px; top: 22px;" @click="showScreensaverFlag = true">Screen Saver Test</a>
-    <a href="javascript:void(0)" v-if="showScreensaverFlag == true && $store.state.AppActiveUser.role == 'assistant'" style="position: absolute; right: 90px; top: 22px; z-index: 2001; color: white;" @click="showScreensaverFlag = false">Hide Screen Saver Test</a>
+    <a href="javascript:void(0)" v-if="showScreensaverFlag == false && $store.state.AppActiveUser.role == 'assistant'" style="position: absolute; right: 90px; top: 22px;" @click="showScreensaverFlag = true">{{ $t('home_module.screen_saver_test') }}</a>
+    <a href="javascript:void(0)" v-if="showScreensaverFlag == true && $store.state.AppActiveUser.role == 'assistant'" style="position: absolute; right: 90px; top: 22px; z-index: 2001; color: white;" @click="showScreensaverFlag = false">{{ $t('home_module.hide_screen_saver_test') }}</a>
 
-    <a href="javascript:void(0)" id="screensaverBackButton" @click="$router.push('/assistant')" v-if="$store.state.AppActiveUser.role == 'assistant'" style="top: 1rem; right: 1rem; position: absolute; background-color: #6c757d; border-color: #6c757d; color: #fff; text-align: center; text-decoration: none; border: 1px solid transparent; padding: 0.375rem 0.75rem; font-size: 1rem; border-radius: 0.25rem;">Back</a>
+    <a href="javascript:void(0)" id="screensaverBackButton" @click="$router.push('/assistant')" v-if="$store.state.AppActiveUser.role == 'assistant'" style="top: 1rem; right: 1rem; position: absolute; background-color: #6c757d; border-color: #6c757d; color: #fff; text-align: center; text-decoration: none; border: 1px solid transparent; padding: 0.375rem 0.75rem; font-size: 1rem; border-radius: 0.25rem;">{{ $t('home_module.back') }}</a>
     <img src="/mail/trash1_1.png" class="trash1 trash" @mousedown="trashMousedown" @mouseup="trashMouseup" />
     <img src="/mail/trash1_2.png" class="trash2 trash" @mousedown="trashMousedown" @mouseup="trashMouseup" />
     <img src="/mail/desk.png" class="tray" @mousedown="trayMousedown" width="133" height="133" style="position:absolute; top:100px;"/>
-    <a href="javascript:void(0)" @click="$store.commit('LOGOUT_USER', $router)" v-if="$store.state.AppActiveUser.role=='user'" style="position: absolute; right: 10px; top: 10px;">Logout</a>
+    <a href="javascript:void(0)" @click="$store.commit('LOGOUT_USER', $router)" v-if="$store.state.AppActiveUser.role=='user'" style="position: absolute; right: 10px; top: 10px;">{{ $t('home_module.logout') }}</a>
   </div>
 </template>
 <style>
@@ -695,16 +695,6 @@ export default {
     }
   },
   computed: {
-    getNewMailString() {
-      if(this.mails.length)
-      {
-        return this.mails.length + " New"
-      }
-      else
-      {
-        return "Checking"
-      }
-    },
     getScreenSaverFolder() {
       let screensaver = this.$store.state.home.folders.find(obj => obj.name == "Slideshow")
 
@@ -1189,7 +1179,7 @@ export default {
           });
     },
     //generate mails html
-    generateMailsHTML() {
+    /*generateMailsHTML() {
       var self = this
       var html = ""
       self.mails.forEach(function(mail, index) {
@@ -1244,7 +1234,7 @@ export default {
         $(html).insertAfter("#tray_envelope2")
 
       })
-    },
+    },*/
     b64toBlob (b64Data, contentType, sliceSize) {
       contentType = contentType || ''
       sliceSize = sliceSize || 512

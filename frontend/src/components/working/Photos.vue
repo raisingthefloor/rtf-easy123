@@ -26,7 +26,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
   <div class="photos-main" style="background-color: #818182">
     <div id="albumContents" style="display: block;">
 
-      <div id="noAlbumsMessage" style="text-align:center; padding:50px; display: none;">There are no albums</div>
+      <div id="noAlbumsMessage" style="text-align:center; padding:50px; display: none;">{{ $t('home_module.no_album') }}</div>
 
       <div class="anAlbum" style="top: 284.961px; left: -150px; opacity: 0; width: 119.987px; display: block; height: 139.99px;" v-for="(folder, index) in $store.state.home.folders" :key="index" v-bind:style="{ left: (index * 140) + 'px' }">
         <div class="$showAlbum" style="text-decoration:none; cursor:pointer;" @click="showAlbum(folder, index)" :id="'showAlbum_'+index">
@@ -43,7 +43,8 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
       </div>
       <div id="galleryTitle" style="width: 171px; height: 167px;" v-if="showAlbumStatus == 'SHOWING'">{{ current_album.name }}</div>
       <div id="closeGallery" style="position: absolute; width: 171px; height: 167px; right: 0px; top: 180px;" v-if="selectedAlbum">
-        <button style="background-color: #6c757d; border: 1px solid transparent; color: rgb(255, 255, 255); text-align: center; text-decoration: none; padding: 0.375rem 0.75rem; font-size: 1rem; border-radius: 0.25rem;" @click="hideAlbum">Close</button>
+        <button style="background-color: #6c757d; border: 1px solid transparent; color: rgb(255, 255, 255); text-align: center; text-decoration: none; padding: 0.375rem 0.75rem; font-size: 1rem; border-radius: 0.25rem;" @click="hideAlbum">
+          {{ $t('close') }}</button>
       </div>
 
     </div>

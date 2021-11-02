@@ -32,9 +32,9 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         <img id='paper' src='/mail/paper2.png' />
         <div id='message' style='position:absolute; width:300px; padding: 35px;  font:Times New Roman; font-size:18px; '>
           <iframe :srcdoc="getDecodedMailBody" frameborder="0" style="height: 535px; width: 430px;"></iframe>
-          <button class='reply' @click="replyClick($event)" style=' padding-left:10px; position:absolute; top:580px; left:25px; '> <span style=' font-size:19px;'>Reply</span></button>
-          <button class='close' @click="closeClick($event, mail)" style=' padding-left:10px;position:absolute; top:580px; left:120px; padding-right:10px; '> <span style=' font-size:19px;'>Keep</span></button>
-          <button class='throwaway' @click="throwawayClick($event, mail.messageId)" style=' padding-left:10px;  padding-right:10px; position:absolute; top:580px; left: 315px; position: absolute '> <span style=' font-size:19px;'>Throw Away</span></button>
+          <button class='reply' @click="replyClick($event)" style=' padding-left:10px; position:absolute; top:580px; left:25px; '> <span style=' font-size:19px;'>{{ $t('home_module.reply') }}</span></button>
+          <button class='close' @click="closeClick($event, mail)" style=' padding-left:10px;position:absolute; top:580px; left:120px; padding-right:10px; '> <span style=' font-size:19px;'>{{ $t('home_module.keep') }}</span></button>
+          <button class='throwaway' @click="throwawayClick($event, mail.messageId)" style=' padding-left:10px;  padding-right:10px; position:absolute; top:580px; left: 315px; position: absolute '> <span style=' font-size:19px;'>{{ $t('home_module.throw_away') }}</span></button>
         </div>
       </div>
       <img src='/mail/back2_2.png'   id='rot3' style='position:absolute; top: 128px; display:none;'/>
@@ -42,11 +42,11 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
     </div>
 
     <div id='frontcontents' style='display:none;'>
-      <div style='position:absolute; left: 12px; top: 5px; font:Times New Roman; font-size:20px'> From</div>
+      <div style='position:absolute; left: 12px; top: 5px; font:Times New Roman; font-size:20px'> {{ $t('home_module.from') }}</div>
       <div id="from" style='position:absolute; left: 12px; top: 29px; font:Times New Roman; font-size:20px;width:191px'>{{ strip_html_tags(mail.from) }}</div>
-      <div style='position:absolute; left: 120px; top: 104px; font:Times New Roman; font-size:20px' class="mail-to"> To</div>
+      <div style='position:absolute; left: 120px; top: 104px; font:Times New Roman; font-size:20px' class="mail-to"> {{ $t('home_module.to') }}</div>
       <div style='position:absolute; left: 120px; top: 128px; font:Times New Roman; font-size:20px'> {{ strip_html_tags(mail.to) }}</div>
-      <div style='position:absolute; width:300px; left: 10px; top: 204px; font:Times New Roman; font-size:18px; color:#333333' class="mail-subject">About:
+      <div style='position:absolute; width:300px; left: 10px; top: 204px; font:Times New Roman; font-size:18px; color:#333333' class="mail-subject">{{ $t('home_module.about') }}:
         {{ strip_html_tags(mail.subject) }}</div>
       <input type="hidden" name="mail_subject" id="mail-subject" :value="mail.subject">
       <input type="hidden" name="mail_header_from" id="mail-header-from" :value="mail.from">

@@ -1,3 +1,27 @@
+<!--
+Copyright 2020 Raising the Floor - International
+
+Licensed under the New BSD license. You may not use this file except in
+compliance with this License.
+
+You may obtain a copy of the License at
+https://github.com/GPII/universal/blob/master/LICENSE.txt
+
+The R&D leading to these results received funding from the:
+* Rehabilitation Services Administration, US Dept. of Education under
+grant H421A150006 (APCP)
+* National Institute on Disability, Independent Living, and
+Rehabilitation Research (NIDILRR)
+* Administration for Independent Living & Dept. of Education under grants
+H133E080022 (RERC-IT) and H133E130028/90RE5003-01-00 (UIITA-RERC)
+* European Union's Seventh Framework Programme (FP7/2007-2013) grant
+agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
+* William and Flora Hewlett Foundation
+* Ontario Ministry of Research and Innovation
+* Canadian Foundation for Innovation
+* Adobe Foundation
+* Consumer Electronics Association Foundation
+-->
 <template>
   <div class="easyweb-main" style="background-color: #818182">
     <div id="easyweb-content" class="easyweb-content-pre">
@@ -51,20 +75,21 @@
         <div style="float: left; display: inline-block;" v-if="!openFolder" v-show="openWebsite.fav" @click="alterMyFav('fav', openWebsite)">
           <button style="background-color: #ffffff; border: 1px solid black; color: #6c757d; text-align: center; text-decoration: none; padding: 0.2rem 0.6rem; border-radius: 0.25rem;">
             <font-awesome-icon :icon="['fas','star']" style="color: #ffc107;"></font-awesome-icon>
-            Remove From My Favorites
+            {{ $t('home_module.remove_from_my_favorites') }}
           </button>
         </div>
         <div style="float: left; display: inline-block;" v-if="!openFolder" v-show="!openWebsite.fav" @click="alterMyFav('add', openWebsite)">
           <button style="background-color: #ffffff; border: 1px solid black; color: #6c757d; text-align: center; text-decoration: none; padding: 0.2rem 0.6rem; border-radius: 0.25rem;">
             <font-awesome-icon :icon="['fas','star']" style="color: #ffc107;"></font-awesome-icon>
-            Add to My Favorites
+            {{ $t('home_module.add_to_my_favorites') }}
           </button>
         </div>
         <div style="display:inline-block;">
           <h6 style="margin-top: 0; margin-bottom: 0; font-size: 1rem;">{{ openWebsite.name }}</h6>
         </div>
         <div style="float: right; display: inline-block;">
-          <button @click="closeWebsite()" style="background-color: #ffffff; border: 1px solid black; color: #6c757d; text-align: center; text-decoration: none; padding: 0.2rem 0.6rem; border-radius: 0.25rem;">Close</button>
+          <button @click="closeWebsite()" style="background-color: #ffffff; border: 1px solid black; color: #6c757d; text-align: center; text-decoration: none; padding: 0.2rem 0.6rem; border-radius: 0.25rem;">
+            {{ $t('close') }}</button>
         </div>
       </div>
       <div style="padding-right: 4px; position: relative;">
@@ -84,11 +109,9 @@
           <button @click="closeFolder()" style="background-color: #ffffff; border: 1px solid black; color: #6c757d; text-align: center; text-decoration: none; padding: 0.2rem 0.6rem; border-radius: 0.25rem;">Close</button>
         </div>
       </div>
-      <div style="padding-right: 4px; padding-left: 4px; position: relative; display:flex;
-  flex-wrap: wrap;">
+      <div style="padding-right: 4px; padding-left: 4px; position: relative; display:flex; flex-wrap: wrap;">
         <div class="file" v-for="(item, index) in openFolder.websites" :key="'easyweb_'+index" :ref="'file_'+item._id" v-bind:class="{ 'folder': item.type == 'folder' }" @click="openEasyweb(item)">
           <div class="text-center">
-
             <h6 class="text-center" style="margin-top: 1rem; margin-bottom: 0.7rem;"><b>{{ item.name }}</b></h6>
             <easy-web-image :image="item" v-if="item.type != 'folder'"></easy-web-image>
 
@@ -121,7 +144,8 @@
           <h6 style="margin-top: 0; margin-bottom: 0; font-size: 1rem;"><font-awesome-icon :icon="['fas', 'star']" style="color: #ffc107;" /> {{ $t('my_favorites') }}</h6>
         </div>
         <div style="float: right; display: inline-block;">
-          <button @click="closeMyFavFolder()" style="background-color: #ffffff; border: 1px solid black; color: #6c757d; text-align: center; text-decoration: none; padding: 0.2rem 0.6rem; border-radius: 0.25rem;">Close</button>
+          <button @click="closeMyFavFolder()" style="background-color: #ffffff; border: 1px solid black; color: #6c757d; text-align: center; text-decoration: none; padding: 0.2rem 0.6rem; border-radius: 0.25rem;">
+            {{ $t('close') }}</button>
         </div>
       </div>
       <div style="padding-right: 4px; padding-left: 4px; display:flex; flex-wrap: wrap;">

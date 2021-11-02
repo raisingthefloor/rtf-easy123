@@ -27,7 +27,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
     <nav class="mt-3" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
       <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="#">Home</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Library</li>
+        <li class="breadcrumb-item active" aria-current="page">Create</li>
       </ol>
     </nav>
 
@@ -86,7 +86,6 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 </style>
 
 <script>
-import swal from 'sweetalert';
 const axios = require('axios')
 export default {
   name: 'NewUser',
@@ -118,33 +117,6 @@ export default {
               return
             }
             //console.log(self.users)
-          }, (error) => {
-            console.log(error)
-          })
-    },
-    async deleteUserAlert(id) {
-      //console.log(id)
-      let willDelete = await swal({
-        title: "Are you sure, you want to delete?",
-        text: "Once deleted, you will not be able to recover!",
-        icon: "warning",
-        buttons: ["Cancel", "Delete"],
-        dangerMode: true,
-      })
-
-      if (willDelete) {
-        this.users = this.users.filter(user => user.id != id)
-        this.deleteUser(id)
-      } else {
-        //pressed cancel button
-      }
-    },
-    deleteUser(id) {
-      axios.post(process.env.VUE_APP_API_HOST_NAME+'/api/admin/delete-user/',{
-        id: id
-      })
-          .then(() => {
-            //self.users = response.data.data
           }, (error) => {
             console.log(error)
           })
