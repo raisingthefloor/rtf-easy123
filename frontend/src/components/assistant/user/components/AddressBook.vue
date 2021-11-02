@@ -28,9 +28,9 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
     </div>
     <div class="col-md-3">
-      <a href="javascript:void(0)" class="btn btn-sm btn-primary mb-3 me-4" @click="addContact" v-show="!show_add_contact_form">Add Contact</a>
+      <a href="javascript:void(0)" class="btn btn-sm btn-primary mb-3 me-4" @click="addContact" v-show="!show_add_contact_form">{{ $t('assistant_module.add_contact') }}</a>
       <div class="address-book" style="position: relative;">
-        <input type="text" style="width: 100%; height: 35px;" v-model="search_contact" placeholder="Search All Contacts">
+        <input type="text" style="width: 100%; height: 35px;" v-model="search_contact" :placeholder="$t('assistant_module.search_all_contact')">
         <div class="list-group address-book-contact-list" id="address-book-contact-list" style="max-height: 75vh; overflow-y: scroll;">
           <a href="javascript:void(0)" class="list-group-item list-group-item-action address-book-list-item" v-bind:class="(current_contact.id == contact.id)?'active':''"  v-for="contact in contacts" :key="contact.id" @click="showContact(contact.id)">
             {{ contact.name }}
@@ -93,32 +93,30 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                 >
                 </vue-avatar>
 
-                <span class="form-text text-danger" v-show="errors.avatar">Please select image</span>
+                <span class="form-text text-danger" v-show="errors.avatar">{{  $t('assistant_module.please_select_image')  }}</span>
 
                 <div class="mb-3 mt-3">
-                  <label for="name" class="form-label"><b>Name</b></label>
+                  <label for="name" class="form-label"><b>{{ $t('assistant_module.contact_name') }}</b></label>
                   <input type="text" class="form-control" id="name" v-model="name" required>
-                  <span class="form-text text-danger" v-show="errors.name">Please enter name</span>
+                  <span class="form-text text-danger" v-show="errors.name">{{  $t('assistant_module.please_enter_contact_name')  }}</span>
                 </div>
                 <div class="mb-3 mt-3">
-                  <label for="skypeid" class="form-label"><b>Skype ID</b></label>
+                  <label for="skypeid" class="form-label"><b>{{ $t('assistant_module.skype_id') }}</b></label>
                   <input type="text" class="form-control" id="skypeid" v-model="skypeid">
                 </div>
                 <div class="mb-3 mt-3">
-                  <label for="zoom_meeting_url" class="form-label"><b>Zoom Meeting URL</b></label>
+                  <label for="zoom_meeting_url" class="form-label"><b>{{ $t('assistant_module.zoom_meeting_url') }}</b></label>
                   <input type="text" class="form-control" id="zoom_meeting_url" v-model="zoom_meeting_url">
-                  <span class="form-text text-danger" v-show="errors.name">Please enter Zoom Meeting URL</span>
                 </div>
                 <div class="mb-3 mt-3">
-                  <label for="notes" class="form-label"><b>Notes</b></label>
+                  <label for="notes" class="form-label"><b>{{ $t('assistant_module.notes') }}</b></label>
                   <textarea name="notes" id="notes" rows="3" class="form-control" v-model="notes"></textarea>
-                  <span class="form-text text-danger" v-show="errors.name">Please enter Notes</span>
                 </div>
 
                 <div class="mb-3 p-2" style="border: 1px solid black;">
                   <div class="row">
                     <div class="col-md-12">
-                      <label for="email" class="form-label"><b>Email</b></label>
+                      <label for="email" class="form-label"><b>{{ $t('assistant_module.contact_email') }}</b></label>
                       <div class="row">
                         <div class="col-md-6 mb-3" style="position:relative;" v-for="(email_field, index) in email" :key="index">
                           <input type="email" class="form-control" :name="'email'+index" v-model="email[index]" id="email">
@@ -128,18 +126,18 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                     </div>
                     <div class="col-md-12">
                       <div class="d-grid gap-2 mt-2">
-                        <button class="btn btn-sm btn-info btn-block" type="button" @click="addEmail()">Add Email</button>
+                        <button class="btn btn-sm btn-info btn-block" type="button" @click="addEmail()">{{ $t('assistant_module.add_email') }}</button>
                       </div>
                     </div>
 
                   </div>
 
-                  <span class="form-text text-danger" v-show="errors.email">Please enter email</span>
+                  <span class="form-text text-danger" v-show="errors.email">{{ $t('assistant_module.please_add_contact_email') }}</span>
                 </div>
 
                 <div class="mb-3 p-2" style="border: 1px solid black;">
                   <div class="row">
-                    <label for="phone_number" v-if="!phoneNumber.length"><b>Phone Number</b></label>
+                    <label for="phone_number" v-if="!phoneNumber.length"><b>{{ $t('assistant_module.contact_phone_number') }}</b></label>
                     <div class="col-md-12" v-for="(pn, index) in phoneNumber" :key="index">
                       <hr v-if="index != 0" style="height: 5px;">
                       <div class="row" style="position:relative;">
@@ -150,25 +148,25 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                         </div>
 
                         <div class="col-md-4">
-                          <label :for="'phone_number_type_'+index"><b>Type</b></label>
+                          <label :for="'phone_number_type_'+index"><b>{{ $t('assistant_module.contact_phone_type') }}</b></label>
                           <select class="form-select" :id="'phone_number_type_'+index" :name="'phone_number_type_'+index" v-model="pn.type" required>
-                            <option value="Mobile">Mobile</option>
-                            <option value="Home">Home</option>
-                            <option value="Work">Work</option>
-                            <option value="Other">Other</option>
+                            <option value="Mobile">{{ $t('assistant_module.contact_phone_type_option_mobile') }}</option>
+                            <option value="Home">{{ $t('assistant_module.contact_phone_type_option_home') }}</option>
+                            <option value="Work">{{ $t('assistant_module.contact_phone_type_option_work') }}</option>
+                            <option value="Other">{{ $t('assistant_module.contact_phone_type_option_other') }}</option>
                           </select>
                         </div>
                         <div class="col-md-4" v-if="pn.type == 'Mobile'">
-                          <label :for="'phone_number_carrier'+index"><b>Carrier</b></label>
+                          <label :for="'phone_number_carrier'+index"><b>{{ $t('assistant_module.contact_phone_number_carrier') }}</b></label>
                           <select class="form-select" :id="'phone_number_carrier'+index" :name="'phone_number_carrier'+index" v-model="pn.carrier">
-                            <option value="Verizon">Verizon</option>
-                            <option value="AT&T">AT&T</option>
-                            <option value="T-Mobile">T-Mobile</option>
-                            <option value="Other">Other</option>
+                            <option value="Verizon">{{ $t('assistant_module.contact_phone_number_carrier_option_verizon') }}</option>
+                            <option value="AT&T">{{ $t('assistant_module.contact_phone_number_carrier_option_atandt') }}</option>
+                            <option value="T-Mobile">{{ $t('assistant_module.contact_phone_number_carrier_option_tmobile') }}</option>
+                            <option value="Other">{{ $t('assistant_module.contact_phone_number_carrier_option_other') }}</option>
                           </select>
                         </div>
                         <div class="col-md-4">
-                          <label :for="'phone_number_'+index" class=""><b>Phone Number</b></label>
+                          <label :for="'phone_number_'+index" class=""><b>{{ $t('assistant_module.contact_phone_number') }}</b></label>
                           <input type="text" :id="'phone_number_'+index" :name="'phone_number_'+index" autocomplete="off" class="form-control" v-model.number="pn.number" @keypress="isNumber($event)">
                         </div>
                       </div>
@@ -176,7 +174,9 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
                     <div class="col-md-12">
                       <div class="d-grid gap-2 mt-3">
-                        <button class="btn btn-sm btn-info btn-block" type="button" @click="addPhoneNumber()">Add Phone Number</button>
+                        <button class="btn btn-sm btn-info btn-block" type="button" @click="addPhoneNumber()">{{
+                            $t('assistant_module.add_contact_phone_number')
+                          }}</button>
                       </div>
                     </div>
                   </div>
@@ -184,10 +184,10 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
                 <div>
                   <button class="btn btn-primary me-2" type="submit" :disabled="processingForm" :readonly="processingForm">
-                    <span v-if="processingForm">Saving...</span>
-                    <span v-if="!processingForm">Save</span>
+                    <span v-if="processingForm">{{ $t('saving_process') }}</span>
+                    <span v-if="!processingForm">{{ $t('save') }}</span>
                   </button>
-                  <button class="btn btn-secondary" @click="saveContactCancel" type="button">Cancel</button>
+                  <button class="btn btn-secondary" @click="saveContactCancel" type="button">{{ $t('cancel') }}</button>
                 </div>
               </form>
 
@@ -208,35 +208,33 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                   ></vue-avatar>
                 </div>
                 <div style="height: 250px; width: 250px; background-color: #7F7F7F; color: #FFFFFF; padding-top: 109px;" v-if="!showEditAvatar">
-                  <h5 class="text-center">Loading...</h5>
+                  <h5 class="text-center">{{ $t('loading_progress') }}</h5>
                 </div>
 
                 <span class="form-text text-danger" v-show="errors.avatar">Please select image</span>
 
                 <div class="mb-3 mt-3">
-                  <label for="name" class="form-label"><b>Name</b></label>
+                  <label for="name" class="form-label"><b>{{ $t('assistant_module.contact_name') }}</b></label>
                   <input type="text" class="form-control" id="name" v-model="name" required>
-                  <span class="form-text text-danger" v-show="errors.name">Please enter name</span>
+                  <span class="form-text text-danger" v-show="errors.name">{{  $t('assistant_module.please_enter_contact_name')  }}</span>
                 </div>
                 <div class="mb-3 mt-3">
-                  <label for="skypeid" class="form-label"><b>Skype ID</b></label>
+                  <label for="skypeid" class="form-label"><b>{{ $t('assistant_module.skype_id') }}</b></label>
                   <input type="text" class="form-control" id="skypeid" v-model="skypeid">
                 </div>
                 <div class="mb-3 mt-3">
-                  <label for="zoom_meeting_url" class="form-label"><b>Zoom Meeting URL</b></label>
+                  <label for="zoom_meeting_url" class="form-label"><b>{{ $t('assistant_module.zoom_meeting_url') }}</b></label>
                   <input type="text" class="form-control" id="zoom_meeting_url" v-model="zoom_meeting_url">
-                  <span class="form-text text-danger" v-show="errors.name">Please enter Zoom Meeting URL</span>
                 </div>
                 <div class="mb-3 mt-3">
-                  <label for="notes" class="form-label"><b>Notes</b></label>
+                  <label for="notes" class="form-label"><b>{{ $t('assistant_module.notes') }}</b></label>
                   <textarea name="notes" id="notes" rows="3" class="form-control" v-model="notes"></textarea>
-                  <span class="form-text text-danger" v-show="errors.name">Please enter Notes</span>
                 </div>
 
                 <div class="mb-3 p-2" style="border: 1px solid black;">
                   <div class="row">
                     <div class="col-md-12">
-                      <label for="email" class="form-label"><b>Email</b></label>
+                      <label for="email" class="form-label"><b>{{ $t('assistant_module.contact_email') }}</b></label>
                       <div class="row">
                         <div class="col-md-6 mb-3" style="position:relative;" v-for="(email_field, index) in email" :key="index">
                           <input type="email" class="form-control" :name="'email'+index" v-model="email[index]" id="email">
@@ -246,13 +244,13 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                     </div>
                     <div class="col-md-12">
                       <div class="d-grid gap-2 mt-2">
-                        <button class="btn btn-sm btn-info btn-block" type="button" @click="addEmail()">Add Email</button>
+                        <button class="btn btn-sm btn-info btn-block" type="button" @click="addEmail()">{{ $t('assistant_module.add_email') }}</button>
                       </div>
                     </div>
 
                   </div>
 
-                  <span class="form-text text-danger" v-show="errors.email">Please enter email</span>
+                  <span class="form-text text-danger" v-show="errors.email">{{ $t('assistant_module.please_add_contact_email') }}</span>
                 </div>
 
                 <div class="mb-3 p-2" style="border: 1px solid black;">
@@ -266,25 +264,25 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                         </div>
 
                         <div class="col-md-6">
-                          <label :for="'phone_number_edit_'+index">Phone Number</label>
+                          <label :for="'phone_number_edit_'+index">{{ $t('assistant_module.contact_phone_number') }}</label>
                           <input type="text" :id="'phone_number_edit_'+index" :name="'phone_number_edit_'+index" autocomplete="off" class="form-control" v-model.number="pn.number" @keypress="isNumber($event)">
                         </div>
                         <div class="col-md-6">
-                          <label :for="'phone_number_type_edit_'+index">Type</label>
+                          <label :for="'phone_number_type_edit_'+index">{{ $t('assistant_module.contact_phone_type') }}</label>
                           <select class="form-select" :id="'phone_number_type_edit_'+index" :name="'phone_number_type_edit_'+index" autocomplete="off" v-model="pn.type">
-                            <option value="Mobile">Mobile</option>
-                            <option value="Home">Home</option>
-                            <option value="Work">Work</option>
-                            <option value="Other">Other</option>
+                            <option value="Mobile">{{ $t('assistant_module.contact_phone_type_option_mobile') }}</option>
+                            <option value="Home">{{ $t('assistant_module.contact_phone_type_option_home') }}</option>
+                            <option value="Work">{{ $t('assistant_module.contact_phone_type_option_work') }}</option>
+                            <option value="Other">{{ $t('assistant_module.contact_phone_type_option_other') }}</option>
                           </select>
                         </div>
                         <div class="col-md-6" v-if="pn.type == 'Mobile'">
-                          <label :for="'phone_number_carrier_edit_'+index" class="mt-2">Carrier</label>
+                          <label :for="'phone_number_carrier_edit_'+index" class="mt-2">{{ $t('assistant_module.contact_phone_number_carrier') }}</label>
                           <select class="form-select" :id="'phone_number_carrier_edit_'+index" :name="'phone_number_carrier_edit_'+index" v-model="pn.carrier">
-                            <option value="Verizon">Verizon</option>
-                            <option value="AT&T">AT&T</option>
-                            <option value="T-Mobile">T-Mobile</option>
-                            <option value="Other">Other</option>
+                            <option value="Verizon">{{ $t('assistant_module.contact_phone_number_carrier_option_verizon') }}</option>
+                            <option value="AT&T">{{ $t('assistant_module.contact_phone_number_carrier_option_atandt') }}</option>
+                            <option value="T-Mobile">{{ $t('assistant_module.contact_phone_number_carrier_option_tmobile') }}</option>
+                            <option value="Other">{{ $t('assistant_module.contact_phone_number_carrier_option_other') }}</option>
                           </select>
                         </div>
                       </div>
@@ -292,7 +290,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
                     <div class="col-md-12">
                       <div class="d-grid gap-2 mt-3">
-                        <button class="btn btn-sm btn-info btn-block" type="button" @click="addPhoneNumber()">Add Phone Number</button>
+                        <button class="btn btn-sm btn-info btn-block" type="button" @click="addPhoneNumber()">{{ $t('assistant_module.add_contact_phone_number') }}</button>
                       </div>
                     </div>
                   </div>
@@ -300,10 +298,10 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
                 <div>
                   <button class="btn btn-primary me-2" type="submit" :disabled="form_submit_status == 'PROCESSING'" :readonly="form_submit_status == 'PROCESSING'">
-                    <span v-if="form_submit_status == 'PROCESSING'">Saving...</span>
-                    <span v-if="form_submit_status != 'PROCESSING'">Save</span>
+                    <span v-if="form_submit_status == 'PROCESSING'">{{ $t('saving_process') }}</span>
+                    <span v-if="form_submit_status != 'PROCESSING'">{{ $t('save') }}</span>
                   </button>
-                  <button class="btn btn-secondary" @click="saveContactCancel" type="button">Cancel</button>
+                  <button class="btn btn-secondary" @click="saveContactCancel" type="button">{{ $t('cancel') }}</button>
                 </div>
               </form>
 
@@ -316,25 +314,25 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
               <div class="card-body">
                 <h5 class="card-title">{{ current_contact.name }} </h5>
-                <p class="card-text">Email: {{ current_contact.email.join(", ") }}</p>
+                <p class="card-text">{{ $t('assistant_module.contact_email') }}: {{ current_contact.email.join(", ") }}</p>
                 <p class="card-text">
-                  Phone Number(s):
+                  {{ $t('assistant_module.contact_phone_numbers') }}:
                   <ul>
                     <li v-for="(pn, index) in current_contact.phoneNumber" :key="'show_pn_'+index">
                       {{ pn.number }} ({{ pn.type }}) <span v-if="pn.carrier">- {{ pn.carrier }}</span>
                     </li>
                   </ul>
                 </p>
-                <p class="card-text">Skype ID: {{ current_contact.skypeid }}</p>
-                <p class="card-text">Zoom Meeting URL: {{ current_contact.zoom_meeting_url }}</p>
+                <p class="card-text">{{ $t('assistant_module.skype_id') }}: {{ current_contact.skypeid }}</p>
+                <p class="card-text">{{ $t('assistant_module.zoom_meeting_url') }}: {{ current_contact.zoom_meeting_url }}</p>
                 <p>Notes: {{ current_contact.notes }}</p>
-<!--                <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>-->
-                <a href="javascript:void(0)" class="btn btn-sm btn-info me-2" @click="editContact(current_contact.id)">Edit Contact</a>
-                <a href="javascript:void(0)" class="btn btn-sm btn-danger" @click="showDeleteContactDialog(current_contact)">Delete Contact</a>
+
+                <a href="javascript:void(0)" class="btn btn-sm btn-info me-2" @click="editContact(current_contact.id)">{{ $t('assistant_module.edit_contact') }}</a>
+                <a href="javascript:void(0)" class="btn btn-sm btn-danger" @click="showDeleteContactDialog(current_contact)">{{ $t('assistant_module.delete_contact') }}</a>
               </div>
             </div>
             <div v-if="!show_add_contact_form && !show_edit_contact_form && !contacts.length">
-              <h4 class="mt-2">No contacts found</h4>
+              <h4 class="mt-2">{{ $t('assistant_contact.no_contacts_found') }}</h4>
             </div>
 
           </div>
@@ -615,10 +613,10 @@ export default {
     },
     async showDeleteContactDialog(contact) {
       let willDelete = await swal({
-        title: "Are you sure, you want to delete?",
-        text: "Once deleted, you will not be able to recover!",
+        title: this.$t('swal_delete_title'),
+        text: this.$t('swal_delete_text'),
         icon: "warning",
-        buttons: ["Cancel", "Delete"],
+        buttons: [this.$t('cancel'), this.$t('delete')],
         dangerMode: true,
       })
 

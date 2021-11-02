@@ -26,7 +26,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
   <div id="admin-app">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
-        <a class="navbar-brand" href="/admin">Easy123</a>
+        <a class="navbar-brand" href="/admin">{{ $t('easy123') }}</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -36,7 +36,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
               <a class="nav-link active" aria-current="page" href="#">Users</a>
             </li>-->
             <li class="nav-item">
-              <a class="nav-link" href="javascript:void(0)" @click="logoutUser">Logout</a>
+              <a class="nav-link" href="javascript:void(0)" @click="logoutUser">{{ $t('logout') }}</a>
             </li>
           </ul>
         </div>

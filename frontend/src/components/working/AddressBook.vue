@@ -51,7 +51,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
                 <tbody v-if="!filteredContacts.length">
                     <tr>
-                        <td>No Contacts Found</td>
+                        <td>{{ $t('home_module.no_contact') }}</td>
                     </tr>
                 </tbody>
             </table>
@@ -97,7 +97,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                             <a class="large awesome" :href="`skype:${contactDetails.skypeId}`">
                                 <img align="left" style="padding:0px" src="/images/skype.png" width="70" height="70" />
                                 <div id="photo" align="left" style="padding-left:80px; padding-top: 17px; font-size: 26px">
-                                    Connect with Skype
+                                    {{ $t('home_module.connect_with_skype') }}
                                 </div>
                             </a>
                         </div>
@@ -107,7 +107,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                             <a class="large awesome" :href="contactDetails.zoomMeetingURL" target="_blank" rel="no-referrer">
                                 <img align="left" style="padding:0px" src="/images/zoom.png" width="70" height="70" />
                                 <div id="photo" align="left" style="padding-left:80px; padding-top: 17px; font-size: 26px">
-                                    Connect with Zoom
+                                    {{ $t('home_module.connect_with_zoom') }}
                                 </div>
                             </a>
                         </div>

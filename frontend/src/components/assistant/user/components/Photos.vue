@@ -25,13 +25,9 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 <template>
   <div class="container-fluid row">
     <div class="col-md-12">
-
-      <button class="btn btn-primary mt-3 mb-2" @click="addFolder">Add Folder</button>
-      <!--      <button class="btn btn-primary float-end mt-3" @click="uploadImages" v-if="current_folder != null">Upload Images</button>-->
-
+      <button class="btn btn-primary mt-3 mb-2" @click="addFolder">{{ $t('assistant_module.add_folder') }}</button>
     </div>
     <div class="col-md-12">
-      <!--      <i class="fas fa-folder-open"></i>-->
       <div class="row">
         <div class="col-md-3">
           <div style="border-right: 1px solid #d4d4d4">
@@ -86,8 +82,8 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           <img :src="getImageData(current_photo)" v-if="!loading_image" alt="" style="max-height: 100%; max-width: 100%;" class="mb-2">
           <h4 class="text-center mt-5" v-if="loading_image">Loading...</h4>
           <button type="button" class="btn btn-sm btn-danger mb-5 d-block float-end" @click="deletePhoto(current_photo)" v-if="current_photo && current_photo.id" :readonly="deleting_photo" :disabled="deleting_photo">
-            <span v-if="!deleting_photo">Delete</span>
-            <span v-if="deleting_photo">Deleting...</span>
+            <span v-if="!deleting_photo">{{ $t('delete') }}</span>
+            <span v-if="deleting_photo">{{ $t('deleting_process') }}</span>
           </button>
         </div>
       </div>
@@ -225,22 +221,6 @@ export default {
           return a.order - b.order
         })
         self.folders = response.data.data
-        /*console.log("self.folders", self.folders)
-        console.log("self.folders.photos", self.folders.photos)
-        console.log("self.folders.photos.length", self.folders.photos.length)*/
-        /*if(self.folders.photos.length)
-        {
-          self.loading_image = true
-          axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/get-private-image", {
-            id: self.$route.params.id,
-            photo: self.folders.photos[0]
-          })
-          .then((response)=>{
-            console.log("photos", response.data)
-          }, (error) => {
-            console.log(error)
-          })
-        }*/
 
 
       }, (error) => {
@@ -267,10 +247,10 @@ export default {
     addFolder() {
       let self = this
       swal({
-        text: "Enter folder name",
+        text: self.$t('assistant_module.enter_folder_name'),
         content: 'input',
         button: {
-          text: "Create",
+          text: self.$t('create'),
           closeModal: false,
         },
         closeOnClickOutside: false,
@@ -317,7 +297,7 @@ export default {
       //console.log("editFolder", folder, index)
       let self = this
       swal({
-        text: "Edit folder name",
+        text: self.$t('assistant_module.edit_folder_name'),
         content: {
           element: "input",
           attributes: {
@@ -403,10 +383,10 @@ export default {
       //console.log("deleteFolder", folder, index)
       let self = this
       let willDelete = await swal({
-        title: "Are you sure you want to delete the folder?",
-        text: "All photos inside the folder will be also be deleted.",
+        title: self.$t('assistant_folder.are_you_sure_to_delete_folder'),
+        text: self.$t('assistant_folder.all_photos_inside_folder_will_be_deleted'),
         icon: "warning",
-        buttons: ["Cancel", "Delete"],
+        buttons: [self.$t('cancel'), self.$t('delete')],
         dangerMode: true,
       })
 
@@ -441,10 +421,10 @@ export default {
     {
       let self = this
       let willDelete = await swal({
-        title: "Are you sure you want to delete?",
+        title: self.$t('swal_delete_title'),
         //text: "All photos inside the folder will be also be deleted.",
         icon: "warning",
-        buttons: ["Cancel", "Delete"],
+        buttons: [self.$t('cancel'), self.$t('delete')],
         dangerMode: true,
       })
 
@@ -729,15 +709,6 @@ export default {
       }
       else if (event.keyCode == 39) // key right event
       {
-
-        /*this.openFolder(this.folders[folder_index].id)
-        let el = this.$refs['photo_0'][0]
-        if(el)
-        {
-          el.focus({
-            behavior: "smooth"
-          })
-        }*/
         //console.log("right")
       }
       else if (event.keyCode == 40) // key down event
@@ -773,7 +744,7 @@ export default {
       //console.log("photo edit", photo, index)
 
       swal({
-        text: "Edit photo name",
+        text: self.$t('assistant_module.edit_photo_name'),
         content: {
           element: "input",
           attributes: {
@@ -781,8 +752,8 @@ export default {
             type: "text",
           },
         },
-        buttons: ["Cancel", {
-          text: "Update",
+        buttons: [self.$t('cancel'), {
+          text: self.$t('update'),
           closeModal: false,
         }],
         /*button: {

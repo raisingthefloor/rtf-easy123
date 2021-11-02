@@ -26,80 +26,82 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
   <div class="container-fluid">
     <nav class="mt-3" style="--bs-breadcrumb-divider: '>'; position: relative;" aria-label="breadcrumb">
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"> <router-link to="/assistant">Members</router-link> </li>
-        <li class="breadcrumb-item active" aria-current="page">Edit Member</li>
+        <li class="breadcrumb-item"> <router-link to="/assistant">{{ $t('assistant_module.members') }}</router-link> </li>
+        <li class="breadcrumb-item active" aria-current="page">{{ $t('assistant_module.edit_member') }}</li>
       </ol>
-      <router-link to="/assistant" class="btn btn-secondary btn-sm" style="position: absolute; right: 0px; top: 0px;">Go back to Members List</router-link>
+      <router-link to="/assistant" class="btn btn-secondary btn-sm" style="position: absolute; right: 0px; top: 0px;">{{ $t('assistant_module.go_back_members_list') }}</router-link>
     </nav>
 
     <div class="row">
       <div class="col-md-12">
-        <h4 class="mb-3">Edit <span style="font-size: 0.9rem;">{{ nickname }}'s Account</span></h4>
+        <h4 class="mb-3">{{ $t('edit') }} <span style="font-size: 0.9rem;">{{ $t('assistant_module.accounts_name', { nickname: nickname}) }}</span></h4>
 
         <ul class="nav nav-tabs" id="myTab" role="tablist">
           <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">User Profile <font-awesome-icon :icon="['fas', 'exclamation-circle']" style="color: red" v-if="!email || !passwordIsSet" /></button>
+            <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="true">{{ $t('assistant_module.user_profile') }} <font-awesome-icon :icon="['fas', 'exclamation-circle']" style="color: red" v-if="!email || !passwordIsSet" /></button>
           </li>
           <li class="nav-item" role="presentation">
-            <button class="nav-link" id="imapdetails-tab" data-bs-toggle="tab" data-bs-target="#imapdetails" type="button" role="tab" aria-controls="imapdetails" aria-selected="false">IMAP/SMTP details</button>
+            <button class="nav-link" id="imapdetails-tab" data-bs-toggle="tab" data-bs-target="#imapdetails" type="button" role="tab" aria-controls="imapdetails" aria-selected="false">{{ $t('assistant_module.imap_smtp_details') }}</button>
           </li>
           <li class="nav-item" role="presentation">
-            <button class="nav-link" id="addressbook-tab" data-bs-toggle="tab" data-bs-target="#addressbook" type="button" role="tab" aria-controls="addressbook" aria-selected="false">Address book</button>
+            <button class="nav-link" id="addressbook-tab" data-bs-toggle="tab" data-bs-target="#addressbook" type="button" role="tab" aria-controls="addressbook" aria-selected="false">{{ $t('assistant_module.address_book') }}</button>
           </li>
           <li class="nav-item" role="presentation">
-            <button class="nav-link" id="photos-tab" data-bs-toggle="tab" data-bs-target="#photos" type="button" role="tab" aria-controls="photos" aria-selected="false">Photos</button>
+            <button class="nav-link" id="photos-tab" data-bs-toggle="tab" data-bs-target="#photos" type="button" role="tab" aria-controls="photos" aria-selected="false">
+              {{ $t('assistant_module.photos') }}</button>
           </li>
           <li class="nav-item" role="presentation">
-            <button class="nav-link" id="easyweb-tab" data-bs-toggle="tab" data-bs-target="#easyweb" type="button" role="tab" aria-controls="easyweb" aria-selected="false">EasyWeb</button>
+            <button class="nav-link" id="easyweb-tab" data-bs-toggle="tab" data-bs-target="#easyweb" type="button" role="tab" aria-controls="easyweb" aria-selected="false">
+              {{ $t('assistant_module.easyweb') }}</button>
           </li>
           <li class="nav-item" role="presentation">
-            <button class="nav-link" id="easyweb-tab" data-bs-toggle="tab" data-bs-target="#generalsettings" type="button" role="tab" aria-controls="generalsettings" aria-selected="false">General Settings</button>
+            <button class="nav-link" id="easyweb-tab" data-bs-toggle="tab" data-bs-target="#generalsettings" type="button" role="tab" aria-controls="generalsettings" aria-selected="false">{{ $t('assistant_module.general_settings') }}</button>
           </li>
         </ul>
         <div class="tab-content" id="myTabContent">
           <div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
             <form method="post" @submit.prevent="submitUserProfile()">
-              <p class="text-danger mt-3" v-if="profileFormSubmitStatus === 'ERROR'">Please fill the form correctly.</p>
+              <p class="text-danger mt-3" v-if="profileFormSubmitStatus === 'ERROR'">{{ $t('validation.please_fill_form_correctly') }}</p>
               <div class="mb-3 mt-3">
-                <label for="name" class="form-label">Name</label>
+                <label for="name" class="form-label">{{ $t('assistant_module.name') }}</label>
                 <input type="text" class="form-control" v-bind:class="{ 'is-invalid': $v.name.$error }" id="name" v-model.trim="$v.name.$model">
                 <div class="invalid-feedback">
-                  <span v-if="!$v.name.required">Name is required.</span>
-                  <span v-if="!$v.name.minLength">Name should atlist 3 character long.</span>
+                  <span v-if="!$v.name.required">{{ $t('validation.name_is_required') }}</span>
+                  <span v-if="!$v.name.minLength">{{ $t('validation.name_should_3_char_long') }}</span>
                 </div>
               </div>
               <div class="mb-3 mt-3">
-                <label for="nickname" class="form-label">Nickname</label>
+                <label for="nickname" class="form-label">{{ $t('assistant_module.nickname') }}</label>
                 <input type="text" class="form-control" v-bind:class="{ 'is-invalid': $v.nickname.$error }" id="nickname" v-model.trim="$v.nickname.$model">
                 <div class="invalid-feedback">
-                  <span v-if="!$v.nickname.required">Nickname is required. </span>
-                  <span v-if="!$v.nickname.minLength">Nickname should be minimum 3 character long.</span>
+                  <span v-if="!$v.nickname.required">{{ $t('validation.nickname_is_required') }} </span>
+                  <span v-if="!$v.nickname.minLength">{{ $t('validation.nickname_should_3_char_long') }}</span>
                 </div>
               </div>
               <div class="mb-3">
-                <label for="email" class="form-label">Easy123 User Name (recommend to use User’s email address)</label>
-                <input type="email" class="form-control" v-bind:class="{ 'is-invalid': $v.email.$error }" id="email" v-model.trim="$v.email.$model" placeholder="Enter a login password.">
+                <label for="email" class="form-label">{{ $t('assistant_module.easy123_username') }}</label>
+                <input type="email" class="form-control" v-bind:class="{ 'is-invalid': $v.email.$error }" id="email" v-model.trim="$v.email.$model" :placeholder="$t('assistant_module.easy123_username_placeholder')">
                 <div class="invalid-feedback">
-                  <span v-if="!$v.email.required">Email is required.</span>
-                  <span v-if="!$v.email.email">Please enter a valid email.</span>
+                  <span v-if="!$v.email.required">{{ $t('validation.email_is_required') }}</span>
+                  <span v-if="!$v.email.email">{{ $t('validation.enter_valid_email') }}</span>
                 </div>
               </div>
               <div class="mb-3">
-                <label for="password" class="form-label">Easy123 Password</label>
+                <label for="password" class="form-label">{{ $t('assistant_module.easy123_password') }}</label>
                 <div style="position:relative;">
-                  <input :type="(show_password_protected)?'password':'text'" class="form-control" v-bind:class="{ 'is-invalid': $v.password.$error }" id="password" v-model.trim="$v.password.$model" placeholder="Enter a new login password." autocomplete="new-password" name="new_password_1">
+                  <input :type="(show_password_protected)?'password':'text'" class="form-control" v-bind:class="{ 'is-invalid': $v.password.$error }" id="password" v-model.trim="$v.password.$model" :placeholder="$t('assistant_module.easy123_password_placeholder')" autocomplete="new-password" name="new_password_1">
                   <font-awesome-icon :icon="['fas', 'eye']" style="position: absolute;right: 9px; top: 12px; cursor: pointer;" @click="show_password_protected=false" v-show="show_password_protected" />
                   <font-awesome-icon :icon="['fas', 'eye-slash']" style="position: absolute;right: 9px; top: 12px; cursor: pointer;" @click="show_password_protected=true" v-show="!show_password_protected" />
                 </div>
-                <small class="form" v-if="passwordIsSet">Password is secured with encryption.</small>
+                <small class="form" v-if="passwordIsSet">{{ $t('assistant_module.password_secured_with_encryption') }}</small>
                 <div class="invalid-feedback" v-bind:class="{ 'd-block': $v.password.$error }">
-                  <span v-if="!$v.password.required">Password is required.</span>
-                  <span v-if="!$v.password.minLength">Password must be 8 characters long.</span>
+                  <span v-if="!$v.password.required">{{ $t('validation.password_is_required') }}</span>
+                  <span v-if="!$v.password.minLength">{{ $t('validation.password_8_char_long') }}</span>
                 </div>
               </div>
               <button type="submit" class="btn btn-primary mb-5" :readonly="profileFormSubmitStatus == 'PROCESSING'" :disabled="profileFormSubmitStatus == 'PROCESSING'">
-                <span v-if="profileFormSubmitStatus == 'PROCESSING'">Saving...</span>
-                <span v-if="profileFormSubmitStatus != 'PROCESSING'">Save</span>
+                <span v-if="profileFormSubmitStatus == 'PROCESSING'">{{ $t('saving_process') }}</span>
+                <span v-if="profileFormSubmitStatus != 'PROCESSING'">{{ $t('save') }}</span>
               </button>
             </form>
 
@@ -107,20 +109,20 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           <div class="tab-pane fade" id="imapdetails" role="tabpanel" aria-labelledby="imapdetails-tab">
             <form @submit.prevent="submitImapSmtpDetails()">
               <div>
-                <h6 class="mt-3"><b>Incoming Mail Server (IMAP)</b></h6>
+                <h6 class="mt-3"><b>{{ $t('assistant_module.imap_heading') }}</b></h6>
                 <div class="mb-3">
-                  <label for="imap_username" class="form-label">Email address</label>
+                  <label for="imap_username" class="form-label">{{ $t('assistant_module.imap_email_address') }}</label>
                   <input type="text" class="form-control" id="imap_username" v-model.trim="$v.imap_username.$model" v-bind:class="{ 'is-invalid': $v.imap_username.$error }">
                   <div class="invalid-feedback">
-                    <span v-if="!$v.imap_username.required">Email address is required.</span>
+                    <span v-if="!$v.imap_username.required">{{ $t('validation.imap_email_is_required') }}</span>
                   </div>
                 </div>
                 <div class="mb-3">
-                  <label for="imap_password" class="form-label">Password</label>
+                  <label for="imap_password" class="form-label">{{ $t('assistant_module.imap_password') }}</label>
                   <div style="position:relative;">
                     <input :type="(show_imap_password_protected)?'password':'text'" class="form-control" v-bind:class="{ 'is-invalid': $v.imap_password.$error }" id="imap_password" v-model.trim="$v.imap_password.$model" autocomplete="new-password">
                     <div class="invalid-feedback">
-                      <span v-if="!$v.imap_password.required">Password is required.</span>
+                      <span v-if="!$v.imap_password.required">{{ $t('validation.imap_password_is_required') }}</span>
                     </div>
                     <font-awesome-icon :icon="['fas', 'eye']" style="position: absolute;right: 9px; top: 12px; cursor: pointer;" @click="show_imap_password_protected=false" v-show="show_imap_password_protected" />
                     <font-awesome-icon :icon="['fas', 'eye-slash']" style="position: absolute;right: 9px; top: 12px; cursor: pointer;" @click="show_imap_password_protected=true" v-show="!show_imap_password_protected" />
@@ -128,26 +130,26 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
                 </div>
                 <div class="mb-3">
-                  <label for="imap_host" class="form-label">Host</label>
+                  <label for="imap_host" class="form-label">{{ $t('assistant_module.imap_host') }}</label>
                   <input type="text" class="form-control" id="imap_host" v-model.trim="$v.imap_host.$model" v-bind:class="{ 'is-invalid': $v.imap_host.$error }">
                   <div class="invalid-feedback">
-                    <span v-if="!$v.imap_host.required">Host is required.</span>
+                    <span v-if="!$v.imap_host.required">{{ $t('validation.imap_host_required') }}</span>
                   </div>
                 </div>
                 <div class="mb-3">
                   <a href="javascript:void(0)" class="btn btn-sm btn-info" :disabled="testIncomingMailStatus == 'PROCESSING'" :readonly="testIncomingMailStatus == 'PROCESSING'" @click="testIncomingMail()" v-bind:class="{ 'disabled': testIncomingMailStatus == 'PROCESSING' }">
-                    <span v-if="testIncomingMailStatus != 'PROCESSING'">Test Incoming Mail</span>
-                    <span v-if="testIncomingMailStatus == 'PROCESSING'">Test Incoming Mail...</span>
+                    <span v-if="testIncomingMailStatus != 'PROCESSING'">{{ $t('assistant_module.test_incoming_mail') }}</span>
+                    <span v-if="testIncomingMailStatus == 'PROCESSING'">{{ $t('assistant_module.test_incoming_mail_processing') }}</span>
                   </a>
                 </div>
               </div>
               <div>
-                <h6 class="mt-4"><b>Outgoing Mail Server (SMTP)</b></h6>
+                <h6 class="mt-4"><b>{{ $t('assistant_module.smtp_heading') }}</b></h6>
                 <div class="mb-3">
-                  <label for="smtp_username" class="form-label">Email address</label>
+                  <label for="smtp_username" class="form-label">{{ $t('assistant_module.smtp_email_address') }}</label>
                   <input type="text" class="form-control" id="smtp_username" v-model.trim="$v.smtp_username.$model" v-bind:class="{ 'is-invalid': $v.smtp_username.$error }">
                   <div class="invalid-feedback">
-                    <span v-if="!$v.smtp_username.required">Email address is required.</span>
+                    <span v-if="!$v.smtp_username.required">{{ $t('validation.imap_email_is_required') }}</span>
                   </div>
                 </div>
                 <div class="mb-3">
@@ -155,56 +157,56 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                   <div style="position:relative;">
                     <input :type="(show_smtp_password_protected)?'password':'text'" class="form-control" v-bind:class="{ 'is-invalid': $v.smtp_password.$error }" id="smtp_password" v-model.trim="$v.smtp_password.$model" autocomplete="new-password">
                     <div class="invalid-feedback">
-                      <span v-if="!$v.smtp_password.required">Password is required.</span>
+                      <span v-if="!$v.smtp_password.required">{{ $t('validation.imap_password_is_required') }}</span>
                     </div>
                     <font-awesome-icon :icon="['fas', 'eye']" style="position: absolute;right: 9px; top: 12px; cursor: pointer;" @click="show_smtp_password_protected=false" v-show="show_smtp_password_protected" />
                     <font-awesome-icon :icon="['fas', 'eye-slash']" style="position: absolute;right: 9px; top: 12px; cursor: pointer;" @click="show_smtp_password_protected=true" v-show="!show_smtp_password_protected" />
                   </div>
                 </div>
                 <div class="mb-3">
-                  <label for="smtp_host" class="form-label">Host</label>
+                  <label for="smtp_host" class="form-label">{{ $t('assistant_module.imap_host') }}</label>
                   <input type="text" class="form-control" id="smtp_host" v-model.trim="$v.smtp_host.$model" v-bind:class="{ 'is-invalid': $v.smtp_host.$error }">
                   <div class="invalid-feedback">
-                    <span v-if="!$v.smtp_host.required">Host is required.</span>
+                    <span v-if="!$v.smtp_host.required">{{ $t('validation.imap_host_required') }}</span>
                   </div>
                 </div>
                 <div class="mb-3">
-                  <label for="smtp_port" class="form-label">Port</label>
+                  <label for="smtp_port" class="form-label">{{ $t('assistant_module.smtp_port') }}</label>
                   <input type="text" class="form-control" id="smtp_port" v-model.trim="$v.smtp_port.$model" v-bind:class="{ 'is-invalid': $v.smtp_port.$error }">
                   <div class="invalid-feedback">
-                    <span v-if="!$v.smtp_port.required">Port is required.</span>
+                    <span v-if="!$v.smtp_port.required">{{ $t('validation.smtp_port_required') }}</span>
                   </div>
                 </div>
 
                 <div class="form-check mb-3">
                   <input class="form-check-input" type="checkbox" value="true" id="smtp_use_tls_ssl" v-model="smtp_use_tls_ssl">
                   <label class="form-check-label" for="smtp_use_tls_ssl">
-                    Use TLS/SSL
+                    {{ $t('assistant_module.use_tls_ssl') }}
                   </label>
                 </div>
 
                 <div class="mb-3">
-                  <label for="smtp_authentication" class="form-label">Authentication</label>
+                  <label for="smtp_authentication" class="form-label">{{ $t('assistant_module.smtp_authentication_type') }}</label>
                   <select class="form-select" id="smtp_authentication" v-model.trim="$v.smtp_authentication.$model" v-bind:class="{ 'is-invalid': $v.smtp_authentication.$error }">
-                    <option value="None">None</option>
-                    <option value="Password" selected>Password</option>
+                    <option value="None">{{ $t('assistant_module.smtp_authentication_type_option_none') }}</option>
+                    <option value="Password" selected>{{ $t('assistant_module.smtp_authentication_type_option_password') }}</option>
                   </select>
                   <div class="invalid-feedback">
-                    <span v-if="!$v.smtp_authentication.required">Authentication Method is required.</span>
+                    <span v-if="!$v.smtp_authentication.required">{{ $t('validation.smtp_authentication_method_required') }}</span>
                   </div>
                 </div>
 
                 <div class="mb-3">
                   <a href="javascript:void(0)" class="btn btn-sm btn-info" :disabled="testOutgoingMailStatus == 'PROCESSING'" :readonly="testOutgoingMailStatus == 'PROCESSING'" @click="testOutgoingMail()" v-bind:class="{ 'disabled': testOutgoingMailStatus == 'PROCESSING' }">
-                    <span v-if="testOutgoingMailStatus != 'PROCESSING'">Test Outgoing Mail</span>
-                    <span v-if="testOutgoingMailStatus == 'PROCESSING'">Test Outgoing Mail...</span>
+                    <span v-if="testOutgoingMailStatus != 'PROCESSING'">{{ $t('assistant_module.test_outgoing_mail') }}</span>
+                    <span v-if="testOutgoingMailStatus == 'PROCESSING'">{{ $t('assistant_module.test_outgoing_mail_processing') }}</span>
                   </a>
                 </div>
               </div>
 
               <button type="submit" class="btn btn-primary mb-5" :readonly="imapSmtpFormSubmitStatus == 'PROCESSING'" :disabled="imapSmtpFormSubmitStatus == 'PROCESSING'">
-                <span v-if="imapSmtpFormSubmitStatus == 'PROCESSING'">Saving...</span>
-                <span v-if="imapSmtpFormSubmitStatus != 'PROCESSING'">Save</span>
+                <span v-if="imapSmtpFormSubmitStatus == 'PROCESSING'">{{ $t('saving_process') }}</span>
+                <span v-if="imapSmtpFormSubmitStatus != 'PROCESSING'">{{ $t('save') }}</span>
               </button>
             </form>
 
@@ -224,26 +226,28 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
             <form @submit.prevent="submitGeneralSettings()">
               <div>
                 <div class="mt-3 mb-3 row">
-                  <label for="screen_saver_start_after" class="col-sm-3 col-form-label">Screen Saver - Start After</label>
+                  <label for="screen_saver_start_after" class="col-sm-3 col-form-label">{{ $t('assistant_module.screen_saver_start_after') }}</label>
                   <div class="col-sm-9">
                     <select name="screen_saver_start_after" id="screen_saver_start_after" class="form-control" v-model="screenSaverStartAfter">
-                      <option :value="i" v-for="i in 60" :key="'option_'+i">{{ i }} {{ (i == 1)?' minute':' minutes' }}</option>
+                      <option :value="i" v-for="i in 60" :key="'option_'+i">{{ i }} {{ (i == 1)? $t('assistant_module.minute'): $t('assistant_module.minutes') }}</option>
                     </select>
                   </div>
                 </div>
                 <div class="mt-3 mb-3 row">
-                  <label for="screen_saver_photo_transition_period" class="col-sm-3 col-form-label">Screen Saver - Photo transition period</label>
+                  <label for="screen_saver_photo_transition_period" class="col-sm-3 col-form-label">{{
+                      $t('assistant_module.screen_saver_photo_transition_period')
+                    }}</label>
                   <div class="col-sm-9">
                     <select name="screen_saver_photo_transition_period" id="screen_saver_photo_transition_period" class="form-control" v-model="screenSaverPhotoTransitionPeriod">
-                      <option :value="i" v-for="i in 60" :key="'option_'+i">{{ i }} {{ (i == 1)?' second':' seconds' }}</option>
+                      <option :value="i" v-for="i in 60" :key="'option_'+i">{{ i }} {{ (i == 1)? $t('assistant_module.second'): $t('assistant_module.seconds') }}</option>
                     </select>
                   </div>
                 </div>
               </div>
 
               <button type="submit" class="btn btn-primary mb-5" :readonly="generalSettingSubmitStatus == 'PROCESSING'" :disabled="generalSettingSubmitStatus == 'PROCESSING'">
-                <span v-if="generalSettingSubmitStatus == 'PROCESSING'">Saving...</span>
-                <span v-if="generalSettingSubmitStatus != 'PROCESSING'">Save</span>
+                <span v-if="generalSettingSubmitStatus == 'PROCESSING'">{{ $t('saving_process') }}</span>
+                <span v-if="generalSettingSubmitStatus != 'PROCESSING'">{{ $t('save') }}</span>
               </button>
             </form>
           </div>
@@ -398,18 +402,6 @@ export default {
       required
     }
   },
-  watch: {
-    /*smtp_use_tls_ssl: function (newVal) {
-      if(newVal == true)
-      {
-        this.smtp_port = 465
-      }
-      else
-      {
-        this.smtp_port = 587
-      }
-    }*/
-  },
   mounted() {
     this.getUserDetails()
   },
@@ -442,8 +434,6 @@ export default {
           self.passwordIsSet = true
         }
 
-        //console.log("data", response.data)
-        //self.users = response.data.data
       }, (error) => {
         console.log(error)
       })
@@ -479,7 +469,7 @@ export default {
             self.passwordIsSet = true
           }
 
-          swal("Success", "Profile details saved.", "success");
+          swal(self.$t('success'), self.$t('assistant_module.profile_details_saved'), "success");
 
         }, (error) => {
           self.profileFormSubmitStatus = "ERROR"
@@ -526,7 +516,7 @@ export default {
           self.imapSmtpFormSubmitStatus = "PROCESSING_SUCCESS"
           self.item = response.data.data
 
-          swal("Success", "IMAP & SMTP details saved.", "success");
+          swal(self.$t('success'), self.$t('imap_smtp_details_saved'), "success");
 
         }, (error) => {
           self.imapSmtpFormSubmitStatus = "ERROR"
@@ -534,7 +524,6 @@ export default {
         })
       }
 
-      console.log("submitImapSmtpDetails")
     },
     submitGeneralSettings() {
       let self = this
@@ -548,25 +537,24 @@ export default {
         self.generalSettingSubmitStatus = "PROCESSING_SUCCESS"
         if(response.data.status)
         {
-          swal("Success", "Settings saved successfully.", "success");
+          swal(self.$t('success'), self.$t('assistant_module.settings_saved_successfully'), "success");
         }
         else {
-          swal("Error", "Failed to save settings.", "error");
+          swal(self.$t('error'), self.$t('assistant_module.failed_to_save_settings'), "error");
         }
       }, (error) => {
         self.generalSettingSubmitStatus = "ERROR"
-        swal("Error", "Server error, please contact administrator.", "error");
+        swal(self.$t('error'), self.$t('server_error_occurred_please_contact_admin'), "error");
         console.log(error)
       })
-      //console.log("submitGeneralSettings", this.screenSaverStartAfter)
     },
     async deleteUserAlert(id) {
       //console.log(id)
       let willDelete = await swal({
-        title: "Are you sure, you want to delete?",
-        text: "Once deleted, you will not be able to recover!",
+        title: this.$t('swal_delete_title'),
+        text: this.$t('swal_delete_text'),
         icon: "warning",
-        buttons: ["Cancel", "Delete"],
+        buttons: [this.$t('cancel'), this.$t('delete')],
         dangerMode: true,
       })
 
@@ -616,8 +604,8 @@ export default {
           {
             self.testIncomingMailStatus = "SUCCESS"
             swal({
-              title: "Success",
-              text: "Incoming mail credentials are working",
+              title: self.$t('success'),
+              text: self.$t('imap_credentials_working'),
               icon: "success",
             });
 
@@ -627,8 +615,8 @@ export default {
           {
             self.testIncomingMailStatus = "FAILED"
             swal({
-              title: "Failed",
-              text: "Incoming mail credentials are not working",
+              title: self.$t('failed'),
+              text: self.$t('assistant_module.imap_credentials_not_working'),
               icon: "warning",
             })
 
@@ -641,15 +629,15 @@ export default {
           if(rerr.message && rerr.message.code && rerr.message.code == "ENOTFOUND")
           {
             swal({
-              title: "Failed",
-              text: "Not found.",
+              title: self.$t('failed'),
+              text: self.$t('assistant_module.not_found'),
               icon: "error",
             })
           }
           else if (rerr.message && rerr.message.textCode == "ALERT" && rerr.message.customMessage)
           {
             swal({
-              title: "Failed",
+              title: self.$t('failed'),
               text: rerr.message.customMessage,
               icon: "error",
             })
@@ -657,16 +645,16 @@ export default {
           else if(rerr.message && rerr.message.textCode && rerr.message.textCode == "AUTHENTICATIONFAILED")
           {
             swal({
-              title: "Failed",
-              text: "Authentication failed.",
+              title: self.$t('failed'),
+              text: self.$t('assistant_module.authentication_failed'),
               icon: "error",
             })
           }
           else if(rerr.message && rerr.message.source == "timeout")
           {
             swal({
-              title: "Failed",
-              text: "Timeout.",
+              title: self.$t('failed'),
+              text: self.$t('assistant_module.timeout'),
               icon: "error",
             })
           }
@@ -674,12 +662,11 @@ export default {
           else
           {
             swal({
-              title: "Failed",
-              text: "Incoming mail credentials are not working.",
+              title: self.$t('failed'),
+              text: self.$t('assistant_module.imap_credentials_not_working'),
               icon: "error",
             })
           }
-
 
           console.log(error)
         })
@@ -723,12 +710,11 @@ export default {
               {
                 self.testOutgoingMailStatus = "SUCCESS"
                 swal({
-                  title: "Success",
-                  text: "Outgoing mail credentials are working",
+                  title: self.$t('success'),
+                  text: self.$t('assistant_module.smtp_credentials_working'),
                   icon: "success",
                 })
 
-                //console.log(response.data)
               }
               else
               {
@@ -739,23 +725,23 @@ export default {
                   if(serr.code == "ETIMEDOUT")
                   {
                     swal({
-                      title: "Failed",
-                      text: "Connection timeout",
+                      title: self.$t('failed'),
+                      text: self.$t('assistant_module.connection_timeout'),
                       icon: "warning",
                     })
                   }
                   else if(serr.code == "EDNS")
                   {
                     swal({
-                      title: "Failed",
-                      text: "Extended DNS error.",
+                      title: self.$t('failed'),
+                      text: self.$t('assistant_module.extended_dns_error'),
                       icon: "warning",
                     })
                   }
                   else if (serr.code == "EAUTH")
                   {
                     swal({
-                      title: "Failed",
+                      title: self.$t('failed'),
                       text: serr.response,
                       icon: "warning",
                     })
@@ -763,16 +749,16 @@ export default {
                   else if (serr.code == "CUSTOM_CONNECTION_CLOSED")
                   {
                     swal({
-                      title: "Failed",
-                      text: "Connection closed automatically.",
+                      title: self.$t('failed'),
+                      text: self.$t('assistant_module.smtp_connection_closed_auto'),
                       icon: "warning",
                     })
                   }
                   else
                   {
                     swal({
-                      title: "Failed",
-                      text: "Outgoing mail credentials are not working",
+                      title: self.$t('failed'),
+                      text: self.$t('assistant_module.smtp_credentials_not_working'),
                       icon: "warning",
                     })
                   }
@@ -780,20 +766,18 @@ export default {
                 else
                 {
                   swal({
-                    title: "Failed",
-                    text: "Outgoing mail credentials are not working",
+                    title: self.$t('failed'),
+                    text: self.$t('assistant_module.smtp_credentials_not_working'),
                     icon: "warning",
                   })
                 }
 
-
-                //console.log(response.data)
               }
             }, (error) => {
               self.testOutgoingMailStatus = "FAILED"
               swal({
-                title: "Failed",
-                text: "Outgoing mail credentials are not working",
+                title: self.$t('failed'),
+                text: self.$t('assistant_module.smtp_credentials_not_working'),
                 icon: "error",
               })
 

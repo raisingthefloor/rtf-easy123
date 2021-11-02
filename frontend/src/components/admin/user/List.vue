@@ -28,12 +28,12 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
       <table class="table mt-5">
         <thead>
         <tr>
-          <th scope="col">Assistant Name</th>
-          <th scope="col">Assistant Email</th>
-          <th scope="col">Account Name</th>
-          <th scope="col">Account Nickname</th>
-          <th scope="col">Role</th>
-          <th scope="col">Actions</th>
+          <th scope="col">{{ $t('admin_module.assistant_name') }}</th>
+          <th scope="col">{{ $t('admin_module.assistant_email') }}</th>
+          <th scope="col">{{ $t('admin_module.account_name') }}</th>
+          <th scope="col">{{ $t('admin_module.account_nickname') }}</th>
+          <th scope="col">{{ $t('admin_module.role') }}</th>
+          <th scope="col">{{ $t('admin_module.actions') }}</th>
         </tr>
         </thead>
         <tbody>
@@ -44,8 +44,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
           <td>{{ user.account_nickname }}</td>
           <td style="text-transform: capitalize;">{{ user.role }}</td>
           <td>
-<!--            <button type="button" class="btn btn-danger btn-sm" @click="deleteUser(user.id)" v-show="user.role != 'admin'">Delete</button>-->
-            <button type="button" class="btn btn-danger btn-sm" @click="deleteUserAlert(user.id)" v-show="user.role != 'Admin'">Delete</button>
+            <button type="button" class="btn btn-danger btn-sm" @click="deleteUserAlert(user.id)" v-show="user.role != 'Admin'">{{ $t('delete') }}</button>
           </td>
         </tr>
         </tbody>
@@ -69,8 +68,6 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 <script>
 import swal from 'sweetalert';
 const axios = require('axios')
-/*import DataTable from "@andresouzaabreu/vue-data-table";
-import "bootstrap/dist/css/bootstrap.min.css";*/
 
 export default {
   name: 'NewUser',
@@ -110,23 +107,23 @@ export default {
         columns: [
           {
             key: "name",
-            title: "Assistant Name"
+            title: this.$t('admin_module.assistant_name')
           },
           {
             key: "email",
-            title: "Assistant Email"
+            title: this.$t('admin_module.assistant_email')
           },
           {
             key: "account_name",
-            title: "Account Name"
+            title: this.$t('admin_module.account_name')
           },
           {
             key: "account_nickname",
-            title: "Account Nickname"
+            title: this.$t('admin_module.account_nickname')
           },
           {
             key: "role",
-            title: "Role"
+            title: this.$t('admin_module.role')
           },
         ],
         data: this.users,
@@ -143,7 +140,7 @@ export default {
         pageObjs.push({
           disable: true,
           active: false,
-          name: "Previous",
+          name: this.$t('previous'),
           params: {
             page: 0
           }
@@ -153,7 +150,7 @@ export default {
         pageObjs.push({
           disable: false,
           active: false,
-          name: "Previous",
+          name: this.$t('previous'),
           params: {
             page: 0,
             action: 'previous'
@@ -182,7 +179,7 @@ export default {
         pageObjs.push({
           disable: true,
           active: false,
-          name: "Next",
+          name: this.$t('next'),
           params: {
             page: 0
           }
@@ -192,7 +189,7 @@ export default {
         pageObjs.push({
           disable: false,
           active: false,
-          name: "Next",
+          name: this.$t('next'),
           params: {
             page: 0,
             action: 'next'
@@ -226,10 +223,10 @@ export default {
     async deleteUserAlert(id) {
       //console.log(id)
       let willDelete = await swal({
-        title: "Are you sure, you want to delete?",
-        text: "Once deleted, you will not be able to recover!",
+        title: this.$t("swal_delete_title"),
+        text: this.$t("swal_delete_text"),
         icon: "warning",
-        buttons: ["Cancel", "Delete"],
+        buttons: [this.$t('cancel'), this.$t('delete')],
         dangerMode: true,
       })
 
@@ -251,15 +248,8 @@ export default {
       })
     },
 
-    handleAction(actionName, data) {
-      console.log(actionName, data);
-      window.alert("check out the console to see the logs");
-    },
-
     pageNumberClicked(obj)
     {
-      //console.log("pageNumberClicked", obj)
-
       if(obj.params.action && obj.params.action == "next")
       {
         this.tableConfig.page++

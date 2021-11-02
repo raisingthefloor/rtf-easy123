@@ -31,16 +31,16 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 			<div id="letter" style="top:132px;left:25px;position:absolute;">
 				
 				<div class="addressField">
-                    <span id="toInLetterFacade">To </span>&nbsp;<span id="composeEmailTo">{{$store.state.mailTo.name}}</span>
+                    <span id="toInLetterFacade">{{ $t('home_module.to') }} </span>&nbsp;<span id="composeEmailTo">{{$store.state.mailTo.name}}</span>
 				</div>
 				<textarea id="inputpaperFacade" v-model="mail.text" scroll="no"></textarea>
 
 				<div id="message" style="position: absolute;width: 460px; top: 580px; left: 25px;">
 					<button class="send wahighlight" :class="[sendDisabled ? 'disabled-btn': '']" :disabled="sendDisabled" id="sendFacade" @click="sendMail" style=" top:580px; left:25px;">
-						Send
+						{{ $t('home_module.send') }}
 					</button>
 					<button class="throwaway wahighlight" id="throwawayFacade" @click="sendMailDiscard" style="position:absolute; position: absolute; right:20px; ">
-						Throw Away
+            {{ $t('home_module.throw_away') }}
 					</button>
 				</div>
 			</div>
@@ -62,11 +62,11 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         </div>
 
         <div class='compose_frontcontents' style='display:none;'>
-            <div style='position:absolute; left: 12px; top: 5px; font:Times New Roman; font-size:20px'> From</div>
+            <div style='position:absolute; left: 12px; top: 5px; font:Times New Roman; font-size:20px'> {{ $t('home_module.from') }}</div>
             <div id="from" style='position:absolute; left: 12px; top: 29px; font:Times New Roman; font-size:20px;width:191px'>{{ mail.from }}</div>
-            <div style='position:absolute; left: 120px; top: 104px; font:Times New Roman; font-size:20px' class="mail-to"> To</div>
+            <div style='position:absolute; left: 120px; top: 104px; font:Times New Roman; font-size:20px' class="mail-to"> {{ $t('home_module.to') }}</div>
             <div style='position:absolute; left: 120px; top: 128px; font:Times New Roman; font-size:20px'> {{ mail.to }}</div>
-            <div style='position:absolute; width:300px; left: 10px; top: 204px; font:Times New Roman; font-size:18px; color:#333333' class="mail-subject">About:
+            <div style='position:absolute; width:300px; left: 10px; top: 204px; font:Times New Roman; font-size:18px; color:#333333' class="mail-subject">{{ $t('home_module.about') }}:
                 {{ mail.subject}}
             </div>
         
