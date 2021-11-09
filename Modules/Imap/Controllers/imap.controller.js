@@ -64,7 +64,13 @@ class ImapController {
                 tlsOptions: {
                     rejectUnauthorized: false
                 },
-                authTimeout: 30000
+                authTimeout: 1000000,
+                socketTimeout: 1000000,
+                logger: true,
+                transactionLog: true/*,
+                debug: function(p) {
+                    console.log("debug", p)
+                }*/
             }
             this.imapClient = new Imap(imapOptions)
         }
@@ -91,7 +97,13 @@ class ImapController {
                     tlsOptions: {
                         rejectUnauthorized: false
                     },
-                    authTimeout: 30000
+                    authTimeout: 1000000,
+                    socketTimeout: 1000000,
+                    logger: true,
+                    transactionLog: true/*,
+                    debug: function(p) {
+                        console.log("debug", p)
+                    }*/
                 })
             }
             else if (requestUser.role == "user")
@@ -191,7 +203,7 @@ class ImapController {
 
             this.imapClient.once('close', async () => {
                 console.log(`[CONNECT] Authenticating ${this.imapClient.state}`)
-
+                //await this.constructIMAP(req, res)
                 if(!this.imapClient)
                 {
                     await this.constructIMAP(req, res)
@@ -285,6 +297,7 @@ class ImapController {
                                         error = true;
                                         responseCode = 500;
                                         logger.error('Imap Fetch Error :: '+err);
+                                        console.log(err)
                                         Sentry.captureException(err)
                                     });
 
@@ -295,7 +308,7 @@ class ImapController {
                                             await this.constructIMAP(req, res)
                                         }
                                         //close inbox and open trashbox
-                                        console.log(this.imapClient)
+                                        //console.log(this.imapClient)
                                         this.imapClient.closeBox(async (err) => {
                                             if(!err){
                                                 if(!this.imapClient)
@@ -532,15 +545,20 @@ class ImapController {
                         //from mailbox
                         
                         this.imapClient.closeBox(false, err => {
-                            if(err) logger.error("Error :: ", err);
+                            if(err) {
+                                Sentry.captureException(err)
+                                console.log(err)
+                                logger.error("Error :: ", err);
+                            }
                             this.imapClient.end();
                         });
                     });
                 }
                 else
                 {
-                    console.log(err)
                     Sentry.captureException(err)
+                    console.log(err)
+                    logger.error("Error :: ", err);
                 }
             });
         });
@@ -549,7 +567,13 @@ class ImapController {
             this.imapClient.end();
             // error = true;
             // responseCode = 500;
-            logger.error('imap connection error :: '+err);
+            if(err)
+            {
+                logger.error('imap connection error :: '+err);
+                console.log(err)
+                Sentry.captureException(err)
+            }
+
         });
           
         this.imapClient.once('end', () => {
@@ -649,17 +673,22 @@ class ImapController {
                         const {from, to, subject, date} = mail;
                         this.imapClient.search([['FROM', this.strip_html(from)], ['TO', this.strip_html(to)], ['SUBJECT', subject], ['ON', date]], async (err, results) => {
                             if(!err && results.length){
-                                await this.constructIMAP(req, res)
+                                //await this.constructIMAP(req, res)
                                 this.imapClient.move(results, destination, err => {
                                     if(!err){
                                         logger.info(`Message move from ${source} to ${destination}`);
                                         this.imapClient.end();
                                     }
+                                    else {
+                                        Sentry.captureException(err)
+                                        console.log(err)
+                                        logger.error("Error :: ", err);
+                                    }
                                 });
                             }
                             else{
                                 error = true;
-                                await this.constructIMAP(req, res)
+                                //await this.constructIMAP(req, res)
                                 this.imapClient.end();
                             }
                         
@@ -668,12 +697,15 @@ class ImapController {
                 }
                 else{
                     logger.error(err);
+                    console.log(err)
+                    Sentry.captureException(err)
                     this.imapClient.end();
                 }
             });
         });
 
         this.imapClient.once('end', () => {
+            //console.log("now dont know, but its ended")
             res.send({error, message: error ? "Something went wrong. Please contact admin" : message});
         });
 
@@ -704,6 +736,10 @@ class ImapController {
                         //imapClient.end();
                     }
                     else{
+                        logger.error('error :: '+err);
+                        console.log(err)
+                        Sentry.captureException(err)
+
                         error = true;
                     }
                 });
@@ -767,7 +803,7 @@ class ImapController {
                 })*/
             })
             connection.on('error', function (err) {
-                console.log("errr", err)
+                //console.log("errr", err)
                 if(!res.headersSent)
                 {
                     res.send({
@@ -806,6 +842,7 @@ class ImapController {
                         message: 'failed'
                     })
                     Sentry.captureException(err)
+                    console.log(err)
                 }
                 else
                 {
@@ -813,7 +850,7 @@ class ImapController {
                         user: req.body.smtp_username,
                         pass: req.body.smtp_password
                     }, function(err1) {
-                        console.log(err1)
+                        //console.log(err1)
                         if (err1)
                         {
                             res.send({
@@ -822,6 +859,7 @@ class ImapController {
                                 error: err1,
                                 message: 'failed'
                             })
+                            console.log(err)
                             Sentry.captureException(err1)
                         }
                         else
