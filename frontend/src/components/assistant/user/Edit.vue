@@ -127,6 +127,8 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                     <font-awesome-icon :icon="['fas', 'eye']" style="position: absolute;right: 9px; top: 12px; cursor: pointer;" @click="show_imap_password_protected=false" v-show="show_imap_password_protected" />
                     <font-awesome-icon :icon="['fas', 'eye-slash']" style="position: absolute;right: 9px; top: 12px; cursor: pointer;" @click="show_imap_password_protected=true" v-show="!show_imap_password_protected" />
                   </div>
+                  <small class="form" v-html="$t('assistant_module.imap_password_desc')">
+                  </small>
 
                 </div>
                 <div class="mb-3">
@@ -170,39 +172,50 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                     <span v-if="!$v.smtp_host.required">{{ $t('validation.imap_host_required') }}</span>
                   </div>
                 </div>
-                <div class="mb-3">
-                  <label for="smtp_port" class="form-label">{{ $t('assistant_module.smtp_port') }}</label>
-                  <input type="text" class="form-control" id="smtp_port" v-model.trim="$v.smtp_port.$model" v-bind:class="{ 'is-invalid': $v.smtp_port.$error }">
-                  <div class="invalid-feedback">
-                    <span v-if="!$v.smtp_port.required">{{ $t('validation.smtp_port_required') }}</span>
-                  </div>
-                </div>
-
-                <div class="form-check mb-3">
-                  <input class="form-check-input" type="checkbox" value="true" id="smtp_use_tls_ssl" v-model="smtp_use_tls_ssl">
-                  <label class="form-check-label" for="smtp_use_tls_ssl">
-                    {{ $t('assistant_module.use_tls_ssl') }}
-                  </label>
-                </div>
-
-                <div class="mb-3">
-                  <label for="smtp_authentication" class="form-label">{{ $t('assistant_module.smtp_authentication_type') }}</label>
-                  <select class="form-select" id="smtp_authentication" v-model.trim="$v.smtp_authentication.$model" v-bind:class="{ 'is-invalid': $v.smtp_authentication.$error }">
-                    <option value="None">{{ $t('assistant_module.smtp_authentication_type_option_none') }}</option>
-                    <option value="Password" selected>{{ $t('assistant_module.smtp_authentication_type_option_password') }}</option>
-                  </select>
-                  <div class="invalid-feedback">
-                    <span v-if="!$v.smtp_authentication.required">{{ $t('validation.smtp_authentication_method_required') }}</span>
-                  </div>
-                </div>
-
+                  
                 <div class="mb-3">
                   <a href="javascript:void(0)" class="btn btn-sm btn-info" :disabled="testOutgoingMailStatus == 'PROCESSING'" :readonly="testOutgoingMailStatus == 'PROCESSING'" @click="testOutgoingMail()" v-bind:class="{ 'disabled': testOutgoingMailStatus == 'PROCESSING' }">
                     <span v-if="testOutgoingMailStatus != 'PROCESSING'">{{ $t('assistant_module.test_outgoing_mail') }}</span>
                     <span v-if="testOutgoingMailStatus == 'PROCESSING'">{{ $t('assistant_module.test_outgoing_mail_processing') }}</span>
                   </a>
                 </div>
+
+                <button type="button" class="mb-3 btn btn-sm btn-warning" data-bs-toggle="collapse" data-bs-target="#collapseWidthExample" aria-expanded="false" aria-controls="collapseWidthExample">{{ $t('assistant_module.advance_settings') }}</button>
+                <div>
+                  <div class="collapse collapse-horizontal" id="collapseWidthExample">
+                    <div class="mb-3">
+                      <label for="smtp_port" class="form-label">{{ $t('assistant_module.smtp_port') }}</label>
+                      <input type="text" class="form-control" id="smtp_port" v-model.trim="$v.smtp_port.$model" v-bind:class="{ 'is-invalid': $v.smtp_port.$error }">
+                      <div class="invalid-feedback">
+                        <span v-if="!$v.smtp_port.required">{{ $t('validation.smtp_port_required') }}</span>
+                      </div>
+                    </div>
+
+                    <div class="form-check mb-3">
+                      <input class="form-check-input" type="checkbox" value="true" id="smtp_use_tls_ssl" v-model="smtp_use_tls_ssl">
+                      <label class="form-check-label" for="smtp_use_tls_ssl">
+                        {{ $t('assistant_module.use_tls_ssl') }}
+                      </label>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="smtp_authentication" class="form-label">{{ $t('assistant_module.smtp_authentication_type') }}</label>
+                      <select class="form-select" id="smtp_authentication" v-model.trim="$v.smtp_authentication.$model" v-bind:class="{ 'is-invalid': $v.smtp_authentication.$error }">
+                        <option value="None">{{ $t('assistant_module.smtp_authentication_type_option_none') }}</option>
+                        <option value="Password" selected>{{ $t('assistant_module.smtp_authentication_type_option_password') }}</option>
+                      </select>
+                      <div class="invalid-feedback">
+                        <span v-if="!$v.smtp_authentication.required">{{ $t('validation.smtp_authentication_method_required') }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
               </div>
+
+
+
 
               <button type="submit" class="btn btn-primary mb-5" :readonly="imapSmtpFormSubmitStatus == 'PROCESSING'" :disabled="imapSmtpFormSubmitStatus == 'PROCESSING'">
                 <span v-if="imapSmtpFormSubmitStatus == 'PROCESSING'">{{ $t('saving_process') }}</span>

@@ -188,7 +188,10 @@
     "image_is_not_valid": "Image is not valid",
     "swal_website_not_open_in_iframe_warning": "This website does not allow itself to be open within another application like this. Do you want to have it open in a new browser tab?",
     "dont_add_website_button": "No, don’t add this website button",
-    "yes_open_in_new_tab": "Yes, open in a new tab"
+    "yes_open_in_new_tab": "Yes, open in a new tab",
+
+    "imap_password_desc": "Use an <a href=\"https://www.lifewire.com/get-a-password-to-access-gmail-by-pop-imap-2-1171882\" target=\"_blank\">application-specific Gmail password</a> if you enabled\n                    <a href=\"https://www.lifewire.com/secure-your-gmail-account-with-password-and-phone-authentication-1171958\" target=\"_blank\">2-step authentication</a> for Gmail",
+    "advance_settings": "Advanced Settings"
   },
 
   "//": "Home",
