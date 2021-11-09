@@ -28,19 +28,20 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         <div id="addressBook" class="addressBook">
             <div id="page">
                 <div>
-                    <div id="Header" class="Header">Touch the person you want to write <br>or talk to.</div>
-                    <div id="EmailInstructions" style="" class="">Find name in directory <br>and click MAIL button there
+                    <div id="Header" class="Header" v-html="$t('mail_to_prompt_component.touch_the_person')"></div>
+                      <div id="EmailInstructions" style="" class="">
+                        <span v-html="$t('mail_to_prompt_component.find_name_in_directory')"></span>
                         <br><br>
-                        <button class="wahighlight"> Open Address Book</button><br><br>
-                        or<br><br>
-                        Fill in Name and Email Address here<br><br>
+                        <button class="wahighlight"> {{ $t('mail_to_prompt_component.open_address_book') }}</button><br><br>
+                        {{ $t('mail_to_prompt_component.or') }}<br><br>
+                        {{ $t('mail_to_prompt_component.fill_in_name_email_address_here') }}<br><br>
                         <div style="padding-bottom:0px;">
-                            Name : <input type="text" v-model="mailUserName" id="name" style="font-size:22px;widht:100px;height:30px;" />
+                            {{ $t('mail_to_prompt_component.name') }} : <input type="text" v-model="mailUserName" id="name" style="font-size:22px;widht:100px;height:30px;" />
                         </div><br>
                         <div>
-                            Email : <input type="email" v-model="mailUserAddress" id="email" style="font-size:22px;widht:100px;height:30px;" />
+                          {{ $t('mail_to_prompt_component.email') }} : <input type="email" v-model="mailUserAddress" id="email" style="font-size:22px;widht:100px;height:30px;" />
                         </div><br><br>
-                            <button class="wahighlight" :class="[writeMailBtnActive ? 'disabled-btn': '']" :disabled="writeMailBtnActive" @click="writeMailClicked">Write Email</button>
+                            <button class="wahighlight" :class="[writeMailBtnActive ? 'disabled-btn': '']" :disabled="writeMailBtnActive" @click="writeMailClicked">{{ $t('mail_to_prompt_component.write_email') }}</button>
                         </div>
                 </div>
             </div>

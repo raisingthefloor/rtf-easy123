@@ -268,5 +268,17 @@
 
   "//": "Home",
   "connect_google_account_desc": "Connect to your Google account to enable Email access and management",
-  "my_favorites": "My Favorites"
+  "my_favorites": "My Favorites",
+
+  "//": "Mail To Prompt",
+  "mail_to_prompt_component": {
+    "touch_the_person": "Touch the person you want to write <br>or talk to.",
+    "find_name_in_directory": "Find name in directory <br>and click MAIL button there",
+    "open_address_book": "Open Address Book",
+    "or": "or",
+    "fill_in_name_email_address_here": "Fill in Name and Email Address here",
+    "name": "Name",
+    "email": "Email",
+    "write_email": "Write Email"
+  }
 }

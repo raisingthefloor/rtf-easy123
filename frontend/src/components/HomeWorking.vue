@@ -134,7 +134,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         @writeMailClicked="writeMailClicked"
       />
       <AddressBook v-show="!showMailToPrompt"
-        :search-alphabets="searchAlphabets" @resetSearch="resetSearchAlphabet"
+        :search-alphabets="searchAlphabets" @resetSearch="resetSearchAlphabet" @writeMailClicked="writeMailClicked"
       />
     </div>
     <!--Write Mail button-->
@@ -3361,7 +3361,7 @@ export default {
         });
     },
 
-    writeMailClicked(){
+    writeMailClicked(toName = null, toAddress = null){
       if(!this.showMailLetter){
         this.showMailLetter = true;
         setTimeout(() => {
