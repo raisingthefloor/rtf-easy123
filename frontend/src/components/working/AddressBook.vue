@@ -58,22 +58,22 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         </div>
 
         <div id="contact-details" style="position:relative" v-if="contactDetails">
-            <div class="close" title="Close Contact" @click="hideContactDetails">X</div>
-            <div style= "position:relative;left:60px;width:120px; height:143px;border : 1px solid #f0e9eb; z-index: 3; background-color: #fefefe;">
+            <div class="close" title="Close Contact" @click="hideContactDetails" style="cursor: pointer; z-index: 2050;">X</div>
+            <div style= "position:relative; padding-left: 60px;/*left:60px;*//*width:120px;*/ /*height:143px;*/border : 1px solid #f0e9eb; z-index: 3; /*background-color: #fefefe;*/">
                 <div>
                     <!-- <img id="person_pic" src="/images/user.jpg" width="128" height="128" style="margin:30px;" /> -->
-                    <div id="person_pic" style="margin:30px">
+                    <div id="person_pic" style="margin: 30px 30px 30px 0px;">
                         <address-book-contact-image 
                             v-show="contactDetails.avatarName" :image="contactDetails" height="128" width="128"
                         >
                         </address-book-contact-image>
                         <img v-if="!contactDetails.avatarName" src="@/assets/images/contact-profile-pic.png" alt="User Avatar" height="128" width="128">
                     </div>
-                    <div id="person_name" align="left" style="padding-left:0px;position:absolute; left:188px; top:80px; font-size: 30px">{{contactDetails.contactName ? contactDetails.contactName : ''}}</div>
+                    <div id="person_name" align="left" style="padding-left:0px;position:absolute; left:192px; top:50px; font-size: 30px">{{contactDetails.contactName ? contactDetails.contactName : ''}}</div>
                     <div id="options">
                         <!--User Email Info-->
                         <div v-if="contactDetails.email && contactDetails.email.length">
-                            <a v-for="email in contactDetails.email" :key="email" class="large awesome reply" :href="`mailto:${email}`">
+                            <a v-for="email in contactDetails.email" :key="email" class="large awesome reply" href="javascript:void(0)" @click="setWriteMailContact(contactDetails.contactName, email)">
                                 <img align="left" style="padding:0px" src="/images/mail2.png"  />
                                 <div id="email" align="left" style="padding-left:80px; padding-top: 17px; font-size: 26px">
                                     {{email}}
@@ -214,6 +214,12 @@ export default {
             if(targetIdx !== -1){
                 this.$set(this.contacts, targetIdx, Object.assign({}, this.contacts[targetIdx], {imageData}));
             }
+        },
+
+        setWriteMailContact(toName = '', toEmail = '') {
+          this.$store.commit('updateMailUserName', toName)
+          this.$store.commit('updateMailUserAddress', toEmail)
+          this.$emit('writeMailClicked')
         }
     }
 }
