@@ -24,7 +24,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 -->
 <template>
     <img v-if="!loading" :src="localImage" :alt="image.avatarName"
-         :height="height" :width="width">
+         :height="height" :width="width" style="max-height: 100%; max-width: 100%;">
 </template>
 
 

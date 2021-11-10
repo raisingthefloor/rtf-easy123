@@ -81,10 +81,15 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
         <div class="col-md-5 text-center" v-if="folders.length">
           <img :src="getImageData(current_photo)" v-if="!loading_image" alt="" style="max-height: 100%; max-width: 100%;" class="mb-2">
           <h4 class="text-center mt-5" v-if="loading_image">Loading...</h4>
-          <button type="button" class="btn btn-sm btn-danger mb-5 d-block float-end" @click="deletePhoto(current_photo)" v-if="current_photo && current_photo.id" :readonly="deleting_photo" :disabled="deleting_photo">
+          <button type="button" class="btn btn-sm btn-danger mb-5 ms-2 d-block float-end" @click="deletePhoto(current_photo)" v-if="current_photo && current_photo.id" :readonly="deleting_photo" :disabled="deleting_photo">
             <span v-if="!deleting_photo">{{ $t('delete') }}</span>
             <span v-if="deleting_photo">{{ $t('deleting_process') }}</span>
           </button>
+          <button type="button" class="btn btn-sm btn-info mb-5 d-block float-end" @click="addToSlideshow(current_photo)" v-if="current_photo && current_photo.id" :readonly="deleting_photo" :disabled="deleting_photo">
+            <span v-if="!adding_to_slideshow_flag">{{ $t('assistant_module.add_to_slideshow') }}</span>
+            <span v-if="adding_to_slideshow_flag">{{ $t('assistant_module.add_to_slideshow_process') }}</span>
+          </button>
+
         </div>
       </div>
 
@@ -163,7 +168,8 @@ export default {
       myFiles: [],
       current_photo: null,
       loading_image: false,
-      deleting_photo: false
+      deleting_photo: false,
+      adding_to_slideshow_flag: false
 
     }
   },
@@ -858,6 +864,59 @@ export default {
         }
 
       })
+    },
+
+    /** add photo to slideshow **/
+    addToSlideshow(current_photo) {
+      let self = this
+      self.adding_to_slideshow_flag = true
+      axios.post(process.env.VUE_APP_API_HOST_NAME + "/api/assistant/user/add-to-slideshow-single-photo", {
+        id: self.$route.params.id,
+        folder_id: self.current_folder.id,
+        photo_id: current_photo.id
+      })
+          .then((response) => {
+            self.adding_to_slideshow_flag = false
+            if(response.data.status)
+            {
+              if(response.data.message == "already_exists")
+              {
+                swal(self.$t('assistant_module.photo_already_exists'), {
+                  icon: "info",
+                })
+              }
+              else {
+                for (let i = 0; i < self.folders.length; i++) {
+                  if (self.folders[i].id == response.data.data.id)
+                  {
+                    self.folders[i] = response.data.data
+                  }
+                }
+                swal(self.$t('assistant_module.success_added_to_slideshow'), {
+                  icon: "success",
+                })
+              }
+              /*self.current_folder.photos = self.current_folder.photos.filter(obj => obj._id != current_photo.id)
+              self.current_photo = null
+              if(self.current_folder.photos.length)
+              {
+                self.current_photo = self.showPhoto(self.current_folder.photos[0])
+              }*/
+
+            }
+            else {
+              swal(self.$t('server_error_occurred_please_contact_admin'), {
+                icon: "warning",
+              })
+            }
+
+          }, (error) => {
+            self.adding_to_slideshow_flag = false
+            swal(self.$t('server_error_occurred_please_contact_admin'), {
+              icon: "warning",
+            })
+            console.log(error)
+          })
     }
   }
 }

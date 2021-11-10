@@ -44,6 +44,7 @@ module.exports = function (router) {
     router.post('/api/assistant/user/update-folder-photo', validateToken, UserController.updateFolderPhoto.bind(UserController))
     router.post('/api/assistant/user/delete-folder', validateToken, UserController.deleteFolder.bind(UserController))
     router.post('/api/assistant/user/delete-single-photo', validateToken, UserController.deleteSinglePhoto.bind(UserController))
+    router.post('/api/assistant/user/add-to-slideshow-single-photo', validateToken, UserController.addToSlideshowSinglePhoto.bind(UserController))
     router.post('/api/assistant/user/get-all-folders', validateToken, UserController.getAllFolders.bind(UserController))
     router.post('/api/assistant/user/update-folders-order', validateToken, UserController.updateFoldersOrder.bind(UserController))
     router.post('/api/assistant/user/update-folders-photos-order', validateToken, UserController.updateFoldersPhotosOrder.bind(UserController))
