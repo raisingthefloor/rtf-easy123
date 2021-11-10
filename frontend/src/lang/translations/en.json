@@ -191,7 +191,11 @@
     "yes_open_in_new_tab": "Yes, open in a new tab",
 
     "imap_password_desc": "Use an <a href=\"https://www.lifewire.com/get-a-password-to-access-gmail-by-pop-imap-2-1171882\" target=\"_blank\">application-specific Gmail password</a> if you enabled\n                    <a href=\"https://www.lifewire.com/secure-your-gmail-account-with-password-and-phone-authentication-1171958\" target=\"_blank\">2-step authentication</a> for Gmail",
-    "advance_settings": "Advanced Settings"
+    "advance_settings": "Advanced Settings",
+    "add_to_slideshow": "Add to Slideshow",
+    "add_to_slideshow_process": "Adding to Slideshow...",
+    "photo_already_exists": "Photo already exists.",
+    "success_added_to_slideshow": "Photo added to slideshow."
   },
 
   "//": "Home",

@@ -533,6 +533,90 @@ class UserController {
     }
 
     /**
+     * add photo to slideshow
+     */
+    async addToSlideshowSinglePhoto(request, response) {
+        let data = {
+            status: false,
+            data: [],
+            message: ''
+        }
+        try {
+
+            let folder = await Folder.findOne({
+                _id: request.body.folder_id
+            })
+
+            let photo = folder.photos.find(obj => obj._id == request.body.photo_id)
+
+            //get Slideshow folder
+            let slideshowFolder = await Folder.findOne({
+                userId: folder.userId,
+                name: "Slideshow"
+            })
+
+            aws.config.update({
+                accessKeyId: process.env.AWS_S3_ACCESS_KEY,
+                secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY
+            })
+            const s3 = new aws.S3()
+
+            let bucket = process.env.AWS_S3_BUCKET
+            let source_name = photo.path
+            let new_source_name = photo.path.replace(folder.id, slideshowFolder.id)
+
+            //check if item is already exists in slideshowFolder
+            let existInSlideshowFolder = slideshowFolder.photos.find(obj => obj.path == new_source_name)
+
+            if(!existInSlideshowFolder)
+            {
+                let copyParams = {
+                    Bucket: bucket,
+                    CopySource: bucket + "/" +source_name,
+                    Key: new_source_name
+                }
+
+                await s3.copyObject(copyParams).promise()
+
+                let order = slideshowFolder.photos.length
+
+                slideshowFolder.photos.push({
+                    name: photo.name,
+                    path: new_source_name,
+                    mimetype: photo.mimetype,
+                    order: order + 1
+                })
+
+                await slideshowFolder.save()
+
+                data.status = true
+                data.data = slideshowFolder
+                data.message = "success"
+                response.send(data)
+                return
+            }
+
+            data.status = true
+            data.data = folder
+            data.message = "already_exists"
+            response.send(data)
+            return
+        }
+        catch (err)
+        {
+            Sentry.captureException(err)
+            logger.error('Error::' + err)
+
+            data.status = false
+            data.data = null
+            data.error = err
+            data.message = 'failed'
+
+            response.send(data)
+        }
+    }
+
+    /**
      * get all folders of user
      */
     async getAllFolders(request, response) {

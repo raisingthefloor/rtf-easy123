@@ -130,6 +130,10 @@ img.albumThumbnail {
   text-align: center;
   overflow: hidden;
 }
+.galleryPicture>img {
+  max-width: 100%;
+  max-height: 100%;
+}
 .pictureNumber {
   position: absolute;
   right: 2px;
