@@ -332,7 +332,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
               </div>
             </div>
             <div v-if="!show_add_contact_form && !show_edit_contact_form && !contacts.length">
-              <h4 class="mt-2">{{ $t('assistant_contact.no_contacts_found') }}</h4>
+              <h4 class="mt-2">{{ $t('assistant_module.no_contacts_found') }}</h4>
             </div>
 
           </div>
