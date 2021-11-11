@@ -144,7 +144,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
             <img src="/mail/contact.png">
           </div>
         <div style="font-size:23px">
-          <span>{{ $t('home_module.write_mail') }}</span>
+          <span>Write Mail</span>
         </div>
       </div>
     </div>
@@ -1074,11 +1074,6 @@ export default {
       //$(this.moimg).parent().css('margin-left','-65px');
       $(this.mcimg).attr('id','mailbox');
 
-      /*var csstrash = {
-        left:'1100px',
-        top:'475px',
-        position:'absolute'
-      };*/
       var csstrash = {
         left:'1100px',
         top:'475px',
@@ -1106,26 +1101,15 @@ export default {
       $("#easyweb").css('left','0px');
       $("#easyweb").css('top',3 * self.getInt($('#icontact').css('margin'))+ 3 * self.getInt($('#icontact').css('height'))+'px');
 
-      console.log("csstrash", csstrash)
       $(".tray").css(csstrash);
-
-      console.log("self.trash_x", self.trash_x)
-      console.log("self.trash_y", self.trash_y)
 
       $(".trash2").css(csstrash);
       $(".trash2").css('left',self.trash_x+'px');
       $(".trash2").css('top',(self.trash_y+37)+'px');
       //csstrash.top=trash_y+128-73+'px';
-      csstrash.left=220+'px';
+      csstrash.left=300+'px';
       csstrash.top=self.trash_y+5+'px';
-
-      console.log("csstrash2", csstrash)
       $(".tray").css(csstrash);
-
-      console.log("writeMailLeft", self.trash_x)
-      let writeMailLeft = (self.trash_x + 200)/2 - 50
-      $('.write-mail-btn').css('left', writeMailLeft + "px")
-      console.log("writeMailLeft", writeMailLeft)
 
       var $imgs = $(".polaroid");
       var $imgCount = $imgs.length;
