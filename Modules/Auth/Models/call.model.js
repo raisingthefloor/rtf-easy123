@@ -22,22 +22,33 @@
  * Adobe Foundation
  * Consumer Electronics Association Foundation
  **/
+const mongoose = require('mongoose');
 
-const UserController = require('./Controllers/user.controller')
-const validateToken = require('../Auth/utils').validateToken
+const modelName = "calls"
 
-module.exports = function (router) {
-    router.post('/api/user/get-folders', validateToken, UserController.getFolders.bind(UserController))
-    router.post('/api/user/folders/photos', validateToken, UserController.getFolderPhotos.bind(UserController))
-    router.post('/api/user/get-easyweb-links-folders', validateToken, UserController.getEasywebData.bind(UserController))
-    router.post('/api/user/easyweb/change-fav', validateToken, UserController.changeFav.bind(UserController))
-    router.post('/api/user/get-user-general-settings', validateToken, UserController.getUserGeneralSettings.bind(UserController))
-    router.post('/api/user/make-a-call', validateToken, UserController.makeACall.bind(UserController))
+const schema = new mongoose.Schema({
+    link: {type: String, trim: true, default: null},
+    invitationSentTo: [{type: String, trim: true}],
 
+    createdBy: mongoose.Schema.ObjectId
+}, {
+    timestamps: true,
+    collection: modelName, autoIndex: true, timestamps: true,
+    toObject: {
+        transform: function (doc, obj) {
+            obj.id = obj._id;
+            delete obj._id;
+        }
+    },
+    toJSON: {
+        transform: function (doc, obj) {
+            obj.id = obj._id;
+            delete obj._id;
+        }
+    }
+});
 
-
-    router.post('/api/get-call-data', UserController.getCallData.bind(UserController))
-
-
-
+const Call = mongoose.model(modelName, schema);
+module.exports = {
+    Call
 }

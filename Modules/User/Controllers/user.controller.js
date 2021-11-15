@@ -27,9 +27,12 @@
 const logger = require('../../../logger/api.logger')
 const {Folder} = require("../../Auth/Models/folder.model")
 const {EasyWeb} = require("../../Auth/Models/easyweb.model")
+const {Call} = require("../../Auth/Models/call.model")
+const {User} = require("../../Auth/Models/user.model")
 const HelperManager = require("../../../Managers/HelperManager")
 const Sentry = require("@sentry/node")
 const aws = require("aws-sdk")
+const nodeMailJet = require('node-mailjet')
 
 class UserController {
     /** get folders **/
@@ -232,6 +235,176 @@ class UserController {
         }
     }
 
+    /** make a call **/
+    async makeACall(request, response)
+    {
+        let data = {
+            status: false,
+            data: null,
+            message: ""
+        }
+
+        try {
+            let user = await HelperManager.getLoggedInUser(request.decoded)
+
+            if(!user) {
+                data.status = false
+                data.data = null
+                data.message = "failed"
+                response.send(data)
+                return
+            }
+
+            //create a call
+            let call = await Call.create({
+                createdBy: user.id
+            })
+
+            let link = "call/"+call.id
+            call.link = link
+
+
+            //send a mail to contact's mail addresses
+            call.invitationSentTo = request.body.contact.email
+            await call.save()
+
+            const mailjet = nodeMailJet.connect(
+                process.env.MJ_APIKEY_PUBLIC,
+                process.env.MJ_APIKEY_PRIVATE
+            )
+
+            if(request.body.contact.email.length)
+            {
+                for (let i = 0; i < request.body.contact.email.length; i++)
+                {
+                    //send mail mailjet
+                    const mailRequest = mailjet.post('send', { version: 'v3.1' }).request({
+                        Messages: [
+                            {
+                                From: {
+                                    Email: process.env.MJ_SENDER_EMAIL,
+                                    Name: process.env.MJ_SENDER_NAME,
+                                },
+                                To: [
+                                    {
+                                        Email: request.body.contact.email[i],
+                                        Name: request.body.contact.contactName,
+                                    },
+                                ],
+                                Subject: 'Call from '+user.name,
+                                //TextPart: 'Greetings from Mailjet!',
+                                HTMLPart: 'Hello '+ request.body.contact.contactName + ',<br><br>' + 'You have a call from '+ user.name +', please join the call by clicking on the link : <a href="'+process.env.FRONT_URL+link+'?email='+request.body.contact.email[i]+'">Join Call</a><br><br>Thank You!<br>Easy123 Team'
+                            },
+                        ],
+                    })
+
+                    mailRequest
+                        .then(result => {
+                            //console.log(result.body)
+                        })
+                        .catch(err => {
+                            Sentry.captureException(err)
+                            console.log(err.statusCode)
+                        })
+                }
+            }
+
+
+
+            //console.log(request.body.contact)
+
+            data.status = true
+            data.data = {
+                call:call,
+                callLink: link+"?email="+user.email
+            }
+            data.message = "success"
+            response.send(data)
+            return
+        }
+        catch (err)
+        {
+            console.log(err)
+            Sentry.captureException(err)
+            logger.error('Error::' + err)
+
+            data.message = "failed"
+            response.send(data)
+            return
+        }
+    }
+
+    /** get a call data **/
+    async getCallData(request, response)
+    {
+        let data = {
+            status: false,
+            data: null,
+            message: ""
+        }
+
+        try {
+            /*let user = await HelperManager.getLoggedInUser(request.decoded)
+
+            if(!user) {
+                data.status = false
+                data.data = null
+                data.message = "failed"
+                response.send(data)
+                return
+            }*/
+
+            //get a call
+            let call = await Call.findOne({
+                _id: request.body.call
+            })
+
+            if(!call)
+            {
+                data.status = false
+                data.data = null
+                data.message = "failed"
+                response.send(data)
+                return
+            }
+
+            let createdBy = await User.findOne({
+                _id: call.createdBy
+            })
+
+            if(createdBy.email == request.body.email || call.invitationSentTo.includes(request.body.email))
+            {
+                data.status = true
+                data.data = {
+                    call: call,
+                    createdBy: createdBy
+                }
+                data.message = "success"
+                response.send(data)
+                return
+            }
+            else
+            {
+                data.status = false
+                data.data = null
+                data.message = "not_a_valid_link"
+                response.send(data)
+                return
+            }
+
+
+        }
+        catch (err)
+        {
+            console.log(err)
+            Sentry.captureException(err)
+            logger.error('Error::' + err)
+
+            data.message = "failed"
+            response.send(data)
+            return
+        }
+    }
 }
 
 module.exports = new UserController()

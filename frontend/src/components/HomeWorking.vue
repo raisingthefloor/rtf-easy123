@@ -1106,11 +1106,7 @@ export default {
       $("#easyweb").css('left','0px');
       $("#easyweb").css('top',3 * self.getInt($('#icontact').css('margin'))+ 3 * self.getInt($('#icontact').css('height'))+'px');
 
-      console.log("csstrash", csstrash)
       $(".tray").css(csstrash);
-
-      console.log("self.trash_x", self.trash_x)
-      console.log("self.trash_y", self.trash_y)
 
       $(".trash2").css(csstrash);
       $(".trash2").css('left',self.trash_x+'px');
@@ -1119,13 +1115,10 @@ export default {
       csstrash.left=220+'px';
       csstrash.top=self.trash_y+5+'px';
 
-      console.log("csstrash2", csstrash)
       $(".tray").css(csstrash);
 
-      console.log("writeMailLeft", self.trash_x)
       let writeMailLeft = (self.trash_x + 200)/2 - 50
       $('.write-mail-btn').css('left', writeMailLeft + "px")
-      console.log("writeMailLeft", writeMailLeft)
 
       var $imgs = $(".polaroid");
       var $imgCount = $imgs.length;

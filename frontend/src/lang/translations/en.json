@@ -220,7 +220,10 @@
     "connect_with_zoom": "Connect with Zoom",
     "remove_from_my_favorites": "Remove From My Favorites",
     "add_to_my_favorites": "Add to My Favorites",
-    "write_mail": "Write Mail"
+    "write_mail": "Write Mail",
+    "call": "Call",
+    "not_valid_link": "Not a valid link.",
+    "call_not_found": "Call not valid."
   },
 
   "//": "Login",
