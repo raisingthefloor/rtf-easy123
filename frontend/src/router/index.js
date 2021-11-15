@@ -30,6 +30,7 @@ import ForgotPassword from '@/components/ForgotPassword'
 import ResetForgotPassword from '@/components/ResetForgotPassword'
 import VerifyEmail from '@/components/VerifyEmail'
 import HomeWorking from "@/components/HomeWorking"
+import VideoCall from "@/components/VideoCall"
 
 //admin components
 import AdminUser from "@/components/admin/user/List"
@@ -81,6 +82,12 @@ const router = new Router({
             meta: {
                 middleware: user
             }
+        },
+
+        {
+            path: '/call/:id',
+            name: 'VideoCall',
+            component: VideoCall
         },
 
         //Admin Routes

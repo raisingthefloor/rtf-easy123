@@ -38,8 +38,9 @@ import { faEye, faEyeSlash, faStar, faTrash, faPlus, faExclamationCircle, faWind
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import Vuelidate from 'vuelidate'
 import {VueAvatar} from 'vue-avatar-editor-improved'
+import WebRTC from 'vue-webrtc'
 
-
+Vue.use(WebRTC)
 
 Vue.use(Vuelidate)
 

@@ -123,14 +123,25 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                         </div>-->
 
                         <!--Chat Button-->
-                        <!-- <div>
+<!--                         <div>
                             <a class="large awesome" href="javascript:void(0)">
                                 <img align="left" style="padding:0px" src="/images/Chat.png"  />
                                 <div  id="chat" align="left" style="padding-left:80px; padding-top: 17px; font-size: 26px">
                                     Chat with <span v-if="contactDetails.contactName">{{contactDetails.contactName.split(' ')[0]}}</span>
                                 </div>
                             </a>
-                        </div> -->
+                        </div>-->
+
+                      <!-- Call Button -->
+                      <div>
+                        <a class="large awesome" href="javascript:void(0)" @click="makeWebrtcCall(contactDetails)">
+<!--                          <img align="left" style="padding:0px" src="/images/Chat.png"  />-->
+                          <img align="left" style="padding:0px" src="/images/phone1.png"  />
+                          <div  id="chat" align="left" style="padding-left:80px; padding-top: 17px; font-size: 26px">
+                            {{ $t('home_module.call') }} <span v-if="contactDetails.contactName">{{contactDetails.contactName.split(' ')[0]}}</span>
+                          </div>
+                        </a>
+                      </div>
                     </div>
                 </div>
             </div>
@@ -220,6 +231,28 @@ export default {
           this.$store.commit('updateMailUserName', toName)
           this.$store.commit('updateMailUserAddress', toEmail)
           this.$emit('writeMailClicked')
+        },
+        /** make a webrtc call **/
+        makeWebrtcCall(contactId) {
+          let self = this
+          //send a request to server & save the call
+          //get the response link
+          //redirect to the response link
+
+          axios.post(process.env.VUE_APP_API_HOST_NAME+"/api/user/make-a-call", { contact: contactId })
+          .then(response => {
+            if(response.data.status)
+            {
+              self.$router.push(response.data.data.callLink)
+            }
+            else
+            {
+              console.log(response.data)
+            }
+          }, error => {
+            console.log(error)
+          })
+          //console.log("contactId", contactId)
         }
     }
 }
