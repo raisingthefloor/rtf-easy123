@@ -58,7 +58,6 @@ exports.getLoggedInUser = async function (decoded_data) {
         })
 
         //console.log("found user", user)
-
         if(user)
         {
             if(user.role == "assistant")

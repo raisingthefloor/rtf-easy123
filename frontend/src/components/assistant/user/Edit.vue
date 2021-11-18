@@ -618,7 +618,7 @@ export default {
             self.testIncomingMailStatus = "SUCCESS"
             swal({
               title: self.$t('success'),
-              text: self.$t('imap_credentials_working'),
+              text: self.$t('assistant_module.imap_credentials_working'),
               icon: "success",
             });
 
