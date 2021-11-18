@@ -34,6 +34,6 @@ module.exports = router => {
     router.put('/api/message/:uid/set-flag/:flag', validateToken, imapController.setFlags.bind(imapController));
 
     //test credentials
-    router.get('/api/assistant/member/test-incoming-mail', validateToken, imapController.getAllMails.bind(imapController))
+    router.get('/api/assistant/member/test-incoming-mail', validateToken, imapController.testIMAPConnection.bind(imapController))
     router.post('/api/assistant/member/test-outgoing-mail', validateToken, imapController.testSMTPConnection.bind(imapController))
 }

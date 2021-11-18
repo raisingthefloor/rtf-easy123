@@ -2669,7 +2669,10 @@ export default {
           //}*/
 
           //move polaroid trash ball up -128px
-          let deletedMailPolaroid = $(document.getElementById(mail.messageId));
+          console.log("mail messageid", mail.messageId)
+          //let deletedMailPolaroid = $(document.getElementById(mail.messageId));
+          let deletedMailPolaroid = $("#"+mail.messageId);
+          console.log("deletedMailPolaroid", deletedMailPolaroid)
           let polaroidStyles = {
             top: +deletedMailPolaroid.css('top').substring(0, deletedMailPolaroid.css('top').length-2),
             left: +deletedMailPolaroid.css('left').substring(0, deletedMailPolaroid.css('left').length-2),
