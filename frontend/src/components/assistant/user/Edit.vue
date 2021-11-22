@@ -329,9 +329,9 @@ export default {
       imap_host: null,
       smtp_username: null,
       smtp_password: null,
-      smtp_host: null,
+      smtp_host: 465,
       smtp_port: null,
-      smtp_use_tls_ssl: false,
+      smtp_use_tls_ssl: true,
       smtp_authentication: 'Password',
       imapSmtpFormSubmitStatus: 'NOT_SUBMITTED',
       testIncomingMailStatus: "NONE",
@@ -529,7 +529,7 @@ export default {
           self.imapSmtpFormSubmitStatus = "PROCESSING_SUCCESS"
           self.item = response.data.data
 
-          swal(self.$t('success'), self.$t('imap_smtp_details_saved'), "success");
+          swal(self.$t('success'), self.$t('assistant_module.imap_smtp_details_saved'), "success");
 
         }, (error) => {
           self.imapSmtpFormSubmitStatus = "ERROR"
