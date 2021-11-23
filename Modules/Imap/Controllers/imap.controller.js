@@ -207,6 +207,58 @@ class ImapController {
                                 let mailDate = new Date();
                                 mailDate.setDate(mailDate.getDate() - 7)
                                 imapClient.search([['ALL'], ['SINCE', mailDate] ], function(err, results) {
+                                    //console.log("results", results)
+                                    if(!results.length)
+                                    {
+                                        imapClient.closeBox(async (err) => {
+                                            //console.log("imapClient closeBox")
+                                            if (!err) {
+                                                //method to get messages from trash box
+                                                //check if calling for the first time
+                                                if(req.query.isFirst && req.query.isFirst == 1)
+                                                {
+                                                    self.getTrashedMessages(imapClient, data, payload, req, res);
+                                                }
+                                                else
+                                                {
+                                                    if (!res.headersSent) {
+                                                        res.status(responseCode).send({
+                                                            error,
+                                                            total: !error ? data.length : 0,
+                                                            data,
+                                                            message: !error ? status : 'Some error has occured.'
+                                                        })
+                                                    }
+                                                }
+
+
+
+                                                /*if (!res.headersSent) {
+                                                    res.status(responseCode).send({
+                                                        error,
+                                                        total: !error ? data.length : 0,
+                                                        data,
+                                                        message: !error ? status : 'Some error has occured.'
+                                                    })
+                                                }*/
+
+                                                //return
+                                            } else {
+                                                console.log(err)
+                                                logger.error('imap closebox :: ' + err);
+                                                Sentry.captureException(err)
+                                                if (!res.headersSent) {
+                                                    res.status(responseCode).send({
+                                                        error,
+                                                        total: !error ? data.length : 0,
+                                                        data,
+                                                        message: !error ? status : 'Some error has occured.'
+                                                    })
+                                                }
+                                            }
+                                        })
+                                        return
+                                    }
                                 //imapClient.search([['ALL'], ['SINCE', 'Nov 15, 2021'] ], function(err, results) {
                                     let fetchedMessagesEvent = imapClient.fetch(results, {
                                         bodies: '',
