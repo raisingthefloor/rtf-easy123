@@ -335,10 +335,25 @@ class ImapController {
                             {
 
                                 imapClient.closeBox(async (err) => {
-                                    console.log("imapClient closeBox")
+                                    //console.log("imapClient closeBox")
                                     if (!err) {
+                                        if(req.query.isFirst && req.query.isFirst == 1)
+                                        {
+                                            this.getTrashedMessages(imapClient, data, payload, req, res);
+                                        }
+                                        else
+                                        {
+                                            if (!res.headersSent) {
+                                                res.status(responseCode).send({
+                                                    error,
+                                                    total: !error ? data.length : 0,
+                                                    data,
+                                                    message: !error ? status : 'Some error has occured.'
+                                                })
+                                            }
+                                        }
                                         //method to get messages from trash box
-                                        this.getTrashedMessages(imapClient, data, payload, req, res);
+                                        //this.getTrashedMessages(imapClient, data, payload, req, res);
 
 
                                         /*if (!res.headersSent) {
@@ -515,18 +530,22 @@ class ImapController {
                 })
 
                 trashedMessagesEvent.once('end', () => {
-
-                    //imapClient.end();
-                    if (!res.headersSent) {
+                    let returnInterval = setInterval(function(){
                         let deleted = data.filter(obj => obj.t == "trash")
-                        res.status(responseCode).send({
-                            error,
-                            total: !error ? data.length : 0,
-                            data,
-                            message: !error ? status : 'Some error has occured.'
-                        })
-                    }
-
+                        if (!res.headersSent) {
+                            if(deleted.length == box.messages.total)
+                            {
+                                clearInterval(returnInterval)
+                                res.status(responseCode).send({
+                                    error,
+                                    total: !error ? data.length : 0,
+                                    data,
+                                    message: !error ? status : 'Some error has occured.'
+                                })
+                            }
+                        }
+                    }, 1000)
+                    //imapClient.end();
                 })
             } else {
                 if (!res.headersSent) {
