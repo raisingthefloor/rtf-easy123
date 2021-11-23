@@ -989,9 +989,9 @@ export default {
       var self = this
       //get unread mails
 
-      self.fetchMails()
+      self.fetchMails(1)
       this.mailInterval = setInterval(function() {
-        self.fetchMails()
+        self.fetchMails(0)
 
       }, 30000)
 
@@ -1145,22 +1145,26 @@ export default {
         },containment: "#drag-wrapper", scroll: false});*/
     },
     /** fetch mails **/
-    fetchMails() {
+    fetchMails(isFirst) {
       let self = this
-      axios.get(process.env.VUE_APP_API_HOST_NAME+'/api/users/1/messages', {
+      axios.get(process.env.VUE_APP_API_HOST_NAME+'/api/users/1/messages?isFirst='+isFirst, {
       })
           .then(function (response) {
             //console.log(response.data)
             if(response.data.error)
             {
+              self.loading_mails = false
               //console.log("Mails did not came")
               return
             }
             if(!self.mails.length)
             {
+              //console.log("here",response.data.data)
+              //window.mails = response.data.data
               self.mails = response.data.data
               self.loading_mails = false
-              self.trashedMails = self.mails.filter(mail => mail.t === "trash");
+              self.trashedMails = self.mails.filter(mail => mail.t == "trash")
+
               self.newMailsCount = self.mails.filter(mail => mail.r === "unread").length
             }
             else
@@ -1171,9 +1175,13 @@ export default {
                 {
                   self.mails.push(response.data.data[j])
 
-                  self.$nextTick(function() {
-                    self.showSinglePolaroid(response.data.data[j])
-                  })
+                  if(self.mailOpened == 1)
+                  {
+                    self.$nextTick(function() {
+                      self.showSinglePolaroid(response.data.data[j])
+                    })
+                  }
+
                 }
 
               }
@@ -2360,113 +2368,120 @@ export default {
       });
     },
     throwawayClick(ev) {
-      let e = ev.event;
-      let messageId = ev.messageId;
-      this.moveMailToTrash(messageId);
-      var self = this
-      var p = $(e.currentTarget).parent().parent();
+      try
+      {
+        let e = ev.event;
+        let messageId = ev.messageId;
+        this.moveMailToTrash(messageId);
+        var self = this
+        var p = $(e.currentTarget).parent().parent();
 
-      var q = p = $(p).parent().parent();
-      console.log("item", q)
-      var css23={top:'0px',left:'2px'};
-      css23.left = self.viewportwidth-488+'px';
-      css23.top = self.viewportheight-600+'px';
-      $(q).css('z-index',self.savez);
-      $(q).animate(css23,500, function(){
-        var p = $(this).find("#letter");
-
-
-        //var z=parseInt($(p).parent().parent().css('z-index'));
-        // alert($(p).parent().parent().attr('class'));
-        $(p).parent().parent().attr('in','c');
-        //console.log($(p).parent().parent().attr('class')+":"+z+","+$(p).parent().parent().find('.envcontents').find('#rot3').css('z-index')+","+p.css('z-index'));
-
-        $(p).find('#message').hide();
-
-        $(p).find('#paper').attr('src','/mail/paper2.png');
-        $(p).find('#paper').animate({'width':'305px','height':'230px'},0,function() {
-          $(p).find('#paper').css('width','305px');
-          $(p).find('#paper').css('height','230px');
-
-        });
-        $(p).animate({'left':'25px', 'top':'-90px'},0,function() {
-          $(p).css('z-index',self.z+1);
-          $(p).animate({'top':'132px'},0,function() {
-            $(p).parent().parent().find('.envcontents').rotate3Di('-180',0,{
-              sideChange:function() {
-                let front = false
-                var p=$(this).parent().parent();
-
-                var z=p.css('z-index');
-                if (front) {
+        var q = p = $(p).parent().parent();
+        //console.log("item", q)
+        var css23={top:'0px',left:'2px'};
+        css23.left = self.viewportwidth-488+'px';
+        css23.top = self.viewportheight-600+'px';
+        $(q).css('z-index',self.savez);
+        $(q).animate(css23,500, function(){
+          var p = $(this).find("#letter");
 
 
-                } else {
-                  //alert('hello');
-                  //$(this).css('display','none');
-                  $(this).find('#letter').css('display','none');
-                  $(this).find('#rot3').css('display','none');
-                  $(this).find('#rot2').css('left','0px');
-                  $(this).find('#envelope').attr('src', '/mail/envelope.png');
-                }
-              },
-              complete:function() {
-                var p=$(this);
-                var polaroid=$(this).parent();
-                if(p.find('#letter').css('display')=='none')
-                {
-                  p.parent().find('#frontcontents').show();
+          //var z=parseInt($(p).parent().parent().css('z-index'));
+          // alert($(p).parent().parent().attr('class'));
+          $(p).parent().parent().attr('in','c');
+          //console.log($(p).parent().parent().attr('class')+":"+z+","+$(p).parent().parent().find('.envcontents').find('#rot3').css('z-index')+","+p.css('z-index'));
 
-                  $(p).parent().find('#frontcontents').css('position','absolute');
-                  $(p).parent().find('#frontcontents').css('top','128px');
-                }
+          $(p).find('#message').hide();
 
-                $(this).rotate3Di('unflip',1);
-                $(this).find('#envelope').rotate3Di('unflip',1);
-                $(this).find('#rot2').rotate3Di('unflip',1);
-              }
-            });
+          $(p).find('#paper').attr('src','/mail/paper2.png');
+          $(p).find('#paper').animate({'width':'305px','height':'230px'},0,function() {
+            $(p).find('#paper').css('width','305px');
+            $(p).find('#paper').css('height','230px');
+
           });
-          var polar = $(p).parent().parent();
-          var z123 = $(polar).css('z-index');
+          $(p).animate({'left':'25px', 'top':'-90px'},0,function() {
+            $(p).css('z-index',self.z+1);
+            $(p).animate({'top':'132px'},0,function() {
+              $(p).parent().parent().find('.envcontents').rotate3Di('-180',0,{
+                sideChange:function() {
+                  let front = false
+                  var p=$(this).parent().parent();
 
-          var flag123 = 1;
-          $( polar ).draggable({disabled: true});
-          $(polar).find('.envcontents').find('#envelope').css('left','0px');
-          $(polar).find('.envcontents').find('#envelope').css('top','0px');
-          $(polar).css('z-index',self.z+2);
-          $(polar).find('.envcontents').find('#envelope').attr('src','/mail/trash_ball.png');
-          $(polar).attr('t','trash');
-          $(polar).find('#rot2').css('display','none');
-          $(polar).find('#frontcontents').css('display','none');
-          $(polar).draggable(false);
+                  var z=p.css('z-index');
+                  if (front) {
 
-          var csstrash1 = {
-            left:'1100px',
-            position:'absolute'
-          };
 
-          $(polar).css('left',self.trash_x+34+'px');
-          csstrash1.top = self.trash_y+128-73+'px';
-          csstrash1.left = self.trash_x+34+'px';
-          $(polar).animate(csstrash1,1000,function() {
-            csstrash1.top = self.trash_y+128-73-20+'px';
-            $(polar).animate(csstrash1,0,function(){
+                  } else {
+                    //alert('hello');
+                    //$(this).css('display','none');
+                    $(this).find('#letter').css('display','none');
+                    $(this).find('#rot3').css('display','none');
+                    $(this).find('#rot2').css('left','0px');
+                    $(this).find('#envelope').attr('src', '/mail/envelope.png');
+                  }
+                },
+                complete:function() {
+                  var p=$(this);
+                  var polaroid=$(this).parent();
+                  if(p.find('#letter').css('display')=='none')
+                  {
+                    p.parent().find('#frontcontents').show();
 
-              csstrash1.top = self.trash_y+128-73+'px';
-              $(polar).animate(csstrash1,0,function() {
-                $(polar).css('z-index',z123);
-                /*$(self.deletedEmail).css('display','none');
-                $(self.deletedEmail).attr('t','deleted');*/
-                self.deletedEmail=$(polar);
+                    $(p).parent().find('#frontcontents').css('position','absolute');
+                    $(p).parent().find('#frontcontents').css('top','128px');
+                  }
 
-                self.openedDeleted=flag123;
-                //alert($(this).css('z-index'));
+                  $(this).rotate3Di('unflip',1);
+                  $(this).find('#envelope').rotate3Di('unflip',1);
+                  $(this).find('#rot2').rotate3Di('unflip',1);
+                }
+              });
+            });
+            var polar = $(p).parent().parent();
+            var z123 = $(polar).css('z-index');
+
+            var flag123 = 1;
+            $( polar ).draggable({disabled: true});
+            $(polar).find('.envcontents').find('#envelope').css('left','0px');
+            $(polar).find('.envcontents').find('#envelope').css('top','0px');
+            $(polar).css('z-index',self.z+2);
+            $(polar).find('.envcontents').find('#envelope').attr('src','/mail/trash_ball.png');
+            $(polar).attr('t','trash');
+            $(polar).find('#rot2').css('display','none');
+            $(polar).find('#frontcontents').css('display','none');
+            $(polar).draggable(false);
+
+            var csstrash1 = {
+              left:'1100px',
+              position:'absolute'
+            };
+
+            $(polar).css('left',self.trash_x+34+'px');
+            csstrash1.top = self.trash_y+128-73+'px';
+            csstrash1.left = self.trash_x+34+'px';
+            $(polar).animate(csstrash1,1000,function() {
+              csstrash1.top = self.trash_y+128-73-20+'px';
+              $(polar).animate(csstrash1,0,function(){
+
+                csstrash1.top = self.trash_y+128-73+'px';
+                $(polar).animate(csstrash1,0,function() {
+                  $(polar).css('z-index',z123);
+                  /*$(self.deletedEmail).css('display','none');
+                  $(self.deletedEmail).attr('t','deleted');*/
+                  self.deletedEmail=$(polar);
+
+                  self.openedDeleted=flag123;
+                  //alert($(this).css('z-index'));
+                });
               });
             });
           });
         });
-      });
+      }
+      catch (e) {
+        console.log(e)
+      }
+
     },
     closeClick(e) {
       var self = this
@@ -3431,12 +3446,20 @@ export default {
 
     moveMailToTrash(messageId){
       let self = this
+      for (let i = 0; i < self.mails.length; i++) {
+        if(self.mails.messageId == messageId)
+        {
+          self.mails.t = "trash"
+        }
+      }
       let mail = this.mails.find(mail => mail.messageId === messageId);
+      //mail.t = "trash"
       axios.put(process.env.VUE_APP_API_HOST_NAME+`/api/message/move/trash`, [mail])
         .then(response => {
           //console.log(response);
           self.trashedMails.push(mail);
-          self.mails = self.mails.filter(mailObj => mailObj.messageId != messageId)
+
+          //self.mails = self.mails.filter(mailObj => mailObj.messageId != messageId)
         })
         .catch(err => console.log(err));
     },

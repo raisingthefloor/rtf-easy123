@@ -45,6 +45,7 @@ const HelperManager = require("../../../Managers/HelperManager")
 //SMTP Tansport
 
 let imapConnections = []
+process.setMaxListeners(0)
 
 class ImapController {
     imapClient
@@ -177,6 +178,7 @@ class ImapController {
     }
 
     getAllMailsCode(req, res, imapClient) {
+
         //Variables used for response status and payload
         let error = false, responseCode = 200;
         let data = [], status = 'success', payload = {};
@@ -193,7 +195,16 @@ class ImapController {
                             if(box.messages.total)
                             {
                                 //imapClient.seq.search(['INBOX', ['SINCE', 'May 20, 2018']])
-                                let fetchedMessagesEvent = imapClient.seq.fetch((box.messages.total) + ":1", {
+                                /*let fetchedMessagesEvent = imapClient.seq.fetch((box.messages.total) + ":1", {
+                                    bodies: '',
+                                    struct: true
+                                })*/
+                                let getMessageCount = 10
+                                if(box.messages.total < 10)
+                                {
+                                    getMessageCount = box.messages.total
+                                }
+                                let fetchedMessagesEvent = imapClient.seq.fetch(getMessageCount + ":1", {
                                     bodies: '',
                                     struct: true
                                 })
@@ -274,7 +285,23 @@ class ImapController {
                                         //console.log("imapClient closeBox")
                                         if (!err) {
                                             //method to get messages from trash box
-                                            this.getTrashedMessages(imapClient, data, payload, req, res);
+                                            //check if calling for the first time
+                                            if(req.query.isFirst && req.query.isFirst == 1)
+                                            {
+                                                this.getTrashedMessages(imapClient, data, payload, req, res);
+                                            }
+                                            else
+                                            {
+                                                if (!res.headersSent) {
+                                                    res.status(responseCode).send({
+                                                        error,
+                                                        total: !error ? data.length : 0,
+                                                        data,
+                                                        message: !error ? status : 'Some error has occured.'
+                                                    })
+                                                }
+                                            }
+
 
 
                                             /*if (!res.headersSent) {
@@ -455,7 +482,7 @@ class ImapController {
 
                 //a message is received
                 trashedMessagesEvent.on('message', (msg, seqno) => {
-                    //console.log("trashedMessagesEvent message")
+                    //console.log("trashedMessagesEvent message", seqno)
                     //message body is loaded
                     msg.on('body', (stream, info) => {
                         //console.log("msg body")
@@ -473,11 +500,14 @@ class ImapController {
                                     isRead = "read";
                                     isTrashed = "trash";
                                 }
+                                //console.log("isRead", isRead)
+                                //console.log("isTrashed", isTrashed)
                                 const {to, from, subject, text, html, date, attachments, messageId} = mail;
                                 payload = {
                                     date, to: to ? to.text : '', from: from.text, subject, text, html,
                                     r: isRead, t: isTrashed, in: 'c', attachments, messageId, attrs
                                 };
+                                //console.log("payload t", payload.t)
                                 data.push(payload);
                             })
                         })
@@ -485,8 +515,10 @@ class ImapController {
                 })
 
                 trashedMessagesEvent.once('end', () => {
+
                     //imapClient.end();
                     if (!res.headersSent) {
+                        let deleted = data.filter(obj => obj.t == "trash")
                         res.status(responseCode).send({
                             error,
                             total: !error ? data.length : 0,
@@ -808,9 +840,52 @@ class ImapController {
                         }
                         else
                         {
-                            error = false
-                            message = "no_message"
-                            res.send({error, message: error ? "Something went wrong. Please contact admin" : message});
+                            imapClient.search([
+                                //['FROM', this.strip_html(from)],
+                                //['TO', this.strip_html(to)],
+                                ['SUBJECT', subject],
+                                ['ON', date]
+                            ], async (err, results) => {
+                                if(err)
+                                {
+                                    logger.error(err);
+                                    console.log(err)
+                                    Sentry.captureException(err)
+
+                                    error = true
+                                    res.send({error, message: error ? "Something went wrong. Please contact admin" : message})
+                                }
+                                else if(results.length)
+                                {
+                                    //await this.constructIMAP(req, res)
+                                    imapClient.move(results, destination, err => {
+                                        if (!err) {
+                                            logger.info(`Message move from ${source} to ${destination}`)
+
+                                            res.send({
+                                                error,
+                                                message: error ? "Something went wrong. Please contact admin" : message
+                                            })
+                                            //this.imapClient.end();
+                                        } else {
+                                            Sentry.captureException(err)
+                                            console.log(err)
+                                            logger.error("Error :: ", err)
+
+                                            res.send({
+                                                error,
+                                                message: error ? "Something went wrong. Please contact admin" : message
+                                            })
+                                        }
+                                    });
+                                }
+                                else {
+                                    error = false
+                                    message = "no_message"
+                                    res.send({error, message: error ? "Something went wrong. Please contact admin" : message});
+                                }
+                            })
+
                         }
 
                     })
