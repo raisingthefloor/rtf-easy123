@@ -258,7 +258,6 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
 
 <script>
 const axios = require('axios')
-import Polaroid from "./working/Polaroid"
 import Polaroid2 from "./working/Polaroid2"
 import MailToPrompt from "./working/MailToPrompt";
 import MailLetterPrompt from "./working/MailLetterPrompt"
@@ -623,7 +622,6 @@ export default {
     title: 'Home',
   },
   components: {
-    "Polaroid": Polaroid,
     "Polaroid2": Polaroid2,
     "MailToPrompt" : MailToPrompt,
     "MailLetterPrompt": MailLetterPrompt,
@@ -1161,7 +1159,15 @@ export default {
             {
               //console.log("here",response.data.data)
               //window.mails = response.data.data
-              self.mails = response.data.data
+              let mails = response.data.data
+
+              mails = mails.sort(function (a, b) {
+                var dateA = new Date(a.date).getTime();
+                var dateB = new Date(b.date).getTime();
+                return dateA < dateB ? -1 : 1; // ? -1 : 1 for ascending/increasing order
+              })
+
+              self.mails = mails
               self.loading_mails = false
               self.trashedMails = self.mails.filter(mail => mail.t == "trash")
 
