@@ -194,6 +194,7 @@ class ImapController {
                         if (!err) {
                             if(box.messages.total)
                             {
+                                //console.log("messages total", box.messages.total)
                                 //imapClient.seq.search(['INBOX', ['SINCE', 'May 20, 2018']])
                                 /*let fetchedMessagesEvent = imapClient.seq.fetch((box.messages.total) + ":1", {
                                     bodies: '',
@@ -207,11 +208,11 @@ class ImapController {
                                 let mailDate = new Date();
                                 mailDate.setDate(mailDate.getDate() - 7)
                                 imapClient.search([['ALL'], ['SINCE', mailDate] ], function(err, results) {
-                                    //console.log("results", results)
+                                    //console.log("results", results.length)
                                     if(!results.length)
                                     {
                                         imapClient.closeBox(async (err) => {
-                                            //console.log("imapClient closeBox")
+                                            console.log("imapClient closeBox")
                                             if (!err) {
                                                 //method to get messages from trash box
                                                 //check if calling for the first time
@@ -336,12 +337,13 @@ class ImapController {
                                         //close inbox and open trashbox
                                         //console.log(this.imapClient)
                                         imapClient.closeBox(async (err) => {
-                                            //console.log("imapClient closeBox")
+                                            //console.log("imapClient closeBox in fetchedMessagesEvent")
                                             if (!err) {
                                                 //method to get messages from trash box
                                                 //check if calling for the first time
                                                 if(req.query.isFirst && req.query.isFirst == 1)
                                                 {
+                                                    //console.log("call getTrashedMessages")
                                                     self.getTrashedMessages(imapClient, data, payload, req, res);
                                                 }
                                                 else
@@ -551,7 +553,7 @@ class ImapController {
         let status = 'success'
 
         this.openMailBox("[Gmail]/Trash", false, imapClient, req, res, (err, box) => {
-            //console.log("openMailBox trash")
+            //console.log("openMailBox trash", box.messages.total)
             if (!err && box.messages?.total) {
                 let trashedMessagesEvent = imapClient.seq.fetch((box.messages.total) + ":1", {
                     bodies: '',
@@ -573,7 +575,8 @@ class ImapController {
                             //console.log("msg attributes")
                             //using mailparser to parse message body
                             simpleParser(stream, (err, mail) => {
-                                let isRead = "unread", isTrashed = "none";
+                                //let isRead = "unread", isTrashed = "trash";
+                                let isRead = "read", isTrashed = "trash";
                                 if (attrs.flags.includes("\\Seen")) {
                                     isRead = "read";
                                     isTrashed = "trash";
@@ -587,13 +590,25 @@ class ImapController {
                                 };
                                 //console.log("payload t", payload.t)
                                 data.push(payload);
+
+                                let deleted = data.filter(obj => obj.t == "trash")
+
+                                if(deleted.length == box.messages.total)
+                                {
+                                    res.status(responseCode).send({
+                                        error,
+                                        total: !error ? data.length : 0,
+                                        data,
+                                        message: !error ? status : 'Some error has occured.'
+                                    })
+                                }
                             })
                         })
                     })
                 })
 
                 trashedMessagesEvent.once('end', () => {
-                    let returnInterval = setInterval(function(){
+                    /*let returnInterval = setInterval(function(){
                         let deleted = data.filter(obj => obj.t == "trash")
                         if (!res.headersSent) {
                             if(deleted.length == box.messages.total)
@@ -607,7 +622,7 @@ class ImapController {
                                 })
                             }
                         }
-                    }, 1000)
+                    }, 1000)*/
                     //imapClient.end();
                 })
             } else {
