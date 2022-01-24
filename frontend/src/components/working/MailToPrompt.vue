@@ -32,7 +32,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
                       <div id="EmailInstructions" style="" class="">
                         <span v-html="$t('mail_to_prompt_component.find_name_in_directory')"></span>
                         <br><br>
-                        <button class="wahighlight"> {{ $t('mail_to_prompt_component.open_address_book') }}</button><br><br>
+                        <button class="wahighlight" @click="icontactClick"> {{ $t('mail_to_prompt_component.open_address_book') }}</button><br><br>
                         {{ $t('mail_to_prompt_component.or') }}<br><br>
                         {{ $t('mail_to_prompt_component.fill_in_name_email_address_here') }}<br><br>
                         <div style="padding-bottom:0px;">
@@ -67,6 +67,9 @@ export default {
     methods:{
         writeMailClicked(){
             this.$emit('writeMailClicked');
+        },
+        icontactClick() {
+            this.$emit('icontactClick');
         }
     },
 

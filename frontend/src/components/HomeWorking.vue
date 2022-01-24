@@ -131,6 +131,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
     <div id="contact" class="contact_overflow" style="position:absolute;left:60px; top:306px; z-index:2;   width:120px; height:143px; display:none">
       <MailToPrompt v-if="showMailToPrompt" 
         @writeMailClicked="writeMailClicked"
+        @icontactClick="icontactClick"
       />
       <AddressBook v-show="!showMailToPrompt"
         :search-alphabets="searchAlphabets" @resetSearch="resetSearchAlphabet" @writeMailClicked="writeMailClicked"
@@ -143,7 +144,7 @@ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
             <img src="/mail/contact.png">
           </div>
         <div style="font-size:23px">
-          <span>{{ $t('home_module.write_mail') }}</span>
+          <span> {{ $t('home_module.write_mail') }}</span>
         </div>
       </div>
     </div>
@@ -3415,7 +3416,7 @@ export default {
       }
       //Open the contact view via jquery animate
       $('#contact')
-        .animate({'position':'absolute','left':'300px', 'top':'20px', 'width':'550px','height':'650px'},delay, () => {
+        .animate({'position':'absolute','left':'300px', 'top':'20px', 'width':'550px','height':'650px', 'opacity': '1'},delay, () => {
           this.showMailToPrompt = true;
           $('.spiral').show();
           $('.spiral').css('left','267px');
