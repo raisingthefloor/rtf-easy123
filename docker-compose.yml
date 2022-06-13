@@ -8,7 +8,7 @@ services:
       - "1000:1000"
     container_name: frontend
     environment:
-        - VUE_APP_API_HOST_NAME=https://easy123.plenartech.com:2000
+        - VUE_APP_API_HOST_NAME=https://easy123.plenartech.com:1002
         - VUE_APP_ENV=development
     depends_on:
       - backend
@@ -17,7 +17,7 @@ services:
       context: .
       dockerfile: Dockerfile_Backend
     ports:
-      - "2000:2000"
+      - "1002:2000"
     container_name: backend
     environment:
       - FRONT_URL=https://easy123.plenartech.com/
