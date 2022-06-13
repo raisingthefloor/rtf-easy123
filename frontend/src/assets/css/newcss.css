@@ -1,0 +1,188 @@
+/**
+ Copyright 2020 Raising the Floor - International
+
+ Licensed under the New BSD license. You may not use this file except in
+ compliance with this License.
+
+ You may obtain a copy of the License at
+ https://github.com/GPII/universal/blob/master/LICENSE.txt
+
+ The R&D leading to these results received funding from the:
+ * Rehabilitation Services Administration, US Dept. of Education under
+ grant H421A150006 (APCP)
+ * National Institute on Disability, Independent Living, and
+ Rehabilitation Research (NIDILRR)
+ * Administration for Independent Living & Dept. of Education under grants
+ H133E080022 (RERC-IT) and H133E130028/90RE5003-01-00 (UIITA-RERC)
+ * European Union's Seventh Framework Programme (FP7/2007-2013) grant
+ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
+ * William and Flora Hewlett Foundation
+ * Ontario Ministry of Research and Innovation
+ * Canadian Foundation for Innovation
+ * Adobe Foundation
+ * Consumer Electronics Association Foundation
+ **/
+
+
+	/* CUSTOM FONT */
+
+	.button {
+	 width: 200px;
+	 height: 200px;
+         margin: 25px;
+
+	 color: white;
+	 display: block;
+	text-decoration: none;
+
+
+	 /* BACKGROUND GRADIENTS */
+	 background: #0c5f85;
+	/* background: -moz-linear-gradient(top, #0D658E, #0C577A 50%, #014D71 51%, #003E5C);
+	 background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #0E658E), color-stop(.5, #0C577A), color-stop(.5, #014D71), to(#003E5C)); */
+
+
+	 /* BORDER RADIUS */
+	 -moz-border-radius: 15px;
+	 -webkit-border-radius: 15px;
+	 border-radius: 15px;
+
+	 border: 2px solid #368DBE;
+	 border-top: 3px solid #c3d6df;
+
+
+	 /* TEXT SHADOW */
+
+	 text-shadow: 1px 1px 1px black;
+
+	 /* BOX SHADOW */
+	 -moz-box-shadow: 0 2px 4px black;
+	 -webkit-box-shadow: 0 2px 4px black;
+	 box-shadow: 0 2px 4px black;
+	}
+
+	/* WHILE HOVERED */
+	.button:hover {
+		background: #0c5f85;
+/*	 	background: -moz-linear-gradient(top, #0c5f85, #0b5273 50%, #024869 51%, #003853);
+	 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #0c5f85), color-stop(.5, #0b5273), color-stop(.51, #024869), to(#003853));*/
+	}
+
+	/* WHILE BEING CLICKED */
+	.button:active {
+		-moz-box-shadow: 0 4px 8px black;
+		-webkit-box-shadow: 0 4px 8px black;
+	}
+	/* FONT GLYPH (MOSTLY FOR FUN) */
+	.button:before {
+
+
+		color: #09232F;
+
+		float: left;
+		margin-left: 35px;
+		margin-right: -10px;
+		text-shadow: 0 1px 0 #4190AF;
+	}
+
+
+
+    .button1 {	 width: 250px;
+	 height: 250px;
+
+	 color: white;
+	 display: block;
+	text-decoration: none;
+
+
+	 /* BACKGROUND GRADIENTS */
+	 background: #0c5f85;
+	/* background: -moz-linear-gradient(top, #0D658E, #0C577A 50%, #014D71 51%, #003E5C);
+	 background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #0E658E), color-stop(.5, #0C577A), color-stop(.5, #014D71), to(#003E5C)); */
+
+
+	 /* BORDER RADIUS */
+	 -moz-border-radius: 15px;
+	 -webkit-border-radius: 15px;
+	 border-radius: 15px;
+
+	 border: 2px solid #368DBE;
+	 border-top: 3px solid #c3d6df;
+
+
+	 /* TEXT SHADOW */
+
+	 text-shadow: 1px 1px 1px black;
+
+	 /* BOX SHADOW */
+	 -moz-box-shadow: 0 2px 4px black;
+	 -webkit-box-shadow: 0 2px 4px black;
+	 box-shadow: 0 2px 4px black;
+}
+    .button2 {	 width: 250px;
+	 height: 250px;
+
+	 color: white;
+	 display: block;
+	text-decoration: none;
+
+
+	 /* BACKGROUND GRADIENTS */
+	 background: #014464;
+	/* background: -moz-linear-gradient(top, #0D658E, #0C577A 50%, #014D71 51%, #003E5C);
+	 background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #0E658E), color-stop(.5, #0C577A), color-stop(.5, #014D71), to(#003E5C)); */
+
+
+	 /* BORDER RADIUS */
+	 -moz-border-radius: 15px;
+	 -webkit-border-radius: 15px;
+	 border-radius: 15px;
+
+	 border: 2px solid #368DBE;
+	 border-top: 3px solid #c3d6df;
+
+
+	 /* TEXT SHADOW */
+
+	 text-shadow: 1px 1px 1px black;
+
+	 /* BOX SHADOW */
+	 -moz-box-shadow: 0 2px 4px black;
+	 -webkit-box-shadow: 0 2px 4px black;
+	 box-shadow: 0 2px 4px black;
+}
+    .button3 {	 width: 250px;
+	 height: 250px;
+
+	 color: white;
+	 display: block;
+	text-decoration: none;
+
+
+	 /* BACKGROUND GRADIENTS */
+	 background: #014464;
+	/* background: -moz-linear-gradient(top, #0D658E, #0C577A 50%, #014D71 51%, #003E5C);
+	 background: -webkit-gradient(linear, left top, left bottom, color-stop(0, #0E658E), color-stop(.5, #0C577A), color-stop(.5, #014D71), to(#003E5C)); */
+
+
+	 /* BORDER RADIUS */
+	 -moz-border-radius: 15px;
+	 -webkit-border-radius: 15px;
+	 border-radius: 15px;
+
+	 border: 2px solid #368DBE;
+	 border-top: 3px solid #c3d6df;
+
+
+	 /* TEXT SHADOW */
+
+	 text-shadow: 1px 1px 1px black;
+
+	 /* BOX SHADOW */
+	 -moz-box-shadow: 0 2px 4px black;
+	 -webkit-box-shadow: 0 2px 4px black;
+	 box-shadow: 0 2px 4px black;
+}
+
+
+

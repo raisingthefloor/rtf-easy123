@@ -1,0 +1,21 @@
+.env
+node_modules
+=======
+# Add any directories, files, or patterns you don't want to be tracked by version control
+
+/node_modules
+/Configs/masterConfig.json
+.env
+
+public/uploads/*.jpg
+public/uploads/*.png
+
+public/uploads/avatar/*.png
+public/uploads/avatar/*.jpg
+
+# phpstorm project files
+.idea
+/backup
+access.log
+
+/db

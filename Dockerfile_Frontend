@@ -1,0 +1,15 @@
+FROM node:16
+
+WORKDIR /usr/src/app/easy123_frontend
+
+ENV PATH /usr/src/app/easy123_frontend/node_modules/.bin:$PATH
+
+COPY package*.json ./
+
+RUN npm install
+
+COPY frontend .
+
+EXPOSE 1000
+
+CMD ["npm", "run", "serve"]

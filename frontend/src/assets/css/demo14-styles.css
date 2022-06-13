@@ -1,0 +1,159 @@
+/**
+ Copyright 2020 Raising the Floor - International
+
+ Licensed under the New BSD license. You may not use this file except in
+ compliance with this License.
+
+ You may obtain a copy of the License at
+ https://github.com/GPII/universal/blob/master/LICENSE.txt
+
+ The R&D leading to these results received funding from the:
+ * Rehabilitation Services Administration, US Dept. of Education under
+ grant H421A150006 (APCP)
+ * National Institute on Disability, Independent Living, and
+ Rehabilitation Research (NIDILRR)
+ * Administration for Independent Living & Dept. of Education under grants
+ H133E080022 (RERC-IT) and H133E130028/90RE5003-01-00 (UIITA-RERC)
+ * European Union's Seventh Framework Programme (FP7/2007-2013) grant
+ agreement nos. 289016 (Cloud4all) and 610510 (Prosperity4All)
+ * William and Flora Hewlett Foundation
+ * Ontario Ministry of Research and Innovation
+ * Canadian Foundation for Innovation
+ * Adobe Foundation
+ * Consumer Electronics Association Foundation
+ **/
+#photo_stack {
+	width: 500px;
+	margin: 5em auto;
+	position: relative;
+}
+.photos {
+	position: absolute;
+	border: 3px solid #FFF;
+
+	box-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+	-moz-box-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+	-webkit-box-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+
+	/* Firefox */
+
+
+}
+.noshadow {
+
+        box-shadow: 0px 0px 0px rgba(0,0,0,0.5);
+	-moz-box-shadow: 0px 0px 0px rgba(0,0,0,0.5);
+	-webkit-box-shadow: 0px 0px 0px rgba(0,0,0,0.5);
+
+}
+.deg {
+	-webkit-transform: rotate(0deg); 
+   	-moz-transform: rotate(0deg);
+   	transform: rotate(0deg);
+	margin-left:0px;
+
+}
+ .deg1 {
+	-webkit-transform: rotate(1deg);
+   	-moz-transform: rotate(1deg);
+   	transform: rotate(1deg);
+	margin-left:20px;
+
+	
+
+	
+	
+	
+	 
+}
+ .deg2 {
+	-webkit-transform: rotate(2deg);
+   	-moz-transform: rotate(2deg);
+   	transform: rotate(2deg);
+	margin-top:10px;
+
+}
+ .deg3 {
+	-webkit-transform: rotate(3deg);
+   	-moz-transform: rotate(3deg);
+   	transform: rotate(3deg);
+
+}
+ .deg4 {
+	-webkit-transform: rotate(4deg);
+   	-moz-transform: rotate(4deg);
+   	transform: rotate(4deg);
+	margin-left:20px;
+
+
+
+}
+ .deg1neg {
+	-webkit-transform: rotate(-1deg);
+   	-moz-transform: rotate(-1deg);
+   	transform: rotate(-1deg);
+
+
+
+}
+ .deg2neg {
+	-webkit-transform: rotate(-2deg);
+   	-moz-transform: rotate(-2deg);
+   	transform: rotate(-2deg);
+	margin-top:20px;
+
+}
+ .deg3neg {
+	-webkit-transform: rotate(-3deg);
+   	-moz-transform: rotate(-3deg);
+   	transform: rotate(-3deg);
+
+}
+ .deg4neg {
+	-webkit-transform: rotate(-4deg);
+   	-moz-transform: rotate(-4deg);
+   	transform: rotate(-4deg);
+
+	
+}
+.hover {
+	box-shadow: 2px 2px 8px rgba(255,255,220,0.9);
+	-moz-box-shadow: 2px 2px 8px rgba(255,255,220,0.9);
+	-webkit-box-shadow: 2px 2px 8px rgba(255,255,220,0.9);
+
+
+
+
+
+}
+@-webkit-keyframes shuffle {
+	0% {
+		margin-left: 0px;
+	}
+	50% {
+		margin-left: 450px;
+		-webkit-transform: scale(0.9);
+		-moz-transform: scale(0.9);
+		transform: scale(0.9);
+	}
+	100% {
+		margin-left: 0px;
+		-webkit-transform: scale(1);
+		-moz-transform: scale(1);
+		transform: scale(1);
+	}
+}
+#photo_stack .animate {
+	-webkit-animation-name: shuffle;
+	-webkit-animation-duration: 1s;
+	-webkit-animation-iteration-count: 1;
+
+}
+/* CSS Document */
+
+
+.image {
+   position: relative;
+/* for IE 6 */
+}
+
