@@ -2,10 +2,67 @@
 
 All the APIs are developed in nodejs & frontend in vuejs
 
-For running backend the project you need to run "npm run dev"
+### Prerequisites
 
+* Please open the following ports 
+  ```
+  1000 port for frontend
+  1002 port for web server 
+  ```
+  
+* if you want to setup the SSL we recommand to use this URL and follow for nginx 
+  * https://tecadmin.net/how-to-setup-lets-encrypt-on-ubuntu-20-04/
+  
+* Install NodeJS 
+  
+  * https://www.digitalocean.com/community/tutorials/how-to-install-node-js-on-ubuntu-20-04 (Option - 1)
 
-For running frontend go to "frontend" and run "npm run serve"
+### Domain Setup
+
+- To configure any domain you have to setup the Nginx Reverse Proxy on your Ubuntu system, you can follow this artical for more detail 
+
+  https://www.hostinger.in/tutorials/how-to-set-up-nginx-reverse-proxy/
+
+  Make sure you set the port `1000` so that your configuared domain open the URL on that specific port 
+
+### Environment Variables 
+
+-  Following variables you need to change as per your requirements in 
+  - ```VUE_APP_API_HOST_NAME```
+  - ```FRONT_URL```
+  - ```MJ_APIKEY_PUBLIC```
+  - ```MJ_APIKEY_PRIVATE```
+  - ```MJ_SENDER_EMAIL```
+  - ```MJ_SENDER_NAME```
+
+### Installation
+
+1. Clone the repo
+   ```sh
+   git clone https://github.com/raisingthefloor/rtf-easy123.git
+   ```
+
+2. Switch to master branch
+   ```sh
+   git checkout main
+   ```
+
+3. Go inside the root directly and open ```frontend``` folder in terminal
+
+   ````shell
+   npm install
+   ````
+
+   Now go back to root folder 
+
+4. Build docker image from source using the composer command
+   ```sh
+   docker-compose build --no-cache
+   ```
+
+ 5. Run the docker image
+    ```sh
+     docker-compose up -d
 
 ****
 Below are the all third party libraries in the project
