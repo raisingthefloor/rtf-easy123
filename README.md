@@ -33,7 +33,7 @@ All the APIs are developed in nodejs & frontend in vuejs
 
 ### Environment Variables 
 
-Following variables you need to change as per your requirements in 
+ Following variables you need to change as per your requirements in ```docker-compose.yml```
   - ```VUE_APP_API_HOST_NAME``` //used to communicate with the backend 
   - ```FRONT_URL``` //used to communicate with frontend 
   - ```MJ_APIKEY_PUBLIC``` // Mailjet Public Key 
