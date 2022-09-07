@@ -1,16 +1,16 @@
 # Easy123
 
-All the APIs are developed in nodejs & frontend in vuejs
+All the APIs are developed in node js & frontend in vuejs
 
 ### Prerequisites
 
 * Please open the following ports 
   ```
   1000 port for frontend
-  1002 port for web server 
+  1002 port for the webserver 
   ```
   
-* if you want to setup the SSL we recommand to use this URL and follow for nginx 
+* if you want to set up the SSL we recommend using this URL and the following for Nginx 
   * https://tecadmin.net/how-to-setup-lets-encrypt-on-ubuntu-20-04/
   
 * Install NodeJS 
@@ -19,27 +19,28 @@ All the APIs are developed in nodejs & frontend in vuejs
 
 ### Domain Setup
 
-- To configure any domain you have to setup the Nginx Reverse Proxy on your Ubuntu system, you can follow this artical for more detail 
+- To configure any domain you have to set up the Nginx Reverse Proxy on your Ubuntu system, you can follow this article for more detail 
 
   https://www.hostinger.in/tutorials/how-to-set-up-nginx-reverse-proxy/
 
-  Make sure you set the port `1000` so that your configuared domain open the URL on that specific port 
+  Make sure you set the port `1000` so that your configured domain opens the URL on that specific port 
 
 ### MailJet Setup
 - To configure the mailjet you need to open the account on https://app.mailjet.com/signup (if not created)
 - Once the account setup is completed you need to generate the API Keys(Public & Private)
-- Follow this article https://javascript.plainenglish.io/how-to-send-emails-in-node-e5fb0a48d46d and check section of (In Mailjet & Additional Tips for domain verification process)
+- Follow this article https://javascript.plainenglish.io/how-to-send-emails-in-node-e5fb0a48d46d and check the section (In Mailjet & Additional Tips for domain verification process)
 
 
 ### Environment Variables 
 
- Following variables you need to change as per your requirements in ```docker-compose.yml```
+ Following variables, you need to change as per your requirements in ```docker-compose.yml```
   - ```VUE_APP_API_HOST_NAME``` //used to communicate with the backend 
   - ```FRONT_URL``` //used to communicate with frontend 
   - ```MJ_APIKEY_PUBLIC``` // Mailjet Public Key 
   - ```MJ_APIKEY_PRIVATE``` // Mailjet Private key
   - ```MJ_SENDER_EMAIL``` // Mailjet sender email
   - ```MJ_SENDER_NAME```  // Mailjet sender name
+
 
 ### Installation
 
@@ -48,7 +49,7 @@ All the APIs are developed in nodejs & frontend in vuejs
    git clone https://github.com/raisingthefloor/rtf-easy123.git
    ```
 
-2. Switch to master branch
+2. Switch to main branch
    ```sh
    git checkout main
    ```
@@ -59,7 +60,7 @@ All the APIs are developed in nodejs & frontend in vuejs
    npm install
    ````
 
-   Now go back to root folder 
+   Now go back to the root folder 
 
 4. Build docker image from source using the composer command
    ```sh
@@ -69,9 +70,21 @@ All the APIs are developed in nodejs & frontend in vuejs
  5. Run the docker image
     ```sh
      docker-compose up -d
+     ```
+
+### Setup Admin User after docker process start
+
+- Open Terminal and use this ```curl``` request to generate the Admin user 
+
+```curl --location --request GET 'https://{{domain}}:1002/api/add-admin-user?name={{name}}&email={{email}}&password={{password}}'```
+
+For e.g 
+
+```curl --location --request GET 'https://easy123.plenartech.com:1002/api/add-admin-user?name=Admin&email=adminuser@gmail.com&password=adminuser@123'```
+
 
 ****
-Below are the all third party libraries in the project
+Below are the all third-party libraries in the project
 
 
 **Backend**
