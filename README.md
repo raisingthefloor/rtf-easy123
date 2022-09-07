@@ -25,15 +25,21 @@ All the APIs are developed in nodejs & frontend in vuejs
 
   Make sure you set the port `1000` so that your configuared domain open the URL on that specific port 
 
+### MailJet Setup
+- To configure the mailjet you need to open the account on https://app.mailjet.com/signup (if not created)
+- Once the account setup is completed you need to generate the API Keys(Public & Private)
+- Follow this article https://javascript.plainenglish.io/how-to-send-emails-in-node-e5fb0a48d46d and check section of (In Mailjet & Additional Tips for domain verification process)
+
+
 ### Environment Variables 
 
--  Following variables you need to change as per your requirements in 
-  - ```VUE_APP_API_HOST_NAME```
-  - ```FRONT_URL```
-  - ```MJ_APIKEY_PUBLIC```
-  - ```MJ_APIKEY_PRIVATE```
-  - ```MJ_SENDER_EMAIL```
-  - ```MJ_SENDER_NAME```
+Following variables you need to change as per your requirements in 
+  - ```VUE_APP_API_HOST_NAME``` //used to communicate with the backend 
+  - ```FRONT_URL``` //used to communicate with frontend 
+  - ```MJ_APIKEY_PUBLIC``` // Mailjet Public Key 
+  - ```MJ_APIKEY_PRIVATE``` // Mailjet Private key
+  - ```MJ_SENDER_EMAIL``` // Mailjet sender email
+  - ```MJ_SENDER_NAME```  // Mailjet sender name
 
 ### Installation
 
